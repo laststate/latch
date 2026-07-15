@@ -1,10 +1,8 @@
 #ifndef LASTSTATE_CAPTURE_H
 #define LASTSTATE_CAPTURE_H
-
 #include <stdbool.h>
 #include <stdint.h>
 #include "event.h"
-
 #define LS_MINIMAL_SNAPSHOT_VERSION 2u
 
 enum {

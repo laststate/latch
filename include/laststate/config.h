@@ -1,7 +1,5 @@
 #ifndef LASTSTATE_CONFIG_H
 #define LASTSTATE_CONFIG_H
-
-/* All settings may be overridden by the build system. */
 #ifndef LS_ENABLE_BREADCRUMBS
 #define LS_ENABLE_BREADCRUMBS 1
 #endif
@@ -32,7 +30,6 @@
 #ifndef LS_COMPILED_MIN_LEVEL
 #define LS_COMPILED_MIN_LEVEL 0
 #endif
-
 #ifndef LS_BREADCRUMB_CAPACITY
 #define LS_BREADCRUMB_CAPACITY 32u
 #endif
@@ -108,7 +105,6 @@
 #ifndef LS_DEDUP_WINDOW_MS
 #define LS_DEDUP_WINDOW_MS 60000u
 #endif
-
 #define LS_PROTOCOL_VERSION 1u
 #define LS_FORMAT_VERSION 2u
 #define LS_MAGIC 0x5054534Cu
