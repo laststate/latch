@@ -1,0 +1,12 @@
+{
+  "serial": "COM7",
+  "baud": 115200,
+  "debug_probe": "STLINK-V3",
+  "power_supply": {
+    "endpoint": "192.0.2.10:5025",
+    "normal_voltage": 3.3,
+    "brownout_voltage": 1.7,
+    "hold_seconds": 0.25
+  },
+  "features": ["watchdog", "mpu", "trustzone", "fpu-lazy", "flash", "reset-registers"]
+}
