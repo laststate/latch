@@ -1,20 +1,101 @@
 {
   "version": 6,
-  "cmakeMinimumRequired": {"major": 3, "minor": 20, "patch": 0},
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 20,
+    "patch": 0
+  },
   "configurePresets": [
-    {"name":"host-debug","generator":"Ninja","binaryDir":"${sourceDir}/build/host-debug","cacheVariables":{"CMAKE_BUILD_TYPE":"Debug","LS_BUILD_TESTS":"ON","LS_FREESTANDING_CHECK":"ON","LS_BUILD_TOOLS":"ON","LS_BUILD_BENCHMARKS":"ON"}},
-    {"name":"host-release","inherits":"host-debug","binaryDir":"${sourceDir}/build/host-release","cacheVariables":{"CMAKE_BUILD_TYPE":"Release"}},
-    {"name":"arm-cortex-m4","generator":"Ninja","binaryDir":"${sourceDir}/build/arm-cortex-m4","toolchainFile":"${sourceDir}/cmake/toolchains/arm-none-eabi.cmake"},
-    {"name":"riscv32","generator":"Ninja","binaryDir":"${sourceDir}/build/riscv32","toolchainFile":"${sourceDir}/cmake/toolchains/riscv32-none-elf.cmake"}
+    {
+      "name": "host-debug",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/host-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "LS_BUILD_TESTS": "ON",
+        "LS_FREESTANDING_CHECK": "ON",
+        "LS_BUILD_TOOLS": "ON",
+        "LS_BUILD_BENCHMARKS": "ON"
+      }
+    },
+    {
+      "name": "host-release",
+      "inherits": "host-debug",
+      "binaryDir": "${sourceDir}/build/host-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "host-msvc",
+      "generator": "Visual Studio 17 2022",
+      "architecture": "x64",
+      "binaryDir": "${sourceDir}/build/host-msvc",
+      "cacheVariables": {
+        "LS_BUILD_TESTS": "ON",
+        "LS_FREESTANDING_CHECK": "ON",
+        "LS_BUILD_TOOLS": "ON",
+        "LS_BUILD_BENCHMARKS": "ON"
+      }
+    },
+    {
+      "name": "arm-cortex-m4",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/arm-cortex-m4",
+      "toolchainFile": "${sourceDir}/cmake/toolchains/arm-none-eabi.cmake"
+    },
+    {
+      "name": "riscv32",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/riscv32",
+      "toolchainFile": "${sourceDir}/cmake/toolchains/riscv32-none-elf.cmake"
+    }
   ],
   "buildPresets": [
-    {"name":"host-debug","configurePreset":"host-debug"},
-    {"name":"host-release","configurePreset":"host-release"},
-    {"name":"arm-cortex-m4","configurePreset":"arm-cortex-m4"},
-    {"name":"riscv32","configurePreset":"riscv32"}
+    {
+      "name": "host-debug",
+      "configurePreset": "host-debug"
+    },
+    {
+      "name": "host-release",
+      "configurePreset": "host-release"
+    },
+    {
+      "name": "host-msvc",
+      "configurePreset": "host-msvc",
+      "configuration": "Debug"
+    },
+    {
+      "name": "arm-cortex-m4",
+      "configurePreset": "arm-cortex-m4"
+    },
+    {
+      "name": "riscv32",
+      "configurePreset": "riscv32"
+    }
   ],
   "testPresets": [
-    {"name":"host-debug","configurePreset":"host-debug","output":{"outputOnFailure":true}},
-    {"name":"host-release","configurePreset":"host-release","output":{"outputOnFailure":true}}
+    {
+      "name": "host-debug",
+      "configurePreset": "host-debug",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "host-release",
+      "configurePreset": "host-release",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "host-msvc",
+      "configurePreset": "host-msvc",
+      "configuration": "Debug",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
   ]
 }

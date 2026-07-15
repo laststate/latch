@@ -30,7 +30,25 @@ ctest --test-dir build --output-on-failure
 cargo check --manifest-path rust/latch/Cargo.toml
 ```
 
+On Windows with Visual Studio 2022, use the checked-in `host-msvc` preset:
+
+```sh
+cmake --preset host-msvc
+cmake --build --preset host-msvc
+ctest --preset host-msvc
+```
+
 CMake generates a 128-bit printable Build ID from the project version, Git revision and source hashes. Applications may override it with `LS_BUILD_ID` or `identity.firmware_build_id`; invalid IDs are rejected by `ls_init`.
+
+## Compact production source
+
+Keep the checkout formatted for maintenance. To make a separate compact distribution, run:
+
+```sh
+python tools/minify_sources.py --output ../latch-production --verify
+```
+
+The script copies the project, removes comments and unnecessary lexical whitespace from C, C++ and Rust source files, preserves the original checkout, and writes `minify-manifest.json` with the result. It does not replace compiler optimization, link-time optimization, or binary stripping when producing firmware.
 
 ## Libraries
 
