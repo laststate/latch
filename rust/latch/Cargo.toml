@@ -1,0 +1,12 @@
+[package]
+name = "laststate-latch"
+version = "0.2.0"
+edition = "2024"
+license = "Apache-2.0"
+description = "no_std Rust bindings and safe helpers for the Last State Latch runtime"
+
+[lib]
+crate-type = ["rlib"]
+
+[features]
+default = []
