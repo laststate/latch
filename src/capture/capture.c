@@ -1,5 +1,6 @@
 #include "../core/internal.h"
 #include "laststate/noinit.h"
+
 #define LS_MINIMAL_MAGIC 0x4d534c53u
 
 static LS_NOINIT volatile ls_minimal_snapshot_t minimal_snapshot;
