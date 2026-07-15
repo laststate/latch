@@ -24,5 +24,15 @@ ls_result_t ls_security_set_policy(const ls_security_policy_t *policy){if(!polic
 ls_security_policy_t ls_security_get_policy(void){return ls_runtime.security_policy;}
 void ls_security_set_random_provider(ls_crypto_random_fn random,void *context){ls_enter_critical();ls_runtime.crypto_random=random;ls_runtime.crypto_random_context=context;ls_leave_critical();}
 ls_result_t ls_security_random(uint8_t *output,size_t length){if((!output&&length)||!ls_runtime.crypto_random)return LS_ENOTSUP;ls_result_t result=ls_runtime.crypto_random(ls_runtime.crypto_random_context,output,length);if(result!=LS_OK&&output)ls_secure_zero(output,length);return result;}
-bool ls_replay_accept(uint32_t sequence){if(sequence>ls_runtime.replay_highest){uint32_t shift=sequence-ls_runtime.replay_highest;ls_runtime.replay_bitmap=shift>=64u?1u:(ls_runtime.replay_bitmap<<shift)|1u;ls_runtime.replay_highest=sequence;return true;}uint32_t distance=ls_runtime.replay_highest-sequence;if(distance>=64u)return false;uint64_t bit=(uint64_t)1u<<distance;if(ls_runtime.replay_bitmap&bit)return false;ls_runtime.replay_bitmap|=bit;return true;}
+bool ls_replay_accept(uint32_t sequence){
+    ls_envelope_replay_t replay={
+        .highest_sequence=ls_runtime.replay_highest,
+        .seen_sequences=ls_runtime.replay_bitmap,
+        .initialized=ls_runtime.replay_bitmap!=0u,
+    };
+    bool accepted=ls_envelope_replay_accept(&replay,sequence);
+    ls_runtime.replay_highest=replay.highest_sequence;
+    ls_runtime.replay_bitmap=replay.seen_sequences;
+    return accepted;
+}
 ls_result_t ls_envelope_verify_auth(const uint8_t *data,size_t length){ls_envelope_info_t info;ls_result_t result=ls_envelope_validate(data,length,&info);if(result!=LS_OK)return result;if(!(info.flags&LS_ENVELOPE_AUTHENTICATED)||!ls_runtime.security_key_length)return LS_EAUTH;if(info.flags&LS_ENVELOPE_AEAD){size_t plaintext_length=0;return ls_envelope_decrypt_payload(data,length,0,0,&plaintext_length);}if(!ls_runtime.security_policy.allow_legacy_hmac)return LS_EAUTH;uint8_t expected[LS_HMAC_SHA256_SIZE];ls_hmac_sha256(ls_runtime.security_key,ls_runtime.security_key_length,data,length-LS_HMAC_SHA256_SIZE,expected);bool valid=ls_constant_time_equal(expected,data+length-LS_HMAC_SHA256_SIZE,sizeof expected);ls_secure_zero(expected,sizeof expected);return valid?LS_OK:LS_EAUTH;}

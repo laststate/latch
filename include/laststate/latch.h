@@ -56,6 +56,7 @@ ls_result_t ls_boot(void);
 ls_result_t ls_flush(void);
 void ls_capture_error(const ls_error_t *error);
 void ls_capture_message(const char *message, ls_severity_t severity);
+/* Normal-runtime only; not safe in an ISR or fault handler. */
 ls_result_t ls_capture_cpu_context(const ls_arch_context_t *context);
 bool ls_previous_boot_crashed(void);
 bool ls_boot_loop_detected(void);

@@ -1,6 +1,9 @@
 .syntax unified
 .thumb
+
 .extern ls_cortex_m_fault_from_saved
+.extern ls_cortex_m_fault_recursive
+.extern ls_cortex_m_fault_active
 .extern ls_cortex_m_saved_context
 .extern ls_cortex_m_emergency_stack_top
 
@@ -21,6 +24,18 @@ LS_HANDLER ls_cortex_m_securefault_handler, 6
 
 .type ls_cortex_m_fault_common, %function
 ls_cortex_m_fault_common:
+  ldr r3, =ls_cortex_m_fault_active
+  ldr r1, [r3]
+  cmp r1, #0
+  beq ls_cortex_m_fault_first_entry
+  cmp r1, #1
+  beq ls_cortex_m_fault_recursive_entry
+  b ls_cortex_m_fault_terminal
+
+ls_cortex_m_fault_first_entry:
+  movs r1, #1
+  str r1, [r3]
+
   ldr r3, =ls_cortex_m_saved_context
   str r4, [r3, #0]
   str r5, [r3, #4]
@@ -54,6 +69,7 @@ ls_cortex_m_fault_common:
 #endif
   str lr, [r3, #56]
   str r2, [r3, #60]
+
 #if defined(__ARM_ARCH_6M__) || defined(__ARM_ARCH_8M_BASE__)
   mov r0, lr
   movs r1, #4
@@ -71,8 +87,29 @@ ls_cortex_m_fault_common:
   mrsne r0, psp
 #endif
   mov r1, r3
+  cpsid i
   ldr r3, =ls_cortex_m_emergency_stack_top
   ldr r3, [r3]
   msr msp, r3
-  cpsid i
   b ls_cortex_m_fault_from_saved
+
+ls_cortex_m_fault_recursive_entry:
+  movs r1, #2
+  str r1, [r3]
+  mov r0, r2
+  mov r1, lr
+  mrs r2, msp
+  mrs r3, psp
+  cpsid i
+  ldr r4, =ls_cortex_m_emergency_stack_top
+  ldr r4, [r4]
+  msr msp, r4
+  b ls_cortex_m_fault_recursive
+
+ls_cortex_m_fault_terminal:
+  cpsid i
+  ldr r4, =ls_cortex_m_emergency_stack_top
+  ldr r4, [r4]
+  msr msp, r4
+1:
+  b 1b
