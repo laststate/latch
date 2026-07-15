@@ -1,0 +1,12 @@
+/build/
+**/target/
+*.o
+*.obj
+*.elf
+*.map
+*.lst
+__pycache__/
+*.py[cod]
+/_CPack_Packages/
+/laststate-latch-*.zip
+/laststate-latch-*.tar.gz

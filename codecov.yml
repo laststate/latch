@@ -1,0 +1,17 @@
+coverage:
+  precision: 2
+  round: down
+  range: 60..90
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 2%
+    patch:
+      default:
+        target: 70%
+ignore:
+  - "tests/**"
+  - "fuzz/**"
+  - "benchmarks/**"
+  - "tools/**"

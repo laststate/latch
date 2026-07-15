@@ -1,0 +1,9 @@
+Checks: >
+  -*,
+  bugprone-*,
+  clang-analyzer-*,
+  performance-*,
+  portability-*,
+  -bugprone-easily-swappable-parameters
+WarningsAsErrors: 'clang-analyzer-*'
+HeaderFilterRegex: '(^|/)(src|include|arch|ports)/'
