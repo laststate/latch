@@ -14,7 +14,7 @@ jobs:
       CC: clang
       CXX: clang++
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLS_BUILD_TESTS=OFF -DLS_BUILD_FUZZERS=ON
       - run: cmake --build build --parallel
       - run: mkdir -p corpus/lep corpus/compression corpus/aead artifacts
