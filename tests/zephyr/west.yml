@@ -4,8 +4,9 @@ manifest:
       url-base: https://github.com/zephyrproject-rtos
   projects:
     - name: zephyr
+      path: upstream/zephyr
       remote: zephyrproject-rtos
       revision: v4.4.0
       import: true
   self:
-    path: latch
+    path: zephyr
