@@ -43,8 +43,7 @@ typedef struct {
     volatile uint32_t psp_ready;
 } ls_cortex_m_stack_bounds_t;
 
-_Static_assert(LS_EMERGENCY_STACK_SIZE >= 8u,
-               "emergency stack must leave room for its canary");
+_Static_assert(LS_EMERGENCY_STACK_SIZE >= 8u, "emergency stack must leave room for its canary");
 _Static_assert((LS_EMERGENCY_STACK_SIZE % 8u) == 0u,
                "emergency stack must preserve AAPCS stack alignment");
 
@@ -71,16 +70,13 @@ static bool stack_bounds_pair_valid(const void *lower, const void *upper) {
 
     lower_address = (uintptr_t)lower;
     upper_address = (uintptr_t)upper;
-    return lower_address < upper_address &&
-           ((lower_address | upper_address) & 3u) == 0u;
+    return lower_address < upper_address && ((lower_address | upper_address) & 3u) == 0u;
 }
 
-static bool stack_range_contains(uint32_t lower, uint32_t upper,
-                                 uint32_t address, size_t length) {
+static bool stack_range_contains(uint32_t lower, uint32_t upper, uint32_t address, size_t length) {
     uint32_t available;
 
-    if (lower >= upper || (address & 3u) != 0u || address < lower ||
-        address >= upper) {
+    if (lower >= upper || (address & 3u) != 0u || address < lower || address >= upper) {
         return false;
     }
 
@@ -88,15 +84,12 @@ static bool stack_range_contains(uint32_t lower, uint32_t upper,
     return length <= (size_t)available;
 }
 
-static bool stack_pointer_in_bounds(uint32_t lower, uint32_t upper,
-                                    uint32_t address) {
-    return lower < upper && (address & 3u) == 0u && address >= lower &&
-           address <= upper;
+static bool stack_pointer_in_bounds(uint32_t lower, uint32_t upper, uint32_t address) {
+    return lower < upper && (address & 3u) == 0u && address >= lower && address <= upper;
 }
 
 static bool exc_return_valid(uint32_t exc_return) {
-    return (exc_return & 0xff000000u) == 0xff000000u &&
-           (exc_return & 1u) != 0u;
+    return (exc_return & 0xff000000u) == 0xff000000u && (exc_return & 1u) != 0u;
 }
 
 static uint32_t fault_sequence_next(void) {
@@ -130,8 +123,7 @@ void ls_cortex_m_init(void) {
 }
 
 bool ls_cortex_m_emergency_stack_ok(void) {
-    return *(const uint32_t *)(const void *)emergency_memory.stack ==
-           LS_STACK_CANARY;
+    return *(const uint32_t *)(const void *)emergency_memory.stack == LS_STACK_CANARY;
 }
 
 size_t ls_cortex_m_emergency_stack_usage(void) {
@@ -157,10 +149,8 @@ size_t ls_cortex_m_emergency_stack_high_water_mark(void) {
     return (size_t)emergency_stack_high_water;
 }
 
-ls_result_t ls_cortex_m_stack_bounds_set(const void *msp_lower,
-                                         const void *msp_upper,
-                                         const void *psp_lower,
-                                         const void *psp_upper) {
+ls_result_t ls_cortex_m_stack_bounds_set(const void *msp_lower, const void *msp_upper,
+                                         const void *psp_lower, const void *psp_upper) {
     if (!stack_bounds_pair_valid(msp_lower, msp_upper) ||
         !stack_bounds_pair_valid(psp_lower, psp_upper)) {
         return LS_EINVAL;
@@ -199,11 +189,8 @@ ls_result_t ls_cortex_m_configure_emergency_stack_mpu(uint8_t region_number) {
     }
     REG32W(0xe000ed98u) = region_number;
     REG32W(0xe000edc0u) = 0x44u;
-    REG32W(0xe000ed9cu) =
-        ((uint32_t)(uintptr_t)emergency_memory.guard & ~31u) | (2u << 1) |
-        1u;
-    REG32W(0xe000eda0u) =
-        (((uint32_t)(uintptr_t)emergency_memory.guard + 31u) & ~31u) | 1u;
+    REG32W(0xe000ed9cu) = ((uint32_t)(uintptr_t)emergency_memory.guard & ~31u) | (2u << 1) | 1u;
+    REG32W(0xe000eda0u) = (((uint32_t)(uintptr_t)emergency_memory.guard + 31u) & ~31u) | 1u;
     REG32W(0xe000ed94u) |= 5u;
     __asm volatile("dsb 0xf\n isb 0xf" ::: "memory");
     return LS_OK;
@@ -238,9 +225,9 @@ void ls_cortex_m_configure_fpu_lazy_stacking(bool enabled) {
 #endif
 }
 
-ls_result_t ls_cortex_m_decode_exception_frame(
-    const uint32_t *raw_frame, const volatile ls_cortex_m_saved_t *saved,
-    ls_cortex_m_exception_frame_t *frame) {
+ls_result_t ls_cortex_m_decode_exception_frame(const uint32_t *raw_frame,
+                                               const volatile ls_cortex_m_saved_t *saved,
+                                               ls_cortex_m_exception_frame_t *frame) {
     bool msp_ready;
     bool psp_ready;
     bool msp_valid;
@@ -261,14 +248,10 @@ ls_result_t ls_cortex_m_decode_exception_frame(
     *frame = (ls_cortex_m_exception_frame_t){0};
     msp_ready = fault_stack_bounds.msp_ready != 0u;
     psp_ready = fault_stack_bounds.psp_ready != 0u;
-    msp_valid = msp_ready &&
-                stack_pointer_in_bounds(fault_stack_bounds.msp_lower,
-                                        fault_stack_bounds.msp_upper,
-                                        saved->msp);
-    psp_valid = psp_ready &&
-                stack_pointer_in_bounds(fault_stack_bounds.psp_lower,
-                                        fault_stack_bounds.psp_upper,
-                                        saved->psp);
+    msp_valid = msp_ready && stack_pointer_in_bounds(fault_stack_bounds.msp_lower,
+                                                     fault_stack_bounds.msp_upper, saved->msp);
+    psp_valid = psp_ready && stack_pointer_in_bounds(fault_stack_bounds.psp_lower,
+                                                     fault_stack_bounds.psp_upper, saved->psp);
 
     if (msp_valid) {
         frame->flags |= LS_MINIMAL_SNAPSHOT_MSP_VALID;
@@ -291,12 +274,9 @@ ls_result_t ls_cortex_m_decode_exception_frame(
     }
 
     selected_sp = using_psp ? saved->psp : saved->msp;
-    frame_lower = using_psp ? fault_stack_bounds.psp_lower
-                            : fault_stack_bounds.msp_lower;
-    frame_upper = using_psp ? fault_stack_bounds.psp_upper
-                            : fault_stack_bounds.msp_upper;
-    if ((using_psp && !psp_ready) || (!using_psp && !msp_ready) ||
-        !raw_frame) {
+    frame_lower = using_psp ? fault_stack_bounds.psp_lower : fault_stack_bounds.msp_lower;
+    frame_upper = using_psp ? fault_stack_bounds.psp_upper : fault_stack_bounds.msp_upper;
+    if ((using_psp && !psp_ready) || (!using_psp && !msp_ready) || !raw_frame) {
         return LS_ECORRUPT;
     }
 
@@ -329,8 +309,8 @@ ls_result_t ls_cortex_m_decode_exception_frame(
     return LS_OK;
 }
 
-void ls_cortex_m_fault_from_saved(
-    const uint32_t *raw_frame, const volatile ls_cortex_m_saved_t *saved) {
+void ls_cortex_m_fault_from_saved(const uint32_t *raw_frame,
+                                  const volatile ls_cortex_m_saved_t *saved) {
     ls_cortex_m_exception_frame_t frame = {0};
     ls_result_t frame_result = LS_EINVAL;
     ls_fault_kind_t fault = LS_FAULT_UNKNOWN;
@@ -347,13 +327,11 @@ void ls_cortex_m_fault_from_saved(
         psp = saved->psp;
         exc_return = saved->exc_return;
         fault = (ls_fault_kind_t)saved->fault_kind;
-        frame_result = ls_cortex_m_decode_exception_frame(raw_frame, saved,
-                                                           &frame);
+        frame_result = ls_cortex_m_decode_exception_frame(raw_frame, saved, &frame);
         flags = frame.flags;
     }
 
-    if (frame_result == LS_OK &&
-        (flags & LS_MINIMAL_SNAPSHOT_FPU_FRAME) != 0u &&
+    if (frame_result == LS_OK && (flags & LS_MINIMAL_SNAPSHOT_FPU_FRAME) != 0u &&
         fpu_lazy_state_active()) {
         flags |= LS_MINIMAL_SNAPSHOT_FPU_LAZY;
         frame.fpscr = 0u;
@@ -365,16 +343,15 @@ void ls_cortex_m_fault_from_saved(
         flags |= LS_MINIMAL_SNAPSHOT_EMERGENCY_STACK_CORRUPT;
     }
 
-    ls_capture_minimal_fault(
-        frame.pc, frame.lr, msp, psp, cfsr, hfsr, fault, exc_return,
-        frame.xpsr, frame.fpscr, flags, stack_usage, fault_sequence_next());
+    ls_capture_minimal_fault(frame.pc, frame.lr, msp, psp, cfsr, hfsr, fault, exc_return,
+                             frame.xpsr, frame.fpscr, flags, stack_usage, fault_sequence_next());
 
     for (;;) {
     }
 }
 
-void ls_cortex_m_fault_recursive(uint32_t fault_kind, uint32_t exc_return,
-                                  uint32_t msp, uint32_t psp) {
+void ls_cortex_m_fault_recursive(uint32_t fault_kind, uint32_t exc_return, uint32_t msp,
+                                 uint32_t psp) {
     uint32_t flags = LS_MINIMAL_SNAPSHOT_RECURSIVE;
     uint32_t stack_usage = 0u;
 
@@ -384,9 +361,8 @@ void ls_cortex_m_fault_recursive(uint32_t fault_kind, uint32_t exc_return,
         flags |= LS_MINIMAL_SNAPSHOT_EMERGENCY_STACK_CORRUPT;
     }
 
-    ls_capture_minimal_fault(
-        0u, 0u, msp, psp, 0u, 0u, (ls_fault_kind_t)fault_kind, exc_return,
-        0u, 0u, flags, stack_usage, fault_sequence_next());
+    ls_capture_minimal_fault(0u, 0u, msp, psp, 0u, 0u, (ls_fault_kind_t)fault_kind, exc_return, 0u,
+                             0u, flags, stack_usage, fault_sequence_next());
 
     for (;;) {
     }

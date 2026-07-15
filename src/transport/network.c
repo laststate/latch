@@ -2,8 +2,7 @@
 #include "laststate/envelope.h"
 #include "laststate/network_transport.h"
 
-ls_result_t ls_http_transport_send(void *context, const uint8_t *data,
-                                   size_t length) {
+ls_result_t ls_http_transport_send(void *context, const uint8_t *data, size_t length) {
     ls_http_transport_t *http = (ls_http_transport_t *)context;
     if (!http || !http->post || !http->endpoint || !data || !length) {
         return LS_EINVAL;
@@ -18,8 +17,8 @@ ls_result_t ls_http_transport_send(void *context, const uint8_t *data,
     }
 
     uint16_t status = 0;
-    result = http->post(http->context, http->endpoint,
-                        "application/vnd.laststate.lep", data, length, &status);
+    result = http->post(http->context, http->endpoint, "application/vnd.laststate.lep", data,
+                        length, &status);
     if (result != LS_OK) {
         return result;
     }
@@ -34,15 +33,12 @@ ls_result_t ls_http_transport_send(void *context, const uint8_t *data,
 
 size_t ls_http_transport_max_payload(void *context) {
     const ls_http_transport_t *http = (const ls_http_transport_t *)context;
-    return http && http->maximum_payload ? http->maximum_payload
-                                          : LS_MAX_EVENT_SIZE;
+    return http && http->maximum_payload ? http->maximum_payload : LS_MAX_EVENT_SIZE;
 }
 
-ls_result_t ls_mqtt_transport_send(void *context, const uint8_t *data,
-                                   size_t length) {
+ls_result_t ls_mqtt_transport_send(void *context, const uint8_t *data, size_t length) {
     ls_mqtt_transport_t *mqtt = (ls_mqtt_transport_t *)context;
-    if (!mqtt || !mqtt->publish || !mqtt->topic || !data || !length ||
-        mqtt->qos > 2u) {
+    if (!mqtt || !mqtt->publish || !mqtt->topic || !data || !length || mqtt->qos > 2u) {
         return LS_EINVAL;
     }
     if (length > ls_mqtt_transport_max_payload(mqtt)) {
@@ -53,22 +49,18 @@ ls_result_t ls_mqtt_transport_send(void *context, const uint8_t *data,
     if (result != LS_OK) {
         return result;
     }
-    return mqtt->publish(mqtt->context, mqtt->topic, data, length, mqtt->qos,
-                         false);
+    return mqtt->publish(mqtt->context, mqtt->topic, data, length, mqtt->qos, false);
 }
 
 size_t ls_mqtt_transport_max_payload(void *context) {
     const ls_mqtt_transport_t *mqtt = (const ls_mqtt_transport_t *)context;
-    return mqtt && mqtt->maximum_payload ? mqtt->maximum_payload
-                                          : LS_MAX_EVENT_SIZE;
+    return mqtt && mqtt->maximum_payload ? mqtt->maximum_payload : LS_MAX_EVENT_SIZE;
 }
 
-ls_result_t ls_incident_beacon_encode(const uint8_t *envelope,
-                                      size_t envelope_length,
-                                      uint32_t device_hash,
-                                      uint16_t battery_mv,
-                                      int16_t temperature_c, uint8_t *output,
-                                      size_t capacity, size_t *written) {
+ls_result_t ls_incident_beacon_encode(const uint8_t *envelope, size_t envelope_length,
+                                      uint32_t device_hash, uint16_t battery_mv,
+                                      int16_t temperature_c, uint8_t *output, size_t capacity,
+                                      size_t *written) {
     if (!envelope || !output || !written || capacity < 32u) {
         return LS_EINVAL;
     }

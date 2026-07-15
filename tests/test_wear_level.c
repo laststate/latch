@@ -3,12 +3,12 @@
 
 #include "laststate/latch.h"
 
-#define CHECK(condition)                                                        \
-    do {                                                                        \
-        if (!(condition)) {                                                     \
-            fprintf(stderr, "wear check failed: %s:%d\n", #condition, __LINE__); \
-            return 1;                                                           \
-        }                                                                       \
+#define CHECK(condition)                                                                           \
+    do {                                                                                           \
+        if (!(condition)) {                                                                        \
+            fprintf(stderr, "wear check failed: %s:%d\n", #condition, __LINE__);                   \
+            return 1;                                                                              \
+        }                                                                                          \
     } while (0)
 
 enum {
@@ -24,15 +24,12 @@ static uint8_t flash[16384];
 static uint8_t workspace[512];
 static uint8_t recovery[512];
 
-static ls_result_t strict_read(void *context, size_t offset, void *destination,
-                               size_t length) {
+static ls_result_t strict_read(void *context, size_t offset, void *destination, size_t length) {
     strict_flash_t *flash_context = (strict_flash_t *)context;
-    return ls_storage_sim_read(flash_context->simulator, offset, destination,
-                               length);
+    return ls_storage_sim_read(flash_context->simulator, offset, destination, length);
 }
 
-static ls_result_t strict_write(void *context, size_t offset, const void *source,
-                                size_t length) {
+static ls_result_t strict_write(void *context, size_t offset, const void *source, size_t length) {
     strict_flash_t *flash_context = (strict_flash_t *)context;
     if (offset % WRITE_SIZE || length % WRITE_SIZE) {
         return LS_EINVAL;
@@ -70,8 +67,8 @@ static ls_storage_backend_t raw_backend(strict_flash_t *flash_context) {
 }
 
 int main(void) {
-    CHECK(ls_flash_wear_physical_size_for_write(sizeof(workspace), ERASE_SIZE,
-                                                WRITE_SIZE, 8u) <= sizeof(flash));
+    CHECK(ls_flash_wear_physical_size_for_write(sizeof(workspace), ERASE_SIZE, WRITE_SIZE, 8u) <=
+          sizeof(flash));
 
     memset(flash, 0xff, sizeof(flash));
     ls_storage_sim_t simulator = {
@@ -82,12 +79,10 @@ int main(void) {
     strict_flash_t flash_context = {.simulator = &simulator};
     ls_storage_backend_t backend = raw_backend(&flash_context);
     ls_flash_wear_level_t wear;
-    CHECK(ls_flash_wear_init(&wear, &backend, workspace, sizeof(workspace), 8u) ==
-          LS_OK);
+    CHECK(ls_flash_wear_init(&wear, &backend, workspace, sizeof(workspace), 8u) == LS_OK);
 
     for (uint32_t value = 0u; value < 80u; value++) {
-        CHECK(wear.backend.write(wear.backend.context, 0u, &value, sizeof(value)) ==
-              LS_OK);
+        CHECK(wear.backend.write(wear.backend.context, 0u, &value, sizeof(value)) == LS_OK);
     }
 
     ls_flash_wear_stats_t stats = ls_flash_wear_stats(&wear);
@@ -96,15 +91,12 @@ int main(void) {
     CHECK(stats.generation == 81u);
 
     uint32_t value = 0u;
-    CHECK(wear.backend.read(wear.backend.context, 0u, &value, sizeof(value)) ==
-          LS_OK);
+    CHECK(wear.backend.read(wear.backend.context, 0u, &value, sizeof(value)) == LS_OK);
     CHECK(value == 79u);
 
     ls_flash_wear_level_t reopened;
-    CHECK(ls_flash_wear_init(&reopened, &backend, recovery, sizeof(recovery), 8u) ==
-          LS_OK);
-    CHECK(reopened.backend.read(reopened.backend.context, 0u, &value, sizeof(value)) ==
-          LS_OK);
+    CHECK(ls_flash_wear_init(&reopened, &backend, recovery, sizeof(recovery), 8u) == LS_OK);
+    CHECK(reopened.backend.read(reopened.backend.context, 0u, &value, sizeof(value)) == LS_OK);
     CHECK(value == 79u);
 
     return 0;

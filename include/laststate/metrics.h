@@ -6,7 +6,12 @@
 #include "config.h"
 #include "event.h"
 
-typedef enum { LS_METRIC_I32=1, LS_METRIC_U32, LS_METRIC_BOOL, LS_METRIC_COUNTER } ls_metric_type_t;
+typedef enum {
+    LS_METRIC_I32 = 1,
+    LS_METRIC_U32,
+    LS_METRIC_BOOL,
+    LS_METRIC_COUNTER
+} ls_metric_type_t;
 typedef struct {
     char name[LS_METRIC_NAME_MAX];
     uint32_t name_hash;

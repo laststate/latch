@@ -63,11 +63,19 @@ bool ls_boot_loop_detected(void);
 ls_reset_info_t ls_get_reset_info(void);
 uint32_t ls_uptime_ms(void);
 #if LS_ENABLE_ASSERTS
-#define LS_ASSERT(expr) do { if (!(expr)) ls_assert_failed(#expr,__FILE__,__LINE__,0); } while (0)
-#define LS_ASSERT_MSG(expr,msg) do { if (!(expr)) ls_assert_failed(#expr,__FILE__,__LINE__,(msg)); } while (0)
+#define LS_ASSERT(expr)                                                                            \
+    do {                                                                                           \
+        if (!(expr))                                                                               \
+            ls_assert_failed(#expr, __FILE__, __LINE__, 0);                                        \
+    } while (0)
+#define LS_ASSERT_MSG(expr, msg)                                                                   \
+    do {                                                                                           \
+        if (!(expr))                                                                               \
+            ls_assert_failed(#expr, __FILE__, __LINE__, (msg));                                    \
+    } while (0)
 #else
 #define LS_ASSERT(expr) ((void)0)
-#define LS_ASSERT_MSG(expr,msg) ((void)0)
+#define LS_ASSERT_MSG(expr, msg) ((void)0)
 #endif
 #ifdef __cplusplus
 }

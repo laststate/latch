@@ -4,8 +4,10 @@
 /* Visual Studio injects debug-only RTC hooks before per-target flags can take
    effect. Link-only no-op definitions model the absent hosted debug runtime;
    they are not part of any shipped Latch library. */
-void _RTC_InitBase(void) {}
-void _RTC_Shutdown(void) {}
+void _RTC_InitBase(void) {
+}
+void _RTC_Shutdown(void) {
+}
 void _RTC_CheckStackVars(void *frame, void *descriptor) {
     (void)frame;
     (void)descriptor;

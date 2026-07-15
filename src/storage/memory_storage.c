@@ -1,9 +1,7 @@
 #include "../core/internal.h"
 
-static ls_result_t memory_bounds(const ls_memory_storage_t *memory, size_t offset,
-                                 size_t length) {
-    if (!memory || !memory->data || offset > memory->size ||
-        length > memory->size - offset) {
+static ls_result_t memory_bounds(const ls_memory_storage_t *memory, size_t offset, size_t length) {
+    if (!memory || !memory->data || offset > memory->size || length > memory->size - offset) {
         return LS_EINVAL;
     }
 
@@ -12,16 +10,15 @@ static ls_result_t memory_bounds(const ls_memory_storage_t *memory, size_t offse
 
 static ls_result_t storage_bounds(const ls_storage_backend_t *storage, size_t offset,
                                   size_t length) {
-    if (!storage || !storage->read || !storage->write ||
-        offset > storage->capacity || length > storage->capacity - offset) {
+    if (!storage || !storage->read || !storage->write || offset > storage->capacity ||
+        length > storage->capacity - offset) {
         return LS_EINVAL;
     }
 
     return LS_OK;
 }
 
-ls_result_t ls_memory_storage_read(void *context, size_t offset, void *dst,
-                                   size_t length) {
+ls_result_t ls_memory_storage_read(void *context, size_t offset, void *dst, size_t length) {
     ls_memory_storage_t *memory = (ls_memory_storage_t *)context;
     if (!dst && length) {
         return LS_EINVAL;
@@ -35,8 +32,7 @@ ls_result_t ls_memory_storage_read(void *context, size_t offset, void *dst,
     return result;
 }
 
-ls_result_t ls_memory_storage_write(void *context, size_t offset, const void *src,
-                                    size_t length) {
+ls_result_t ls_memory_storage_write(void *context, size_t offset, const void *src, size_t length) {
     ls_memory_storage_t *memory = (ls_memory_storage_t *)context;
     if (!src && length) {
         return LS_EINVAL;
@@ -60,8 +56,8 @@ ls_result_t ls_memory_storage_erase(void *context, size_t offset, size_t length)
     return result;
 }
 
-ls_result_t ls_storage_program(ls_storage_backend_t *storage, size_t offset,
-                               const void *src, size_t length) {
+ls_result_t ls_storage_program(ls_storage_backend_t *storage, size_t offset, const void *src,
+                               size_t length) {
     const uint8_t *input = (const uint8_t *)src;
     if ((!src && length) || storage_bounds(storage, offset, length) != LS_OK) {
         return LS_EINVAL;
@@ -97,8 +93,7 @@ ls_result_t ls_storage_program(ls_storage_backend_t *storage, size_t offset,
 
     for (size_t unit_offset = first; unit_offset < last; unit_offset += write_size) {
         uint8_t unit[LS_STORAGE_MAX_WRITE_SIZE];
-        ls_result_t result = storage->read(storage->context, unit_offset, unit,
-                                           write_size);
+        ls_result_t result = storage->read(storage->context, unit_offset, unit, write_size);
         if (result != LS_OK) {
             return result;
         }
@@ -133,8 +128,8 @@ ls_result_t ls_storage_program(ls_storage_backend_t *storage, size_t offset,
     return LS_OK;
 }
 
-ls_result_t ls_storage_is_erased(ls_storage_backend_t *storage, size_t offset,
-                                 size_t length, int *erased) {
+ls_result_t ls_storage_is_erased(ls_storage_backend_t *storage, size_t offset, size_t length,
+                                 int *erased) {
     if (!erased || storage_bounds(storage, offset, length) != LS_OK) {
         return LS_EINVAL;
     }

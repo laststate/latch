@@ -3,13 +3,12 @@
 
 #include "laststate/latch.h"
 
-#define CHECK(condition)                                                        \
-    do {                                                                        \
-        if (!(condition)) {                                                     \
-            fprintf(stderr, "transport policy failed: %s:%d\n", #condition, \
-                    __LINE__);                                                  \
-            return 1;                                                           \
-        }                                                                       \
+#define CHECK(condition)                                                                           \
+    do {                                                                                           \
+        if (!(condition)) {                                                                        \
+            fprintf(stderr, "transport policy failed: %s:%d\n", #condition, __LINE__);             \
+            return 1;                                                                              \
+        }                                                                                          \
     } while (0)
 
 typedef struct {
@@ -54,9 +53,8 @@ static size_t mtu(void *context) {
     return ((transport_context_t *)context)->mtu;
 }
 
-static ls_result_t fragment(void *context, uint32_t event_id, uint16_t index,
-                            uint16_t count, const uint8_t *data, size_t length,
-                            uint32_t crc) {
+static ls_result_t fragment(void *context, uint32_t event_id, uint16_t index, uint16_t count,
+                            const uint8_t *data, size_t length, uint32_t crc) {
     (void)context;
     (void)event_id;
     (void)index;
@@ -66,16 +64,14 @@ static ls_result_t fragment(void *context, uint32_t event_id, uint16_t index,
     return LS_OK;
 }
 
-static ls_result_t fragment_v2(void *context,
-                               const ls_transport_fragment_t *fragment) {
+static ls_result_t fragment_v2(void *context, const ls_transport_fragment_t *fragment) {
     (void)context;
     if (!fragment || v2_count >= sizeof(v2_fragments) / sizeof(v2_fragments[0])) {
         return LS_EINVAL;
     }
     v2_fragments[v2_count++] = *fragment;
     if (forward_reassembly) {
-        return ls_transport_reassembly_push(forward_reassembly, fragment,
-                                            &forward_length);
+        return ls_transport_reassembly_push(forward_reassembly, fragment, &forward_length);
     }
     return LS_OK;
 }
@@ -154,8 +150,8 @@ int main(void) {
     uint8_t forwarded[sizeof(data)] = {0};
     uint8_t forwarded_received[1] = {0};
     ls_transport_reassembly_t forwarding;
-    ls_transport_reassembly_init(&forwarding, forwarded, sizeof(forwarded),
-                                  forwarded_received, sizeof(forwarded_received));
+    ls_transport_reassembly_init(&forwarding, forwarded, sizeof(forwarded), forwarded_received,
+                                 sizeof(forwarded_received));
     forward_reassembly = &forwarding;
 
     ls_transport_backend_t v2 = {
@@ -174,21 +170,18 @@ int main(void) {
     uint8_t reassembled[sizeof(data)] = {0};
     uint8_t received[1] = {0};
     ls_transport_reassembly_t reassembly;
-    ls_transport_reassembly_init(&reassembly, reassembled, sizeof(reassembled),
-                                  received, sizeof(received));
+    ls_transport_reassembly_init(&reassembly, reassembled, sizeof(reassembled), received,
+                                 sizeof(received));
     size_t envelope_length = 0;
-    CHECK(ls_transport_reassembly_push(&reassembly, &v2_fragments[2],
-                                       &envelope_length) == LS_OK);
+    CHECK(ls_transport_reassembly_push(&reassembly, &v2_fragments[2], &envelope_length) == LS_OK);
     CHECK(envelope_length == 0);
-    CHECK(ls_transport_reassembly_push(&reassembly, &v2_fragments[0],
-                                       &envelope_length) == LS_OK);
+    CHECK(ls_transport_reassembly_push(&reassembly, &v2_fragments[0], &envelope_length) == LS_OK);
     CHECK(envelope_length == 0);
-    CHECK(ls_transport_reassembly_push(&reassembly, &v2_fragments[1],
-                                       &envelope_length) == LS_OK);
+    CHECK(ls_transport_reassembly_push(&reassembly, &v2_fragments[1], &envelope_length) == LS_OK);
     CHECK(envelope_length == sizeof(data));
     CHECK(memcmp(reassembled, data, sizeof(data)) == 0);
-    CHECK(ls_transport_reassembly_push(&reassembly, &v2_fragments[1],
-                                       &envelope_length) == LS_EBUSY);
+    CHECK(ls_transport_reassembly_push(&reassembly, &v2_fragments[1], &envelope_length) ==
+          LS_EBUSY);
     ls_transport_reassembly_reset(&reassembly);
 
     CHECK(ls_transport_send(0, 0, data, sizeof(data)) == LS_EINVAL);

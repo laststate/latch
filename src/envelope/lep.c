@@ -9,8 +9,8 @@ static uint16_t read_u16(const uint8_t *data) {
 }
 
 static uint32_t read_u32(const uint8_t *data) {
-    return (uint32_t)data[0] | ((uint32_t)data[1] << 8) |
-           ((uint32_t)data[2] << 16) | ((uint32_t)data[3] << 24);
+    return (uint32_t)data[0] | ((uint32_t)data[1] << 8) | ((uint32_t)data[2] << 16) |
+           ((uint32_t)data[3] << 24);
 }
 
 static void write_u32(uint8_t *data, uint32_t value) {
@@ -38,9 +38,8 @@ static size_t string_value_capacity(const ls_writer_t *writer) {
     return remaining > 2u ? remaining - 2u : 0u;
 }
 
-static ls_result_t put_string_field(ls_writer_t *writer, uint8_t field,
-                                    const char *text, size_t value_limit,
-                                    bool *truncated) {
+static ls_result_t put_string_field(ls_writer_t *writer, uint8_t field, const char *text,
+                                    size_t value_limit, bool *truncated) {
     size_t length = ls_string_length(text);
     if (length > 255u) {
         length = 255u;
@@ -61,9 +60,8 @@ static ls_result_t put_string_field(ls_writer_t *writer, uint8_t field,
     return result;
 }
 
-static ls_result_t put_optional_tlv(ls_writer_t *writer, uint16_t type,
-                                    const void *value, uint16_t length,
-                                    bool *truncated) {
+static ls_result_t put_optional_tlv(ls_writer_t *writer, uint16_t type, const void *value,
+                                    uint16_t length, bool *truncated) {
     ls_result_t result = ls_writer_tlv(writer, type, value, length);
     if (result == LS_ENOSPACE) {
         mark_truncated(truncated);
@@ -74,8 +72,7 @@ static ls_result_t put_optional_tlv(ls_writer_t *writer, uint16_t type,
 
 static ls_result_t put_identity(ls_writer_t *writer, bool *truncated) {
     const ls_identity_t *identity = ls_runtime.config.identity;
-    const char *build = identity->firmware_build_id ? identity->firmware_build_id
-                                                     : ls_build_id();
+    const char *build = identity->firmware_build_id ? identity->firmware_build_id : ls_build_id();
     const char *fields[] = {
         identity->project_id,
         identity->device_id,
@@ -91,8 +88,7 @@ static ls_result_t put_identity(ls_writer_t *writer, bool *truncated) {
         identity->architecture,
         identity->rtos ? identity->rtos : ls_runtime.config.rtos,
         identity->region ? identity->region : ls_runtime.config.region,
-        identity->device_group ? identity->device_group
-                               : ls_runtime.config.device_group,
+        identity->device_group ? identity->device_group : ls_runtime.config.device_group,
     };
     uint8_t value[512];
     size_t outer_capacity = writer_remaining(writer);
@@ -113,9 +109,8 @@ static ls_result_t put_identity(ls_writer_t *writer, bool *truncated) {
             return LS_ENOSPACE;
         }
         size_t value_limit = available - 2u - fields_remaining * 2u;
-        ls_result_t result = put_string_field(&nested, (uint8_t)(index + 1u),
-                                              fields[index], value_limit,
-                                              truncated);
+        ls_result_t result =
+            put_string_field(&nested, (uint8_t)(index + 1u), fields[index], value_limit, truncated);
         if (result != LS_OK) {
             return result;
         }
@@ -172,8 +167,7 @@ static ls_result_t put_event(ls_writer_t *writer, const ls_event_t *event) {
         result = ls_writer_u32(&nested, (uint32_t)event->code);
     }
     if (result == LS_OK) {
-        result = ls_writer_u32(&nested,
-                               event->message ? ls_hash_string(event->message) : 0u);
+        result = ls_writer_u32(&nested, event->message ? ls_hash_string(event->message) : 0u);
     }
     if (result == LS_OK) {
         result = ls_writer_u32(&nested, event->fingerprint);
@@ -209,11 +203,9 @@ static ls_result_t put_cpu(ls_writer_t *writer, const ls_arch_context_t *cpu) {
     }
 
     const uint32_t special[] = {
-        cpu->lr,       cpu->pc,        cpu->xpsr,     cpu->msp,
-        cpu->psp,      cpu->control,   cpu->primask,  cpu->basepri,
-        cpu->faultmask, cpu->exc_return, cpu->mcause,   cpu->mtval,
-        cpu->mstatus,  cpu->mepc,      cpu->exccause, cpu->excvaddr,
-        cpu->ps,       cpu->sar,
+        cpu->lr,      cpu->pc,      cpu->xpsr,      cpu->msp,        cpu->psp,    cpu->control,
+        cpu->primask, cpu->basepri, cpu->faultmask, cpu->exc_return, cpu->mcause, cpu->mtval,
+        cpu->mstatus, cpu->mepc,    cpu->exccause,  cpu->excvaddr,   cpu->ps,     cpu->sar,
     };
     for (size_t index = 0; index < sizeof(special) / sizeof(special[0]) && result == LS_OK;
          ++index) {
@@ -270,10 +262,9 @@ static ls_result_t put_cpu(ls_writer_t *writer, const ls_arch_context_t *cpu) {
 static ls_result_t put_breadcrumbs(ls_writer_t *writer, bool *truncated) {
 #if LS_ENABLE_BREADCRUMBS
     for (size_t count = 0; count < ls_runtime.breadcrumb_count; ++count) {
-        size_t index =
-            (ls_runtime.breadcrumb_next + LS_BREADCRUMB_CAPACITY -
-             ls_runtime.breadcrumb_count + count) %
-            LS_BREADCRUMB_CAPACITY;
+        size_t index = (ls_runtime.breadcrumb_next + LS_BREADCRUMB_CAPACITY -
+                        ls_runtime.breadcrumb_count + count) %
+                       LS_BREADCRUMB_CAPACITY;
         const ls_breadcrumb_record_t *record = &ls_runtime.breadcrumbs[index];
         uint8_t value[160];
         ls_writer_t nested = {value, sizeof(value), 0};
@@ -292,19 +283,19 @@ static ls_result_t put_breadcrumbs(ls_writer_t *writer, bool *truncated) {
         }
 #if LS_STORE_STRINGS
         if (result == LS_OK) {
-            result = put_string_field(&nested, 1u, record->category,
-                                      string_value_capacity(&nested), truncated);
+            result = put_string_field(&nested, 1u, record->category, string_value_capacity(&nested),
+                                      truncated);
         }
         if (result == LS_OK) {
-            result = put_string_field(&nested, 2u, record->message,
-                                      string_value_capacity(&nested), truncated);
+            result = put_string_field(&nested, 2u, record->message, string_value_capacity(&nested),
+                                      truncated);
         }
 #endif
         if (result == LS_OK) {
             result = ls_writer_u8(&nested, record->value_count);
         }
-        for (uint8_t value_index = 0;
-             value_index < record->value_count && result == LS_OK; ++value_index) {
+        for (uint8_t value_index = 0; value_index < record->value_count && result == LS_OK;
+             ++value_index) {
             result = ls_writer_u16(&nested, record->values[value_index].key_id);
             if (result == LS_OK) {
                 result = ls_writer_u8(&nested, (uint8_t)record->values[value_index].type);
@@ -320,8 +311,8 @@ static ls_result_t put_breadcrumbs(ls_writer_t *writer, bool *truncated) {
         if (result != LS_OK) {
             return result;
         }
-        result = put_optional_tlv(writer, LS_TLV_BREADCRUMB, value,
-                                  (uint16_t)nested.length, truncated);
+        result =
+            put_optional_tlv(writer, LS_TLV_BREADCRUMB, value, (uint16_t)nested.length, truncated);
         if (result != LS_OK) {
             return result;
         }
@@ -342,8 +333,8 @@ static ls_result_t put_metrics(ls_writer_t *writer, bool *truncated) {
         ls_result_t result = ls_writer_u32(&nested, metric->name_hash);
 #if LS_STORE_STRINGS
         if (result == LS_OK) {
-            result = put_string_field(&nested, 1u, metric->name,
-                                      string_value_capacity(&nested), truncated);
+            result = put_string_field(&nested, 1u, metric->name, string_value_capacity(&nested),
+                                      truncated);
         }
 #endif
         if (result == LS_OK) {
@@ -370,8 +361,7 @@ static ls_result_t put_metrics(ls_writer_t *writer, bool *truncated) {
         if (result == LS_OK) {
             result = ls_writer_u8(&nested, metric->window_count);
         }
-        for (uint8_t window = 0;
-             window < metric->window_count && result == LS_OK; ++window) {
+        for (uint8_t window = 0; window < metric->window_count && result == LS_OK; ++window) {
             result = ls_writer_u32(&nested, (uint32_t)metric->window[window]);
         }
         if (result == LS_ENOSPACE) {
@@ -381,8 +371,7 @@ static ls_result_t put_metrics(ls_writer_t *writer, bool *truncated) {
         if (result != LS_OK) {
             return result;
         }
-        result = put_optional_tlv(writer, LS_TLV_METRIC, value,
-                                  (uint16_t)nested.length, truncated);
+        result = put_optional_tlv(writer, LS_TLV_METRIC, value, (uint16_t)nested.length, truncated);
         if (result != LS_OK) {
             return result;
         }
@@ -398,8 +387,7 @@ static ls_result_t put_power_health(ls_writer_t *writer, bool *truncated) {
 #if LS_ENABLE_POWER_SAMPLES
     for (size_t count = 0; count < ls_runtime.power_count; ++count) {
         size_t index =
-            (ls_runtime.power_next + LS_POWER_SAMPLE_CAPACITY - ls_runtime.power_count +
-             count) %
+            (ls_runtime.power_next + LS_POWER_SAMPLE_CAPACITY - ls_runtime.power_count + count) %
             LS_POWER_SAMPLE_CAPACITY;
         const ls_power_sample_t *sample = &ls_runtime.power_samples[index];
         uint8_t value[20];
@@ -426,8 +414,7 @@ static ls_result_t put_power_health(ls_writer_t *writer, bool *truncated) {
         if (result != LS_OK) {
             return result;
         }
-        result = put_optional_tlv(writer, LS_TLV_POWER, value,
-                                  (uint16_t)nested.length, truncated);
+        result = put_optional_tlv(writer, LS_TLV_POWER, value, (uint16_t)nested.length, truncated);
         if (result != LS_OK) {
             return result;
         }
@@ -446,20 +433,16 @@ static ls_result_t put_power_health(ls_writer_t *writer, bool *truncated) {
     if (result != LS_OK) {
         return result;
     }
-    return put_optional_tlv(writer, LS_TLV_HEALTH, health, (uint16_t)nested.length,
-                            truncated);
+    return put_optional_tlv(writer, LS_TLV_HEALTH, health, (uint16_t)nested.length, truncated);
 }
 
-static ls_result_t put_details(ls_writer_t *writer, const ls_event_t *event,
-                               bool *truncated) {
+static ls_result_t put_details(ls_writer_t *writer, const ls_event_t *event, bool *truncated) {
     if (event->assertion) {
         uint8_t value[200];
         ls_writer_t nested = {value, sizeof(value), 0};
-        ls_result_t result =
-            ls_writer_u32(&nested, (uint32_t)event->assertion->line);
+        ls_result_t result = ls_writer_u32(&nested, (uint32_t)event->assertion->line);
         if (result == LS_OK) {
-            result = ls_writer_u32(&nested,
-                                   ls_hash_string(event->assertion->expression));
+            result = ls_writer_u32(&nested, ls_hash_string(event->assertion->expression));
         }
         if (result == LS_OK) {
             result = ls_writer_u32(&nested, ls_hash_string(event->assertion->file));
@@ -483,8 +466,8 @@ static ls_result_t put_details(ls_writer_t *writer, const ls_event_t *event,
         } else if (result != LS_OK) {
             return result;
         } else {
-            result = put_optional_tlv(writer, LS_TLV_ASSERT, value,
-                                      (uint16_t)nested.length, truncated);
+            result =
+                put_optional_tlv(writer, LS_TLV_ASSERT, value, (uint16_t)nested.length, truncated);
             if (result != LS_OK) {
                 return result;
             }
@@ -494,8 +477,7 @@ static ls_result_t put_details(ls_writer_t *writer, const ls_event_t *event,
     if (event->peripheral) {
         uint8_t value[48];
         ls_writer_t nested = {value, sizeof(value), 0};
-        ls_result_t result =
-            ls_writer_u8(&nested, (uint8_t)event->peripheral->domain);
+        ls_result_t result = ls_writer_u8(&nested, (uint8_t)event->peripheral->domain);
         if (result == LS_OK) {
             result = ls_writer_u16(&nested, event->peripheral->fault);
         }
@@ -522,8 +504,8 @@ static ls_result_t put_details(ls_writer_t *writer, const ls_event_t *event,
         } else if (result != LS_OK) {
             return result;
         } else {
-            result = put_optional_tlv(writer, LS_TLV_PERIPHERAL, value,
-                                      (uint16_t)nested.length, truncated);
+            result = put_optional_tlv(writer, LS_TLV_PERIPHERAL, value, (uint16_t)nested.length,
+                                      truncated);
             if (result != LS_OK) {
                 return result;
             }
@@ -540,8 +522,7 @@ static ls_result_t put_details(ls_writer_t *writer, const ls_event_t *event,
         if (result == LS_OK) {
             result = ls_writer_u8(&nested, event->log->argument_count);
         }
-        for (uint8_t index = 0;
-             index < event->log->argument_count && result == LS_OK; ++index) {
+        for (uint8_t index = 0; index < event->log->argument_count && result == LS_OK; ++index) {
             result = ls_writer_u32(&nested, event->log->arguments[index]);
         }
         if (result == LS_ENOSPACE) {
@@ -549,8 +530,8 @@ static ls_result_t put_details(ls_writer_t *writer, const ls_event_t *event,
         } else if (result != LS_OK) {
             return result;
         } else {
-            result = put_optional_tlv(writer, LS_TLV_LOG, value,
-                                      (uint16_t)nested.length, truncated);
+            result =
+                put_optional_tlv(writer, LS_TLV_LOG, value, (uint16_t)nested.length, truncated);
             if (result != LS_OK) {
                 return result;
             }
@@ -560,8 +541,7 @@ static ls_result_t put_details(ls_writer_t *writer, const ls_event_t *event,
     return LS_OK;
 }
 
-static ls_result_t put_memory(ls_writer_t *writer, const ls_event_t *event,
-                              bool *truncated) {
+static ls_result_t put_memory(ls_writer_t *writer, const ls_event_t *event, bool *truncated) {
 #if LS_ENABLE_DUMPS
     if (event->capture_level >= LS_CAPTURE_SELECTIVE) {
         for (size_t index = 0; index < ls_runtime.dump_region_count; ++index) {
@@ -614,8 +594,8 @@ static ls_result_t put_memory(ls_writer_t *writer, const ls_event_t *event,
             if (result != LS_OK) {
                 return result;
             }
-            result = put_optional_tlv(writer, LS_TLV_MEMORY, value,
-                                      (uint16_t)nested.length, truncated);
+            result =
+                put_optional_tlv(writer, LS_TLV_MEMORY, value, (uint16_t)nested.length, truncated);
             if (result != LS_OK) {
                 return result;
             }
@@ -623,8 +603,8 @@ static ls_result_t put_memory(ls_writer_t *writer, const ls_event_t *event,
     }
 
 #if LS_ENABLE_STACK_SNAPSHOT
-    if (event->capture_level >= LS_CAPTURE_STACK && event->cpu &&
-        ls_runtime.stack_lower && ls_runtime.stack_upper) {
+    if (event->capture_level >= LS_CAPTURE_STACK && event->cpu && ls_runtime.stack_lower &&
+        ls_runtime.stack_upper) {
         uintptr_t stack_pointer = event->cpu->psp ? event->cpu->psp : event->cpu->msp;
         if (stack_pointer >= (uintptr_t)ls_runtime.stack_lower &&
             stack_pointer < (uintptr_t)ls_runtime.stack_upper) {
@@ -647,8 +627,8 @@ static ls_result_t put_memory(ls_writer_t *writer, const ls_event_t *event,
             } else if (result != LS_OK) {
                 return result;
             } else {
-                result = put_optional_tlv(writer, LS_TLV_STACK, value,
-                                          (uint16_t)nested.length, truncated);
+                result = put_optional_tlv(writer, LS_TLV_STACK, value, (uint16_t)nested.length,
+                                          truncated);
                 if (result != LS_OK) {
                     return result;
                 }
@@ -678,12 +658,10 @@ static ls_result_t put_memory(ls_writer_t *writer, const ls_event_t *event,
     if (result != LS_OK) {
         return result;
     }
-    return put_optional_tlv(writer, LS_TLV_HEAP, heap, (uint16_t)nested.length,
-                            truncated);
+    return put_optional_tlv(writer, LS_TLV_HEAP, heap, (uint16_t)nested.length, truncated);
 }
 
-static ls_result_t put_payload(ls_writer_t *writer, const ls_event_t *event,
-                               bool *truncated) {
+static ls_result_t put_payload(ls_writer_t *writer, const ls_event_t *event, bool *truncated) {
     ls_result_t result = put_identity(writer, truncated);
     if (result == LS_OK) {
         result = put_reset(writer, event);
@@ -712,9 +690,9 @@ static ls_result_t put_payload(ls_writer_t *writer, const ls_event_t *event,
     return result;
 }
 
-static void write_header(uint8_t header[LS_LEP_HEADER_SIZE], uint8_t type,
-                         uint8_t architecture, uint8_t flags, uint32_t sequence,
-                         uint32_t event_id, uint32_t payload_length) {
+static void write_header(uint8_t header[LS_LEP_HEADER_SIZE], uint8_t type, uint8_t architecture,
+                         uint8_t flags, uint32_t sequence, uint32_t event_id,
+                         uint32_t payload_length) {
     write_u32(header, LS_MAGIC);
     header[4] = LS_LEP_CURRENT_VERSION;
     header[5] = type;
@@ -726,14 +704,12 @@ static void write_header(uint8_t header[LS_LEP_HEADER_SIZE], uint8_t type,
     write_u32(header + 20u, ls_crc32(header, 20u));
 }
 
-ls_result_t ls_envelope_encode(const ls_event_t *event, uint8_t *out,
-                               size_t capacity, size_t *length) {
+ls_result_t ls_envelope_encode(const ls_event_t *event, uint8_t *out, size_t capacity,
+                               size_t *length) {
     bool secured = ls_runtime.security_key_length != 0u;
-    bool aead = secured &&
-                ls_runtime.security_policy.algorithm == LS_SECURITY_XCHACHA20_POLY1305;
+    bool aead = secured && ls_runtime.security_policy.algorithm == LS_SECURITY_XCHACHA20_POLY1305;
     size_t metadata_size = aead ? LS_ENVELOPE_SECURITY_METADATA_SIZE : 0u;
-    size_t authentication_size =
-        secured ? (aead ? LS_AEAD_TAG_SIZE : LS_HMAC_SHA256_SIZE) : 0u;
+    size_t authentication_size = secured ? (aead ? LS_AEAD_TAG_SIZE : LS_HMAC_SHA256_SIZE) : 0u;
     if (!event || !out || !length ||
         capacity < LS_LEP_HEADER_SIZE + metadata_size + 4u + authentication_size) {
         return LS_EINVAL;
@@ -756,9 +732,8 @@ ls_result_t ls_envelope_encode(const ls_event_t *event, uint8_t *out,
         return LS_EOVERFLOW;
     }
 
-    uint32_t event_id =
-        ls_crc32(out + LS_LEP_HEADER_SIZE + metadata_size, payload.length) ^ sequence ^
-        ls_hash_string(ls_build_id());
+    uint32_t event_id = ls_crc32(out + LS_LEP_HEADER_SIZE + metadata_size, payload.length) ^
+                        sequence ^ ls_hash_string(ls_build_id());
     uint8_t flags = secured ? LS_ENVELOPE_AUTHENTICATED : 0u;
     if (aead) {
         flags |= LS_ENVELOPE_ENCRYPTED | LS_ENVELOPE_AEAD;
@@ -769,8 +744,7 @@ ls_result_t ls_envelope_encode(const ls_event_t *event, uint8_t *out,
 
     uint8_t header[LS_LEP_HEADER_SIZE];
     write_header(header, (uint8_t)event->type,
-                 (uint8_t)(event->cpu ? event->cpu->architecture
-                                      : ls_runtime.config.architecture),
+                 (uint8_t)(event->cpu ? event->cpu->architecture : ls_runtime.config.architecture),
                  flags, sequence, event_id, (uint32_t)payload.length);
     ls_memcpy(out, header, sizeof(header));
 
@@ -793,22 +767,14 @@ ls_result_t ls_envelope_encode(const ls_event_t *event, uint8_t *out,
         uint8_t derived[32];
         static const uint8_t label[] = "laststate/latch/envelope/v1";
         uint8_t salt[12] = {
-            (uint8_t)key_id,
-            (uint8_t)(key_id >> 8),
-            (uint8_t)(key_id >> 16),
-            (uint8_t)(key_id >> 24),
-            (uint8_t)sequence,
-            (uint8_t)(sequence >> 8),
-            (uint8_t)(sequence >> 16),
-            (uint8_t)(sequence >> 24),
-            (uint8_t)event_id,
-            (uint8_t)(event_id >> 8),
-            (uint8_t)(event_id >> 16),
-            (uint8_t)(event_id >> 24),
+            (uint8_t)key_id,           (uint8_t)(key_id >> 8),    (uint8_t)(key_id >> 16),
+            (uint8_t)(key_id >> 24),   (uint8_t)sequence,         (uint8_t)(sequence >> 8),
+            (uint8_t)(sequence >> 16), (uint8_t)(sequence >> 24), (uint8_t)event_id,
+            (uint8_t)(event_id >> 8),  (uint8_t)(event_id >> 16), (uint8_t)(event_id >> 24),
         };
         result = ls_hkdf_sha256(salt, sizeof(salt), ls_runtime.security_key,
-                                ls_runtime.security_key_length, label,
-                                sizeof(label) - 1u, derived, sizeof(derived));
+                                ls_runtime.security_key_length, label, sizeof(label) - 1u, derived,
+                                sizeof(derived));
         if (result != LS_OK) {
             ls_secure_zero(out, LS_LEP_HEADER_SIZE + metadata_size + payload.length);
             return result;
@@ -817,29 +783,27 @@ ls_result_t ls_envelope_encode(const ls_event_t *event, uint8_t *out,
         uint8_t *ciphertext = out + LS_LEP_HEADER_SIZE + metadata_size;
         size_t crc_offset = LS_LEP_HEADER_SIZE + metadata_size + payload.length;
         uint8_t *tag = out + crc_offset + 4u;
-        result = ls_xchacha20_poly1305_encrypt(
-            derived, nonce, out, LS_LEP_HEADER_SIZE + metadata_size, ciphertext,
-            ciphertext, payload.length, tag);
+        result =
+            ls_xchacha20_poly1305_encrypt(derived, nonce, out, LS_LEP_HEADER_SIZE + metadata_size,
+                                          ciphertext, ciphertext, payload.length, tag);
         ls_secure_zero(derived, sizeof(derived));
         if (result != LS_OK) {
             ls_secure_zero(out, crc_offset + 4u + authentication_size);
             return result;
         }
 
-        uint32_t payload_crc =
-            ls_crc32(out + LS_LEP_HEADER_SIZE, metadata_size + payload.length);
+        uint32_t payload_crc = ls_crc32(out + LS_LEP_HEADER_SIZE, metadata_size + payload.length);
         write_u32(out + crc_offset, payload_crc);
         ls_memcpy(ls_runtime.last_envelope_nonce, nonce, LS_XCHACHA20_NONCE_SIZE);
         ls_runtime.has_last_envelope_nonce = true;
         *length = crc_offset + 4u + authentication_size;
     } else {
         size_t crc_offset = LS_LEP_HEADER_SIZE + payload.length;
-        write_u32(out + crc_offset,
-                  ls_crc32(out + LS_LEP_HEADER_SIZE, payload.length));
+        write_u32(out + crc_offset, ls_crc32(out + LS_LEP_HEADER_SIZE, payload.length));
         size_t total = crc_offset + 4u;
         if (authentication_size) {
-            ls_hmac_sha256(ls_runtime.security_key, ls_runtime.security_key_length,
-                           out, total, out + total);
+            ls_hmac_sha256(ls_runtime.security_key, ls_runtime.security_key_length, out, total,
+                           out + total);
             total += authentication_size;
         }
         *length = total;
@@ -879,16 +843,14 @@ static ls_result_t validate_payload(const uint8_t *payload, size_t payload_lengt
     return LS_OK;
 }
 
-ls_result_t ls_envelope_validate(const uint8_t *data, size_t length,
-                                 ls_envelope_info_t *info) {
+ls_result_t ls_envelope_validate(const uint8_t *data, size_t length, ls_envelope_info_t *info) {
     if (!data) {
         return LS_EINVAL;
     }
     if (length < LS_LEP_HEADER_SIZE + 4u || read_u32(data) != LS_MAGIC) {
         return LS_ECORRUPT;
     }
-    if (data[4] < LS_LEP_MIN_SUPPORTED_VERSION ||
-        data[4] > LS_LEP_MAX_SUPPORTED_VERSION) {
+    if (data[4] < LS_LEP_MIN_SUPPORTED_VERSION || data[4] > LS_LEP_MAX_SUPPORTED_VERSION) {
         return LS_ECORRUPT;
     }
 
@@ -898,11 +860,9 @@ ls_result_t ls_envelope_validate(const uint8_t *data, size_t length,
     }
     bool encrypted = (flags & LS_ENVELOPE_ENCRYPTED) != 0u;
     size_t metadata_size = encrypted ? LS_ENVELOPE_SECURITY_METADATA_SIZE : 0u;
-    size_t authentication_size = encrypted
-                                     ? LS_AEAD_TAG_SIZE
-                                     : ((flags & LS_ENVELOPE_AUTHENTICATED)
-                                            ? LS_HMAC_SHA256_SIZE
-                                            : 0u);
+    size_t authentication_size =
+        encrypted ? LS_AEAD_TAG_SIZE
+                  : ((flags & LS_ENVELOPE_AUTHENTICATED) ? LS_HMAC_SHA256_SIZE : 0u);
     uint32_t payload_length = read_u32(data + 16u);
     size_t overhead = LS_LEP_HEADER_SIZE + metadata_size + 4u + authentication_size;
     if (length < overhead || payload_length > length - overhead ||
@@ -917,8 +877,7 @@ ls_result_t ls_envelope_validate(const uint8_t *data, size_t length,
         return LS_ECORRUPT;
     }
     if (!encrypted) {
-        ls_result_t result =
-            validate_payload(data + LS_LEP_HEADER_SIZE, payload_length);
+        ls_result_t result = validate_payload(data + LS_LEP_HEADER_SIZE, payload_length);
         if (result != LS_OK) {
             return result;
         }
@@ -948,8 +907,7 @@ void ls_envelope_replay_reset(ls_envelope_replay_t *replay) {
     }
 }
 
-bool ls_envelope_replay_accept(ls_envelope_replay_t *replay,
-                               uint32_t sequence) {
+bool ls_envelope_replay_accept(ls_envelope_replay_t *replay, uint32_t sequence) {
     if (!replay) {
         return false;
     }
@@ -962,10 +920,9 @@ bool ls_envelope_replay_accept(ls_envelope_replay_t *replay,
 
     uint32_t forward = sequence - replay->highest_sequence;
     if (forward != 0u && forward < UINT32_C(0x80000000)) {
-        replay->seen_sequences =
-            forward >= LS_ENVELOPE_REPLAY_WINDOW_SIZE
-                ? UINT64_C(1)
-                : (replay->seen_sequences << forward) | UINT64_C(1);
+        replay->seen_sequences = forward >= LS_ENVELOPE_REPLAY_WINDOW_SIZE
+                                     ? UINT64_C(1)
+                                     : (replay->seen_sequences << forward) | UINT64_C(1);
         replay->highest_sequence = sequence;
         return true;
     }
@@ -1007,9 +964,8 @@ static ls_result_t visit_payload(const uint8_t *payload, size_t payload_length,
     return LS_OK;
 }
 
-ls_result_t ls_envelope_decrypt_payload(const uint8_t *data, size_t length,
-                                        uint8_t *plaintext, size_t capacity,
-                                        size_t *plaintext_length) {
+ls_result_t ls_envelope_decrypt_payload(const uint8_t *data, size_t length, uint8_t *plaintext,
+                                        size_t capacity, size_t *plaintext_length) {
     if (!plaintext_length) {
         return LS_EINVAL;
     }
@@ -1041,25 +997,16 @@ ls_result_t ls_envelope_decrypt_payload(const uint8_t *data, size_t length,
     uint32_t sequence = info.sequence;
     uint32_t event_id = info.event_id;
     uint8_t salt[12] = {
-        (uint8_t)key_id,
-        (uint8_t)(key_id >> 8),
-        (uint8_t)(key_id >> 16),
-        (uint8_t)(key_id >> 24),
-        (uint8_t)sequence,
-        (uint8_t)(sequence >> 8),
-        (uint8_t)(sequence >> 16),
-        (uint8_t)(sequence >> 24),
-        (uint8_t)event_id,
-        (uint8_t)(event_id >> 8),
-        (uint8_t)(event_id >> 16),
-        (uint8_t)(event_id >> 24),
+        (uint8_t)key_id,           (uint8_t)(key_id >> 8),    (uint8_t)(key_id >> 16),
+        (uint8_t)(key_id >> 24),   (uint8_t)sequence,         (uint8_t)(sequence >> 8),
+        (uint8_t)(sequence >> 16), (uint8_t)(sequence >> 24), (uint8_t)event_id,
+        (uint8_t)(event_id >> 8),  (uint8_t)(event_id >> 16), (uint8_t)(event_id >> 24),
     };
-    result = ls_hkdf_sha256(salt, sizeof(salt), ls_runtime.security_key,
-                            ls_runtime.security_key_length, label,
-                            sizeof(label) - 1u, derived, sizeof(derived));
+    result =
+        ls_hkdf_sha256(salt, sizeof(salt), ls_runtime.security_key, ls_runtime.security_key_length,
+                       label, sizeof(label) - 1u, derived, sizeof(derived));
     if (result == LS_OK) {
-        const uint8_t *ciphertext =
-            data + LS_LEP_HEADER_SIZE + LS_ENVELOPE_SECURITY_METADATA_SIZE;
+        const uint8_t *ciphertext = data + LS_LEP_HEADER_SIZE + LS_ENVELOPE_SECURITY_METADATA_SIZE;
         const uint8_t *tag = ciphertext + info.payload_length + 4u;
         result = ls_xchacha20_poly1305_decrypt(
             derived, nonce, data, LS_LEP_HEADER_SIZE + LS_ENVELOPE_SECURITY_METADATA_SIZE,
@@ -1074,8 +1021,8 @@ ls_result_t ls_envelope_decrypt_payload(const uint8_t *data, size_t length,
     return result;
 }
 
-ls_result_t ls_envelope_visit(const uint8_t *data, size_t length,
-                              ls_tlv_visitor_t visitor, void *context) {
+ls_result_t ls_envelope_visit(const uint8_t *data, size_t length, ls_tlv_visitor_t visitor,
+                              void *context) {
     ls_envelope_info_t info;
     ls_result_t result = ls_envelope_validate(data, length, &info);
     if (result != LS_OK) {
@@ -1084,13 +1031,12 @@ ls_result_t ls_envelope_visit(const uint8_t *data, size_t length,
     if (info.flags & LS_ENVELOPE_ENCRYPTED) {
         return LS_EAUTH;
     }
-    return visit_payload(data + LS_LEP_HEADER_SIZE, info.payload_length, visitor,
-                         context);
+    return visit_payload(data + LS_LEP_HEADER_SIZE, info.payload_length, visitor, context);
 }
 
-ls_result_t ls_envelope_visit_secure(const uint8_t *data, size_t length,
-                                     uint8_t *workspace, size_t workspace_size,
-                                     ls_tlv_visitor_t visitor, void *context) {
+ls_result_t ls_envelope_visit_secure(const uint8_t *data, size_t length, uint8_t *workspace,
+                                     size_t workspace_size, ls_tlv_visitor_t visitor,
+                                     void *context) {
     ls_envelope_info_t info;
     ls_result_t result = ls_envelope_validate(data, length, &info);
     if (result != LS_OK) {
@@ -1105,13 +1051,12 @@ ls_result_t ls_envelope_visit_secure(const uint8_t *data, size_t length,
         } else if (ls_security_enabled() && ls_runtime.security_policy.reject_plaintext) {
             return LS_EAUTH;
         }
-        return visit_payload(data + LS_LEP_HEADER_SIZE, info.payload_length, visitor,
-                             context);
+        return visit_payload(data + LS_LEP_HEADER_SIZE, info.payload_length, visitor, context);
     }
 
     size_t plaintext_length = 0;
-    result = ls_envelope_decrypt_payload(data, length, workspace, workspace_size,
-                                         &plaintext_length);
+    result =
+        ls_envelope_decrypt_payload(data, length, workspace, workspace_size, &plaintext_length);
     if (result != LS_OK) {
         return result;
     }
@@ -1120,10 +1065,10 @@ ls_result_t ls_envelope_visit_secure(const uint8_t *data, size_t length,
     return result;
 }
 
-ls_result_t ls_envelope_visit_secure_replay(
-    const uint8_t *data, size_t length, ls_envelope_replay_t *replay,
-    uint8_t *workspace, size_t workspace_size, ls_tlv_visitor_t visitor,
-    void *context) {
+ls_result_t ls_envelope_visit_secure_replay(const uint8_t *data, size_t length,
+                                            ls_envelope_replay_t *replay, uint8_t *workspace,
+                                            size_t workspace_size, ls_tlv_visitor_t visitor,
+                                            void *context) {
     if (!replay) {
         return LS_EINVAL;
     }
@@ -1142,17 +1087,15 @@ ls_result_t ls_envelope_visit_secure_replay(
             if (!ls_envelope_replay_accept(replay, info.sequence)) {
                 return LS_EAUTH;
             }
-        } else if (ls_security_enabled() &&
-                   ls_runtime.security_policy.reject_plaintext) {
+        } else if (ls_security_enabled() && ls_runtime.security_policy.reject_plaintext) {
             return LS_EAUTH;
         }
-        return visit_payload(data + LS_LEP_HEADER_SIZE, info.payload_length,
-                             visitor, context);
+        return visit_payload(data + LS_LEP_HEADER_SIZE, info.payload_length, visitor, context);
     }
 
     size_t plaintext_length = 0u;
-    result = ls_envelope_decrypt_payload(data, length, workspace, workspace_size,
-                                         &plaintext_length);
+    result =
+        ls_envelope_decrypt_payload(data, length, workspace, workspace_size, &plaintext_length);
     if (result != LS_OK) {
         return result;
     }

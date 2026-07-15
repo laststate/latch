@@ -19,13 +19,10 @@ typedef struct {
 } ls_flash_mirror_t;
 
 size_t ls_flash_mirror_physical_size(size_t logical_capacity, size_t erase_size);
-size_t ls_flash_mirror_physical_size_for_write(size_t logical_capacity,
-                                               size_t erase_size,
+size_t ls_flash_mirror_physical_size_for_write(size_t logical_capacity, size_t erase_size,
                                                size_t write_size);
-ls_result_t ls_flash_mirror_init(ls_flash_mirror_t *mirror,
-                                 ls_storage_backend_t *raw,
-                                 uint8_t *workspace,
-                                 size_t logical_capacity);
+ls_result_t ls_flash_mirror_init(ls_flash_mirror_t *mirror, ls_storage_backend_t *raw,
+                                 uint8_t *workspace, size_t logical_capacity);
 
 #define LS_FLASH_WEAR_MAX_SLOTS 32u
 
@@ -54,17 +51,11 @@ typedef struct {
     uint8_t active_slot;
 } ls_flash_wear_stats_t;
 
-size_t ls_flash_wear_physical_size(size_t logical_capacity, size_t erase_size,
-                                   size_t slots);
-size_t ls_flash_wear_physical_size_for_write(size_t logical_capacity,
-                                             size_t erase_size,
-                                             size_t write_size,
-                                             size_t slots);
-ls_result_t ls_flash_wear_init(ls_flash_wear_level_t *wear,
-                               ls_storage_backend_t *raw,
-                               uint8_t *workspace,
-                               size_t logical_capacity,
-                               size_t slots);
+size_t ls_flash_wear_physical_size(size_t logical_capacity, size_t erase_size, size_t slots);
+size_t ls_flash_wear_physical_size_for_write(size_t logical_capacity, size_t erase_size,
+                                             size_t write_size, size_t slots);
+ls_result_t ls_flash_wear_init(ls_flash_wear_level_t *wear, ls_storage_backend_t *raw,
+                               uint8_t *workspace, size_t logical_capacity, size_t slots);
 ls_flash_wear_stats_t ls_flash_wear_stats(const ls_flash_wear_level_t *wear);
 
 #endif

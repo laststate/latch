@@ -61,10 +61,8 @@ size_t ls_cortex_m_emergency_stack_usage(void);
 size_t ls_cortex_m_emergency_stack_high_water_mark(void);
 
 /* Bounds are exclusive at the top and may be omitted for an unused stack. */
-ls_result_t ls_cortex_m_stack_bounds_set(const void *msp_lower,
-                                         const void *msp_upper,
-                                         const void *psp_lower,
-                                         const void *psp_upper);
+ls_result_t ls_cortex_m_stack_bounds_set(const void *msp_lower, const void *msp_upper,
+                                         const void *psp_lower, const void *psp_upper);
 void ls_cortex_m_stack_bounds_clear(void);
 
 ls_result_t ls_cortex_m_configure_emergency_stack_mpu(uint8_t region_number);
@@ -72,14 +70,14 @@ void ls_cortex_m_enable_configurable_faults(bool secure_fault);
 void ls_cortex_m_configure_fpu_lazy_stacking(bool enabled);
 
 /* The decoder reads the frame only after it is wholly inside configured bounds. */
-ls_result_t ls_cortex_m_decode_exception_frame(
-    const uint32_t *raw_frame, const volatile ls_cortex_m_saved_t *saved,
-    ls_cortex_m_exception_frame_t *frame);
+ls_result_t ls_cortex_m_decode_exception_frame(const uint32_t *raw_frame,
+                                               const volatile ls_cortex_m_saved_t *saved,
+                                               ls_cortex_m_exception_frame_t *frame);
 
-void ls_cortex_m_fault_from_saved(
-    const uint32_t *raw_frame, const volatile ls_cortex_m_saved_t *saved);
-void ls_cortex_m_fault_recursive(uint32_t fault_kind, uint32_t exc_return,
-                                  uint32_t msp, uint32_t psp);
+void ls_cortex_m_fault_from_saved(const uint32_t *raw_frame,
+                                  const volatile ls_cortex_m_saved_t *saved);
+void ls_cortex_m_fault_recursive(uint32_t fault_kind, uint32_t exc_return, uint32_t msp,
+                                 uint32_t psp);
 
 void ls_cortex_m_hardfault_handler(void);
 void ls_cortex_m_memmanage_handler(void);

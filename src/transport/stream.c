@@ -20,8 +20,7 @@ static void clear_pending(ls_stream_transport_t *stream) {
     stream->awaiting_ack = false;
 }
 
-static ls_result_t acquire_stream(ls_stream_transport_t *stream,
-                                  const ls_envelope_info_t *info,
+static ls_result_t acquire_stream(ls_stream_transport_t *stream, const ls_envelope_info_t *info,
                                   size_t length, uint32_t crc) {
     ls_result_t result = LS_OK;
     ls_enter_critical();
@@ -30,8 +29,8 @@ static ls_result_t acquire_stream(ls_stream_transport_t *stream,
     } else if (stream->sending) {
         result = LS_EBUSY;
     } else if (stream->pending &&
-               (stream->pending_event_id != info->event_id ||
-                stream->pending_length != length || stream->pending_crc != crc)) {
+               (stream->pending_event_id != info->event_id || stream->pending_length != length ||
+                stream->pending_crc != crc)) {
         result = LS_EBUSY;
     } else {
         if (!stream->pending) {
@@ -101,14 +100,12 @@ ls_result_t ls_stream_transport_reset(ls_stream_transport_t *stream) {
     return LS_OK;
 }
 
-ls_result_t ls_stream_transport_send(void *context, const uint8_t *data,
-                                     size_t length) {
+ls_result_t ls_stream_transport_send(void *context, const uint8_t *data, size_t length) {
     ls_stream_transport_t *stream = (ls_stream_transport_t *)context;
     if (!stream || !stream->write || !data || length > UINT32_MAX) {
         return LS_EINVAL;
     }
-    size_t maximum = stream->maximum_envelope ? stream->maximum_envelope
-                                               : LS_MAX_EVENT_SIZE;
+    size_t maximum = stream->maximum_envelope ? stream->maximum_envelope : LS_MAX_EVENT_SIZE;
     if (length > maximum) {
         return LS_ENOSPACE;
     }
@@ -137,8 +134,7 @@ ls_result_t ls_stream_transport_send(void *context, const uint8_t *data,
     uint8_t trailer[LS_STREAM_TRANSPORT_TRAILER_SIZE];
     write_u32(trailer, crc);
 
-    if (!stream->awaiting_ack &&
-        stream->header_offset < LS_STREAM_TRANSPORT_HEADER_SIZE) {
+    if (!stream->awaiting_ack && stream->header_offset < LS_STREAM_TRANSPORT_HEADER_SIZE) {
         size_t remaining = LS_STREAM_TRANSPORT_HEADER_SIZE - stream->header_offset;
         result = stream->write(stream->context, header + stream->header_offset, remaining);
         if (result == LS_OK) {
@@ -155,16 +151,14 @@ ls_result_t ls_stream_transport_send(void *context, const uint8_t *data,
     if (result == LS_OK && !stream->awaiting_ack &&
         stream->trailer_offset < LS_STREAM_TRANSPORT_TRAILER_SIZE) {
         size_t remaining = LS_STREAM_TRANSPORT_TRAILER_SIZE - stream->trailer_offset;
-        result =
-            stream->write(stream->context, trailer + stream->trailer_offset, remaining);
+        result = stream->write(stream->context, trailer + stream->trailer_offset, remaining);
         if (result == LS_OK) {
             stream->trailer_offset = LS_STREAM_TRANSPORT_TRAILER_SIZE;
         }
     }
     if (result == LS_OK && stream->wait_ack) {
         stream->awaiting_ack = true;
-        result = stream->wait_ack(stream->context, info.event_id,
-                                  stream->ack_timeout_ms);
+        result = stream->wait_ack(stream->context, info.event_id, stream->ack_timeout_ms);
     }
 
     release_stream(stream, result);

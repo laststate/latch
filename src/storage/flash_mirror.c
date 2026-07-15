@@ -40,12 +40,10 @@ static bool align_size(size_t value, size_t alignment, size_t *result) {
     return add_size(value, alignment - remainder, result);
 }
 
-static bool flash_layout(size_t logical_capacity, size_t erase_size,
-                         size_t write_size, size_t *payload_offset,
-                         size_t *commit_offset, size_t *bank_size) {
-    if (!logical_capacity || !erase_size || !write_size ||
-        write_size > erase_size || erase_size % write_size ||
-        write_size > LS_STORAGE_MAX_WRITE_SIZE) {
+static bool flash_layout(size_t logical_capacity, size_t erase_size, size_t write_size,
+                         size_t *payload_offset, size_t *commit_offset, size_t *bank_size) {
+    if (!logical_capacity || !erase_size || !write_size || write_size > erase_size ||
+        erase_size % write_size || write_size > LS_STORAGE_MAX_WRITE_SIZE) {
         return false;
     }
 
@@ -56,8 +54,7 @@ static bool flash_layout(size_t logical_capacity, size_t erase_size,
     if (!align_size(sizeof(flash_header_t), write_size, &commit) ||
         !add_size(commit, write_size, &metadata_end) ||
         !align_size(metadata_end, write_size, &payload) ||
-        !add_size(payload, logical_capacity, &bank) ||
-        !align_size(bank, erase_size, &bank)) {
+        !add_size(payload, logical_capacity, &bank) || !align_size(bank, erase_size, &bank)) {
         return false;
     }
 
@@ -71,8 +68,7 @@ size_t ls_flash_mirror_physical_size(size_t logical_capacity, size_t erase_size)
     return ls_flash_mirror_physical_size_for_write(logical_capacity, erase_size, 1u);
 }
 
-size_t ls_flash_mirror_physical_size_for_write(size_t logical_capacity,
-                                               size_t erase_size,
+size_t ls_flash_mirror_physical_size_for_write(size_t logical_capacity, size_t erase_size,
                                                size_t write_size) {
     size_t payload_offset;
     size_t commit_offset;
@@ -81,8 +77,8 @@ size_t ls_flash_mirror_physical_size_for_write(size_t logical_capacity,
     if (!write_size) {
         write_size = 1u;
     }
-    if (!flash_layout(logical_capacity, erase_size, write_size, &payload_offset,
-                      &commit_offset, &bank_size) ||
+    if (!flash_layout(logical_capacity, erase_size, write_size, &payload_offset, &commit_offset,
+                      &bank_size) ||
         !add_size(bank_size, bank_size, &physical_size)) {
         return 0;
     }
@@ -102,8 +98,8 @@ static bool generation_is_newer(uint32_t candidate, uint32_t reference) {
     return (int32_t)(candidate - reference) > 0;
 }
 
-static ls_result_t raw_read(const ls_flash_mirror_t *mirror, size_t offset,
-                            void *destination, size_t length) {
+static ls_result_t raw_read(const ls_flash_mirror_t *mirror, size_t offset, void *destination,
+                            size_t length) {
     return mirror->raw->read(mirror->raw->context, offset, destination, length);
 }
 
@@ -111,15 +107,14 @@ static ls_result_t raw_sync(const ls_flash_mirror_t *mirror) {
     return mirror->raw->sync ? mirror->raw->sync(mirror->raw->context) : LS_OK;
 }
 
-static bool valid_header(const ls_flash_mirror_t *mirror,
-                         const flash_header_t *header) {
+static bool valid_header(const ls_flash_mirror_t *mirror, const flash_header_t *header) {
     return header->magic == FLASH_MAGIC && header->version == FLASH_VERSION &&
            header->logical_capacity == mirror->logical_capacity &&
            header->header_crc == header_crc(header);
 }
 
-static ls_result_t valid_bank(ls_flash_mirror_t *mirror, uint8_t bank,
-                              flash_header_t *header, int *valid) {
+static ls_result_t valid_bank(ls_flash_mirror_t *mirror, uint8_t bank, flash_header_t *header,
+                              int *valid) {
     size_t offset = bank_offset(mirror, bank);
     uint8_t committed = 0xffu;
     if (!valid) {
@@ -135,8 +130,7 @@ static ls_result_t valid_bank(ls_flash_mirror_t *mirror, uint8_t bank,
         return LS_OK;
     }
 
-    result = raw_read(mirror, offset + mirror->commit_offset, &committed,
-                      sizeof(committed));
+    result = raw_read(mirror, offset + mirror->commit_offset, &committed, sizeof(committed));
     if (result != LS_OK) {
         return result;
     }
@@ -150,22 +144,19 @@ static ls_result_t valid_bank(ls_flash_mirror_t *mirror, uint8_t bank,
         return result;
     }
 
-    *valid = header->data_crc == ls_crc32(mirror->workspace,
-                                          mirror->logical_capacity);
+    *valid = header->data_crc == ls_crc32(mirror->workspace, mirror->logical_capacity);
     return LS_OK;
 }
 
 static ls_result_t write_commit_marker(ls_flash_mirror_t *mirror, size_t offset) {
     const uint8_t committed = FLASH_COMMITTED;
-    return ls_storage_program(mirror->raw, offset + mirror->commit_offset,
-                              &committed, sizeof(committed));
+    return ls_storage_program(mirror->raw, offset + mirror->commit_offset, &committed,
+                              sizeof(committed));
 }
 
-static ls_result_t commit_image(ls_flash_mirror_t *mirror, uint8_t bank,
-                                uint32_t generation) {
+static ls_result_t commit_image(ls_flash_mirror_t *mirror, uint8_t bank, uint32_t generation) {
     size_t offset = bank_offset(mirror, bank);
-    ls_result_t result = mirror->raw->erase(mirror->raw->context, offset,
-                                             mirror->bank_size);
+    ls_result_t result = mirror->raw->erase(mirror->raw->context, offset, mirror->bank_size);
     if (result != LS_OK) {
         return result;
     }
@@ -182,8 +173,8 @@ static ls_result_t commit_image(ls_flash_mirror_t *mirror, uint8_t bank,
 
     result = ls_storage_program(mirror->raw, offset, &header, sizeof(header));
     if (result == LS_OK) {
-        result = ls_storage_program(mirror->raw, offset + mirror->payload_offset,
-                                    mirror->workspace, mirror->logical_capacity);
+        result = ls_storage_program(mirror->raw, offset + mirror->payload_offset, mirror->workspace,
+                                    mirror->logical_capacity);
     }
     if (result == LS_OK) {
         result = raw_sync(mirror);
@@ -202,8 +193,7 @@ static ls_result_t commit_image(ls_flash_mirror_t *mirror, uint8_t bank,
     return result;
 }
 
-static ls_result_t mirror_read(void *context, size_t offset, void *destination,
-                               size_t length) {
+static ls_result_t mirror_read(void *context, size_t offset, void *destination, size_t length) {
     ls_flash_mirror_t *mirror = (ls_flash_mirror_t *)context;
     if (!mirror || (!destination && length) || offset > mirror->logical_capacity ||
         length > mirror->logical_capacity - offset) {
@@ -211,22 +201,18 @@ static ls_result_t mirror_read(void *context, size_t offset, void *destination,
     }
 
     return raw_read(mirror,
-                    bank_offset(mirror, mirror->active_bank) +
-                        mirror->payload_offset + offset,
+                    bank_offset(mirror, mirror->active_bank) + mirror->payload_offset + offset,
                     destination, length);
 }
 
 static ls_result_t read_active_image(ls_flash_mirror_t *mirror) {
-    return raw_read(mirror,
-                    bank_offset(mirror, mirror->active_bank) +
-                        mirror->payload_offset,
+    return raw_read(mirror, bank_offset(mirror, mirror->active_bank) + mirror->payload_offset,
                     mirror->workspace, mirror->logical_capacity);
 }
 
-static ls_result_t update_image(ls_flash_mirror_t *mirror, size_t offset,
-                                const void *source, size_t length, bool erase) {
-    if (!mirror || (!erase && !source && length) ||
-        offset > mirror->logical_capacity ||
+static ls_result_t update_image(ls_flash_mirror_t *mirror, size_t offset, const void *source,
+                                size_t length, bool erase) {
+    if (!mirror || (!erase && !source && length) || offset > mirror->logical_capacity ||
         length > mirror->logical_capacity - offset) {
         return LS_EINVAL;
     }
@@ -242,12 +228,10 @@ static ls_result_t update_image(ls_flash_mirror_t *mirror, size_t offset,
         ls_memcpy(mirror->workspace + offset, source, length);
     }
 
-    return commit_image(mirror, (uint8_t)(mirror->active_bank ^ 1u),
-                        mirror->generation + 1u);
+    return commit_image(mirror, (uint8_t)(mirror->active_bank ^ 1u), mirror->generation + 1u);
 }
 
-static ls_result_t mirror_write(void *context, size_t offset, const void *source,
-                                size_t length) {
+static ls_result_t mirror_write(void *context, size_t offset, const void *source, size_t length) {
     return update_image((ls_flash_mirror_t *)context, offset, source, length, false);
 }
 
@@ -264,12 +248,10 @@ static ls_result_t mirror_sync(void *context) {
     return raw_sync(mirror);
 }
 
-ls_result_t ls_flash_mirror_init(ls_flash_mirror_t *mirror,
-                                 ls_storage_backend_t *raw,
-                                 uint8_t *workspace,
-                                 size_t logical_capacity) {
-    if (!mirror || !raw || !raw->read || !raw->write || !raw->erase ||
-        !workspace || !logical_capacity || logical_capacity > UINT32_MAX) {
+ls_result_t ls_flash_mirror_init(ls_flash_mirror_t *mirror, ls_storage_backend_t *raw,
+                                 uint8_t *workspace, size_t logical_capacity) {
+    if (!mirror || !raw || !raw->read || !raw->write || !raw->erase || !workspace ||
+        !logical_capacity || logical_capacity > UINT32_MAX) {
         return LS_EINVAL;
     }
 
@@ -277,8 +259,8 @@ ls_result_t ls_flash_mirror_init(ls_flash_mirror_t *mirror,
     size_t payload_offset;
     size_t commit_offset;
     size_t bank_size;
-    if (!flash_layout(logical_capacity, raw->erase_size, write_size,
-                      &payload_offset, &commit_offset, &bank_size)) {
+    if (!flash_layout(logical_capacity, raw->erase_size, write_size, &payload_offset,
+                      &commit_offset, &bank_size)) {
         return LS_EINVAL;
     }
     if (bank_size > SIZE_MAX / 2u || raw->capacity < bank_size * 2u) {

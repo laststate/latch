@@ -55,12 +55,10 @@ void ls_capture_minimal_prepare(void);
  * spool, storage, transport, scheduler, or reset paths and is intended for
  * architecture fault handlers after they have switched to a known-good stack.
  */
-void ls_capture_minimal_fault(uint32_t pc, uint32_t lr, uint32_t msp,
-                              uint32_t psp, uint32_t cfsr, uint32_t hfsr,
-                              ls_fault_kind_t fault, uint32_t exc_return,
+void ls_capture_minimal_fault(uint32_t pc, uint32_t lr, uint32_t msp, uint32_t psp, uint32_t cfsr,
+                              uint32_t hfsr, ls_fault_kind_t fault, uint32_t exc_return,
                               uint32_t xpsr, uint32_t fpscr, uint32_t flags,
-                              uint32_t emergency_stack_used,
-                              uint32_t fault_sequence);
+                              uint32_t emergency_stack_used, uint32_t fault_sequence);
 
 bool ls_minimal_snapshot_read(ls_minimal_snapshot_t *snapshot);
 void ls_minimal_snapshot_clear(void);

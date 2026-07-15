@@ -35,10 +35,10 @@ ls_result_t ls_memory_storage_read(void *context, size_t offset, void *dst, size
 ls_result_t ls_memory_storage_write(void *context, size_t offset, const void *src, size_t length);
 ls_result_t ls_memory_storage_erase(void *context, size_t offset, size_t length);
 
-ls_result_t ls_storage_program(ls_storage_backend_t *storage, size_t offset,
-                               const void *src, size_t length);
-ls_result_t ls_storage_is_erased(ls_storage_backend_t *storage, size_t offset,
-                                 size_t length, int *erased);
+ls_result_t ls_storage_program(ls_storage_backend_t *storage, size_t offset, const void *src,
+                               size_t length);
+ls_result_t ls_storage_is_erased(ls_storage_backend_t *storage, size_t offset, size_t length,
+                                 int *erased);
 
 void ls_storage_register(ls_storage_backend_t *storage);
 size_t ls_storage_required_size(void);

@@ -34,18 +34,15 @@ static void release_transport(ls_transport_backend_t *transport) {
     ls_leave_critical();
 }
 
-static size_t transport_mtu(const ls_transport_backend_t *transport,
-                            size_t event_size) {
-    return transport->max_payload ? transport->max_payload(transport->context)
-                                  : event_size;
+static size_t transport_mtu(const ls_transport_backend_t *transport, size_t event_size) {
+    return transport->max_payload ? transport->max_payload(transport->context) : event_size;
 }
 
 bool ls_transport_result_is_retryable(ls_result_t result) {
     return result == LS_EAGAIN || result == LS_EBUSY;
 }
 
-bool ls_transport_can_send(const ls_transport_backend_t *transport,
-                           size_t event_size) {
+bool ls_transport_can_send(const ls_transport_backend_t *transport, size_t event_size) {
     if (!transport || (!transport->send && !has_fragment_sender(transport))) {
         return false;
     }
@@ -57,8 +54,7 @@ bool ls_transport_can_send(const ls_transport_backend_t *transport,
         return false;
     }
     return event_size <= mtu ||
-           ((transport->capabilities & LS_TRANSPORT_FRAGMENT) &&
-            has_fragment_sender(transport));
+           ((transport->capabilities & LS_TRANSPORT_FRAGMENT) && has_fragment_sender(transport));
 }
 
 void ls_transport_register(ls_transport_backend_t *transport) {
@@ -85,8 +81,7 @@ void ls_transport_clear(void) {
     ls_leave_critical();
 }
 
-ls_transport_backend_t *ls_transport_select(ls_priority_t priority,
-                                            size_t event_size) {
+ls_transport_backend_t *ls_transport_select(ls_priority_t priority, size_t event_size) {
     ls_transport_backend_t *transports[LS_MAX_TRANSPORTS];
     size_t transport_count = 0;
     ls_enter_critical();
@@ -123,19 +118,16 @@ ls_transport_backend_t *ls_transport_select(ls_priority_t priority,
     return best;
 }
 
-static bool should_retry(ls_transport_backend_t *transport, uint8_t *attempt,
-                         ls_result_t result) {
-    if (!ls_transport_result_is_retryable(result) ||
-        *attempt >= transport->retry_limit) {
+static bool should_retry(ls_transport_backend_t *transport, uint8_t *attempt, ls_result_t result) {
+    if (!ls_transport_result_is_retryable(result) || *attempt >= transport->retry_limit) {
         return false;
     }
     ++*attempt;
-    return !transport->retry ||
-           transport->retry(transport->context, *attempt, result);
+    return !transport->retry || transport->retry(transport->context, *attempt, result);
 }
 
-static ls_result_t send_complete(ls_transport_backend_t *transport,
-                                 const uint8_t *data, size_t length) {
+static ls_result_t send_complete(ls_transport_backend_t *transport, const uint8_t *data,
+                                 size_t length) {
     if (!transport->send) {
         return LS_ENOTSUP;
     }
@@ -158,8 +150,7 @@ static ls_result_t send_fragment(ls_transport_backend_t *transport,
         } else if (transport->send_fragment) {
             result = transport->send_fragment(
                 transport->context, fragment->event_id, fragment->fragment_index,
-                fragment->fragment_count, fragment->data, fragment->length,
-                fragment->fragment_crc);
+                fragment->fragment_count, fragment->data, fragment->length, fragment->fragment_crc);
         } else {
             return LS_ENOTSUP;
         }
@@ -167,9 +158,8 @@ static ls_result_t send_fragment(ls_transport_backend_t *transport,
     return result;
 }
 
-ls_result_t ls_transport_send(ls_transport_backend_t *transport,
-                              uint32_t event_id, const uint8_t *data,
-                              size_t length) {
+ls_result_t ls_transport_send(ls_transport_backend_t *transport, uint32_t event_id,
+                              const uint8_t *data, size_t length) {
     if (!transport || !data || !length) {
         return LS_EINVAL;
     }
@@ -186,13 +176,11 @@ ls_result_t ls_transport_send(ls_transport_backend_t *transport,
     }
     bool fragmented = length > mtu;
     if (fragmented &&
-        (!(transport->capabilities & LS_TRANSPORT_FRAGMENT) ||
-         !has_fragment_sender(transport))) {
+        (!(transport->capabilities & LS_TRANSPORT_FRAGMENT) || !has_fragment_sender(transport))) {
         return LS_ENOTSUP;
     }
     if (!fragmented && !transport->send &&
-        (!(transport->capabilities & LS_TRANSPORT_FRAGMENT) ||
-         !has_fragment_sender(transport))) {
+        (!(transport->capabilities & LS_TRANSPORT_FRAGMENT) || !has_fragment_sender(transport))) {
         return LS_ENOTSUP;
     }
     if (!acquire_transport(transport)) {
@@ -241,10 +229,8 @@ ls_result_t ls_transport_send(ls_transport_backend_t *transport,
     return result;
 }
 
-void ls_transport_reassembly_init(ls_transport_reassembly_t *reassembly,
-                                  uint8_t *data, size_t capacity,
-                                  uint8_t *received,
-                                  size_t received_capacity) {
+void ls_transport_reassembly_init(ls_transport_reassembly_t *reassembly, uint8_t *data,
+                                  size_t capacity, uint8_t *received, size_t received_capacity) {
     if (!reassembly) {
         return;
     }
@@ -276,10 +262,9 @@ void ls_transport_reassembly_reset(ls_transport_reassembly_t *reassembly) {
 
 static ls_result_t validate_fragment(const ls_transport_reassembly_t *reassembly,
                                      const ls_transport_fragment_t *fragment) {
-    if (!reassembly || !fragment || !reassembly->data || !reassembly->received ||
-        !fragment->data || !fragment->length || !fragment->total_length ||
-        !fragment->fragment_capacity || !fragment->fragment_count ||
-        fragment->fragment_index >= fragment->fragment_count) {
+    if (!reassembly || !fragment || !reassembly->data || !reassembly->received || !fragment->data ||
+        !fragment->length || !fragment->total_length || !fragment->fragment_capacity ||
+        !fragment->fragment_count || fragment->fragment_index >= fragment->fragment_count) {
         return LS_EINVAL;
     }
     if (fragment->total_length > reassembly->capacity ||
@@ -296,10 +281,8 @@ static ls_result_t validate_fragment(const ls_transport_reassembly_t *reassembly
         return LS_ECORRUPT;
     }
 
-    uint64_t expected_offset =
-        (uint64_t)fragment->fragment_index * fragment->fragment_capacity;
-    if (expected_offset >= fragment->total_length ||
-        fragment->offset != expected_offset) {
+    uint64_t expected_offset = (uint64_t)fragment->fragment_index * fragment->fragment_capacity;
+    if (expected_offset >= fragment->total_length || fragment->offset != expected_offset) {
         return LS_ECORRUPT;
     }
     uint32_t expected_length = fragment->total_length - (uint32_t)expected_offset;
@@ -313,9 +296,9 @@ static ls_result_t validate_fragment(const ls_transport_reassembly_t *reassembly
     return LS_OK;
 }
 
-ls_result_t ls_transport_reassembly_push(
-    ls_transport_reassembly_t *reassembly,
-    const ls_transport_fragment_t *fragment, size_t *envelope_length) {
+ls_result_t ls_transport_reassembly_push(ls_transport_reassembly_t *reassembly,
+                                         const ls_transport_fragment_t *fragment,
+                                         size_t *envelope_length) {
     if (!envelope_length) {
         return LS_EINVAL;
     }
@@ -348,23 +331,20 @@ ls_result_t ls_transport_reassembly_push(
     size_t bitmap_index = fragment->fragment_index / 8u;
     uint8_t bit = (uint8_t)(1u << (fragment->fragment_index % 8u));
     if (reassembly->received[bitmap_index] & bit) {
-        if (ls_memcmp(reassembly->data + fragment->offset, fragment->data,
-                      fragment->length) != 0) {
+        if (ls_memcmp(reassembly->data + fragment->offset, fragment->data, fragment->length) != 0) {
             ls_transport_reassembly_reset(reassembly);
             return LS_ECORRUPT;
         }
         return LS_OK;
     }
 
-    ls_memcpy(reassembly->data + fragment->offset, fragment->data,
-              fragment->length);
+    ls_memcpy(reassembly->data + fragment->offset, fragment->data, fragment->length);
     reassembly->received[bitmap_index] |= bit;
     ++reassembly->received_count;
     if (reassembly->received_count != reassembly->fragment_count) {
         return LS_OK;
     }
-    if (ls_crc32(reassembly->data, reassembly->total_length) !=
-        reassembly->envelope_crc) {
+    if (ls_crc32(reassembly->data, reassembly->total_length) != reassembly->envelope_crc) {
         ls_transport_reassembly_reset(reassembly);
         return LS_ECORRUPT;
     }

@@ -38,6 +38,11 @@ class MinifySourceTests(unittest.TestCase):
         expected = "let byte='\\x7f';let escaped='\\n';let name:&'static str=\"x\";\n"
         self.assertEqual(MINIFY.minify_rust_source(source), expected)
 
+    def test_minifies_assembly_without_merging_instructions(self):
+        source = ".thumb\n\nlabel:\n  movs r0, #1\n  b label\n"
+        expected = ".thumb\nlabel:\nmovs r0, #1\nb label\n"
+        self.assertEqual(MINIFY.minify_assembly_source(source), expected)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -3,13 +3,12 @@
 
 #include "laststate/latch.h"
 
-#define CHECK(condition)                                                        \
-    do {                                                                        \
-        if (!(condition)) {                                                     \
-            fprintf(stderr, "power-loss check failed: %s:%d\n", #condition,   \
-                    __LINE__);                                                  \
-            return 1;                                                           \
-        }                                                                       \
+#define CHECK(condition)                                                                           \
+    do {                                                                                           \
+        if (!(condition)) {                                                                        \
+            fprintf(stderr, "power-loss check failed: %s:%d\n", #condition, __LINE__);             \
+            return 1;                                                                              \
+        }                                                                                          \
     } while (0)
 
 static uint8_t bytes[50000];
@@ -41,8 +40,7 @@ static ls_result_t tracked_erase(void *context, size_t offset, size_t length) {
     return ls_storage_sim_erase(context, offset, length);
 }
 
-static int boot_runtime(ls_storage_backend_t *storage,
-                        ls_transport_backend_t *transport) {
+static int boot_runtime(ls_storage_backend_t *storage, ls_transport_backend_t *transport) {
     static const ls_identity_t identity = {
         .project_id = "power",
         .device_id = "one",

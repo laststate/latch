@@ -3,13 +3,12 @@
 
 #include "laststate/latch.h"
 
-#define CHECK(expression)                                                     \
-    do {                                                                      \
-        if (!(expression)) {                                                  \
-            fprintf(stderr, "security check failed: %s:%d\\n", #expression, \
-                    __LINE__);                                                \
-            return 1;                                                         \
-        }                                                                     \
+#define CHECK(expression)                                                                          \
+    do {                                                                                           \
+        if (!(expression)) {                                                                       \
+            fprintf(stderr, "security check failed: %s:%d\\n", #expression, __LINE__);             \
+            return 1;                                                                              \
+        }                                                                                          \
     } while (0)
 
 static uint8_t retained[50000];
@@ -56,8 +55,7 @@ static ls_result_t random_bytes(void *context, uint8_t *output, size_t length) {
     return LS_OK;
 }
 
-static ls_result_t count_tlv(void *context, uint16_t type, const uint8_t *value,
-                             uint16_t length) {
+static ls_result_t count_tlv(void *context, uint16_t type, const uint8_t *value, uint16_t length) {
     (void)type;
     (void)value;
     (void)length;
@@ -65,8 +63,7 @@ static ls_result_t count_tlv(void *context, uint16_t type, const uint8_t *value,
     return LS_OK;
 }
 
-static int capture_envelope(const char *message, uint8_t *output,
-                            size_t *output_length) {
+static int capture_envelope(const char *message, uint8_t *output, size_t *output_length) {
     ls_capture_message(message, LS_SEVERITY_ERROR);
     if (ls_flush() != LS_OK || sent_length == 0u || sent_length > LS_MAX_EVENT_SIZE) {
         return 0;
@@ -81,8 +78,7 @@ int main(void) {
     uint8_t digest[32];
     memset(key, 0x0b, sizeof(key));
     ls_hmac_sha256(key, sizeof(key), (const uint8_t *)"Hi There", 8u, digest);
-    CHECK(equal_hex(digest,
-                    "b0344c61d8db38535ca8afceaf0bf12b881dc200c9833da726e9376c2e32cff7",
+    CHECK(equal_hex(digest, "b0344c61d8db38535ca8afceaf0bf12b881dc200c9833da726e9376c2e32cff7",
                     sizeof(digest)));
 
     uint8_t chacha_key[32];
@@ -142,14 +138,14 @@ int main(void) {
 
     uint8_t plaintext[LS_MAX_EVENT_SIZE];
     size_t plaintext_length = 0u;
-    CHECK(ls_envelope_decrypt_payload(envelope, envelope_length, plaintext,
-                                      sizeof(plaintext), &plaintext_length) == LS_OK);
+    CHECK(ls_envelope_decrypt_payload(envelope, envelope_length, plaintext, sizeof(plaintext),
+                                      &plaintext_length) == LS_OK);
     CHECK(plaintext_length > 0u);
     CHECK(ls_envelope_visit(envelope, envelope_length, count_tlv, NULL) == LS_EAUTH);
     unsigned tlvs = 0u;
     memset(plaintext, 0xa5, sizeof(plaintext));
-    CHECK(ls_envelope_visit_secure(envelope, envelope_length, plaintext,
-                                   sizeof(plaintext), count_tlv, &tlvs) == LS_OK);
+    CHECK(ls_envelope_visit_secure(envelope, envelope_length, plaintext, sizeof(plaintext),
+                                   count_tlv, &tlvs) == LS_OK);
     CHECK(tlvs > 0u);
     for (size_t index = 0; index < plaintext_length; ++index) {
         CHECK(plaintext[index] == 0u);
@@ -161,17 +157,14 @@ int main(void) {
     memcpy(tampered, envelope, envelope_length);
     tampered[envelope_length - 1u] ^= 1u;
     tlvs = 0u;
-    CHECK(ls_envelope_visit_secure_replay(
-              tampered, envelope_length, &tamper_window, plaintext,
-              sizeof(plaintext), count_tlv, &tlvs) == LS_EAUTH);
+    CHECK(ls_envelope_visit_secure_replay(tampered, envelope_length, &tamper_window, plaintext,
+                                          sizeof(plaintext), count_tlv, &tlvs) == LS_EAUTH);
     CHECK(tlvs == 0u);
-    CHECK(ls_envelope_visit_secure_replay(
-              envelope, envelope_length, &tamper_window, plaintext,
-              sizeof(plaintext), count_tlv, &tlvs) == LS_OK);
+    CHECK(ls_envelope_visit_secure_replay(envelope, envelope_length, &tamper_window, plaintext,
+                                          sizeof(plaintext), count_tlv, &tlvs) == LS_OK);
     CHECK(tlvs > 0u);
-    CHECK(ls_envelope_visit_secure_replay(
-              envelope, envelope_length, &tamper_window, plaintext,
-              sizeof(plaintext), count_tlv, &tlvs) == LS_EAUTH);
+    CHECK(ls_envelope_visit_secure_replay(envelope, envelope_length, &tamper_window, plaintext,
+                                          sizeof(plaintext), count_tlv, &tlvs) == LS_EAUTH);
 
     uint8_t older[LS_MAX_EVENT_SIZE];
     uint8_t newer[LS_MAX_EVENT_SIZE];
@@ -187,15 +180,12 @@ int main(void) {
 
     ls_envelope_replay_t out_of_order_window = {0};
     tlvs = 0u;
-    CHECK(ls_envelope_visit_secure_replay(
-              newer, newer_length, &out_of_order_window, plaintext,
-              sizeof(plaintext), count_tlv, &tlvs) == LS_OK);
-    CHECK(ls_envelope_visit_secure_replay(
-              older, older_length, &out_of_order_window, plaintext,
-              sizeof(plaintext), count_tlv, &tlvs) == LS_OK);
-    CHECK(ls_envelope_visit_secure_replay(
-              older, older_length, &out_of_order_window, plaintext,
-              sizeof(plaintext), count_tlv, &tlvs) == LS_EAUTH);
+    CHECK(ls_envelope_visit_secure_replay(newer, newer_length, &out_of_order_window, plaintext,
+                                          sizeof(plaintext), count_tlv, &tlvs) == LS_OK);
+    CHECK(ls_envelope_visit_secure_replay(older, older_length, &out_of_order_window, plaintext,
+                                          sizeof(plaintext), count_tlv, &tlvs) == LS_OK);
+    CHECK(ls_envelope_visit_secure_replay(older, older_length, &out_of_order_window, plaintext,
+                                          sizeof(plaintext), count_tlv, &tlvs) == LS_EAUTH);
 
     uint8_t expired[LS_MAX_EVENT_SIZE];
     uint8_t advancing[LS_MAX_EVENT_SIZE];
@@ -207,22 +197,20 @@ int main(void) {
     CHECK(ls_envelope_validate(expired, expired_length, &expired_info) == LS_OK);
 
     ls_envelope_replay_t expiry_window = {0};
-    for (unsigned index = 0; index < LS_ENVELOPE_REPLAY_WINDOW_SIZE + 1u;
-         ++index) {
+    for (unsigned index = 0; index < LS_ENVELOPE_REPLAY_WINDOW_SIZE + 1u; ++index) {
         char message[32];
         int written = snprintf(message, sizeof(message), "replay-advance-%u", index);
         CHECK(written > 0 && (size_t)written < sizeof(message));
         CHECK(capture_envelope(message, advancing, &advancing_length));
-        CHECK(ls_envelope_visit_secure_replay(
-                  advancing, advancing_length, &expiry_window, plaintext,
-                  sizeof(plaintext), count_tlv, &tlvs) == LS_OK);
+        CHECK(ls_envelope_visit_secure_replay(advancing, advancing_length, &expiry_window,
+                                              plaintext, sizeof(plaintext), count_tlv,
+                                              &tlvs) == LS_OK);
     }
     CHECK(ls_envelope_validate(advancing, advancing_length, &advancing_info) == LS_OK);
     CHECK((uint32_t)(advancing_info.sequence - expired_info.sequence) >
           LS_ENVELOPE_REPLAY_WINDOW_SIZE);
-    CHECK(ls_envelope_visit_secure_replay(
-              expired, expired_length, &expiry_window, plaintext,
-              sizeof(plaintext), count_tlv, &tlvs) == LS_EAUTH);
+    CHECK(ls_envelope_visit_secure_replay(expired, expired_length, &expiry_window, plaintext,
+                                          sizeof(plaintext), count_tlv, &tlvs) == LS_EAUTH);
 
     ls_security_policy_t hmac_policy = {
         .algorithm = LS_SECURITY_HMAC_SHA256,
@@ -236,27 +224,22 @@ int main(void) {
     CHECK(capture_envelope("hmac-replay", hmac_envelope, &hmac_length));
     ls_envelope_replay_t hmac_window = {0};
     tlvs = 0u;
-    CHECK(ls_envelope_visit_secure_replay(
-              hmac_envelope, hmac_length, &hmac_window, NULL, 0u, count_tlv,
-              &tlvs) == LS_OK);
+    CHECK(ls_envelope_visit_secure_replay(hmac_envelope, hmac_length, &hmac_window, NULL, 0u,
+                                          count_tlv, &tlvs) == LS_OK);
     CHECK(tlvs > 0u);
-    CHECK(ls_envelope_visit_secure_replay(
-              hmac_envelope, hmac_length, &hmac_window, NULL, 0u, count_tlv,
-              &tlvs) == LS_EAUTH);
+    CHECK(ls_envelope_visit_secure_replay(hmac_envelope, hmac_length, &hmac_window, NULL, 0u,
+                                          count_tlv, &tlvs) == LS_EAUTH);
 
     memcpy(tampered, hmac_envelope, hmac_length);
     tampered[hmac_length - 1u] ^= 1u;
     ls_envelope_replay_t hmac_tamper_window = {0};
-    CHECK(ls_envelope_visit_secure_replay(
-              tampered, hmac_length, &hmac_tamper_window, NULL, 0u, count_tlv,
-              &tlvs) == LS_EAUTH);
-    CHECK(ls_envelope_visit_secure_replay(
-              hmac_envelope, hmac_length, &hmac_tamper_window, NULL, 0u,
-              count_tlv, &tlvs) == LS_OK);
+    CHECK(ls_envelope_visit_secure_replay(tampered, hmac_length, &hmac_tamper_window, NULL, 0u,
+                                          count_tlv, &tlvs) == LS_EAUTH);
+    CHECK(ls_envelope_visit_secure_replay(hmac_envelope, hmac_length, &hmac_tamper_window, NULL, 0u,
+                                          count_tlv, &tlvs) == LS_OK);
 
-    CHECK(ls_envelope_visit_secure_replay(
-              envelope, envelope_length, NULL, plaintext, sizeof(plaintext),
-              count_tlv, &tlvs) == LS_EINVAL);
+    CHECK(ls_envelope_visit_secure_replay(envelope, envelope_length, NULL, plaintext,
+                                          sizeof(plaintext), count_tlv, &tlvs) == LS_EINVAL);
     ls_security_clear_key();
     CHECK(!ls_security_enabled());
     return 0;

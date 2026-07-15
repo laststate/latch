@@ -4,13 +4,12 @@
 #include "cortex_m.h"
 #include "laststate/capture.h"
 
-#define CHECK(condition)                                                     \
-    do {                                                                     \
-        if (!(condition)) {                                                  \
-            fprintf(stderr, "check failed: %s at line %d\n", #condition,   \
-                    __LINE__);                                              \
-            return 1;                                                        \
-        }                                                                    \
+#define CHECK(condition)                                                                           \
+    do {                                                                                           \
+        if (!(condition)) {                                                                        \
+            fprintf(stderr, "check failed: %s at line %d\n", #condition, __LINE__);                \
+            return 1;                                                                              \
+        }                                                                                          \
     } while (0)
 
 static void fill_basic_frame(uint32_t *frame) {
@@ -29,15 +28,13 @@ static int test_basic_and_psp_frames(void) {
     ls_cortex_m_saved_t saved = {0};
     ls_cortex_m_exception_frame_t frame;
 
-    CHECK(ls_cortex_m_stack_bounds_set(stack, stack + 64, stack,
-                                        stack + 64) == LS_OK);
+    CHECK(ls_cortex_m_stack_bounds_set(stack, stack + 64, stack, stack + 64) == LS_OK);
     fill_basic_frame(&stack[8]);
     saved.msp = (uint32_t)(uintptr_t)&stack[8];
     saved.psp = (uint32_t)(uintptr_t)&stack[20];
     saved.exc_return = 0xfffffff9u;
 
-    CHECK(ls_cortex_m_decode_exception_frame(&stack[8], &saved, &frame) ==
-          LS_OK);
+    CHECK(ls_cortex_m_decode_exception_frame(&stack[8], &saved, &frame) == LS_OK);
     CHECK((frame.flags & LS_MINIMAL_SNAPSHOT_FRAME_VALID) != 0u);
     CHECK((frame.flags & LS_MINIMAL_SNAPSHOT_MSP_VALID) != 0u);
     CHECK((frame.flags & LS_MINIMAL_SNAPSHOT_PSP_VALID) != 0u);
@@ -49,8 +46,7 @@ static int test_basic_and_psp_frames(void) {
 
     fill_basic_frame(&stack[20]);
     saved.exc_return = 0xfffffffdu;
-    CHECK(ls_cortex_m_decode_exception_frame(&stack[20], &saved, &frame) ==
-          LS_OK);
+    CHECK(ls_cortex_m_decode_exception_frame(&stack[20], &saved, &frame) == LS_OK);
     CHECK(frame.pc == 0x08004567u);
     return 0;
 }
@@ -70,12 +66,10 @@ static int test_extended_fpu_frame(void) {
     saved.psp = 0u;
     saved.exc_return = 0xffffffe9u;
 
-    CHECK(ls_cortex_m_decode_exception_frame(&stack[8], &saved, &frame) ==
-          LS_OK);
+    CHECK(ls_cortex_m_decode_exception_frame(&stack[8], &saved, &frame) == LS_OK);
     CHECK((frame.flags & LS_MINIMAL_SNAPSHOT_FRAME_VALID) != 0u);
     CHECK((frame.flags & LS_MINIMAL_SNAPSHOT_FPU_FRAME) != 0u);
-    CHECK((frame.flags & LS_MINIMAL_SNAPSHOT_STACK_BOUNDS_UNAVAILABLE) !=
-          0u);
+    CHECK((frame.flags & LS_MINIMAL_SNAPSHOT_STACK_BOUNDS_UNAVAILABLE) != 0u);
     CHECK(frame.fpscr == 0xa5a5a5a5u);
     CHECK(frame.pc == 0x08004567u);
     return 0;
@@ -89,26 +83,21 @@ static int test_invalid_frames_are_not_decoded(void) {
     CHECK(ls_cortex_m_stack_bounds_set(stack, stack + 64, 0, 0) == LS_OK);
     saved.msp = (uint32_t)(uintptr_t)&stack[60];
     saved.exc_return = 0xfffffff9u;
-    CHECK(ls_cortex_m_decode_exception_frame(&stack[60], &saved, &frame) ==
-          LS_ECORRUPT);
+    CHECK(ls_cortex_m_decode_exception_frame(&stack[60], &saved, &frame) == LS_ECORRUPT);
     CHECK((frame.flags & LS_MINIMAL_SNAPSHOT_FRAME_VALID) == 0u);
 
     saved.msp = (uint32_t)(uintptr_t)&stack[8];
-    CHECK(ls_cortex_m_decode_exception_frame(&stack[9], &saved, &frame) ==
-          LS_ECORRUPT);
+    CHECK(ls_cortex_m_decode_exception_frame(&stack[9], &saved, &frame) == LS_ECORRUPT);
     CHECK((frame.flags & LS_MINIMAL_SNAPSHOT_FRAME_VALID) == 0u);
 
     saved.exc_return = 0u;
-    CHECK(ls_cortex_m_decode_exception_frame(&stack[8], &saved, &frame) ==
-          LS_ECORRUPT);
+    CHECK(ls_cortex_m_decode_exception_frame(&stack[8], &saved, &frame) == LS_ECORRUPT);
     CHECK((frame.flags & LS_MINIMAL_SNAPSHOT_EXC_RETURN_INVALID) != 0u);
 
     ls_cortex_m_stack_bounds_clear();
     saved.exc_return = 0xfffffff9u;
-    CHECK(ls_cortex_m_decode_exception_frame(&stack[8], &saved, &frame) ==
-          LS_ECORRUPT);
-    CHECK((frame.flags & LS_MINIMAL_SNAPSHOT_STACK_BOUNDS_UNAVAILABLE) !=
-          0u);
+    CHECK(ls_cortex_m_decode_exception_frame(&stack[8], &saved, &frame) == LS_ECORRUPT);
+    CHECK((frame.flags & LS_MINIMAL_SNAPSHOT_STACK_BOUNDS_UNAVAILABLE) != 0u);
     return 0;
 }
 
@@ -118,11 +107,10 @@ static int test_minimal_snapshot(void) {
     ls_minimal_snapshot_clear();
     CHECK(!ls_minimal_snapshot_read(&snapshot));
     ls_capture_minimal_prepare();
-    ls_capture_minimal_fault(
-        0x08004567u, 0x08001235u, 0x20001000u, 0x20002000u, 0x00010002u,
-        0x40000000u, LS_FAULT_HARD, 0xffffffe9u, 0x21000000u, 0x01000000u,
-        LS_MINIMAL_SNAPSHOT_FRAME_VALID | LS_MINIMAL_SNAPSHOT_FPU_FRAME,
-        96u, 3u);
+    ls_capture_minimal_fault(0x08004567u, 0x08001235u, 0x20001000u, 0x20002000u, 0x00010002u,
+                             0x40000000u, LS_FAULT_HARD, 0xffffffe9u, 0x21000000u, 0x01000000u,
+                             LS_MINIMAL_SNAPSHOT_FRAME_VALID | LS_MINIMAL_SNAPSHOT_FPU_FRAME, 96u,
+                             3u);
 
     CHECK(ls_minimal_snapshot_read(&snapshot));
     CHECK(snapshot.version == LS_MINIMAL_SNAPSHOT_VERSION);

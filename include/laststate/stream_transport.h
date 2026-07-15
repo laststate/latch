@@ -7,8 +7,8 @@
 #define LS_STREAM_TRANSPORT_HEADER_SIZE 8u
 #define LS_STREAM_TRANSPORT_TRAILER_SIZE 4u
 #define LS_STREAM_TRANSPORT_STATE_MAGIC 0x4c535354u
-typedef ls_result_t (*ls_stream_write_fn)(void *context,const uint8_t *data,size_t length);
-typedef ls_result_t (*ls_stream_ack_fn)(void *context,uint32_t event_id,uint32_t timeout_ms);
+typedef ls_result_t (*ls_stream_write_fn)(void *context, const uint8_t *data, size_t length);
+typedef ls_result_t (*ls_stream_ack_fn)(void *context, uint32_t event_id, uint32_t timeout_ms);
 typedef struct {
     void *context;
     ls_stream_write_fn write;
@@ -32,7 +32,7 @@ typedef struct {
    is resumed only with the same LEP event after EAGAIN or EBUSY; an ACK retry
    retransmits the complete frame, so receivers must deduplicate event IDs. */
 ls_result_t ls_stream_transport_init(ls_stream_transport_t *stream);
-ls_result_t ls_stream_transport_send(void *context,const uint8_t *data,size_t length);
+ls_result_t ls_stream_transport_send(void *context, const uint8_t *data, size_t length);
 size_t ls_stream_transport_max_payload(void *context);
 ls_result_t ls_stream_transport_reset(ls_stream_transport_t *stream);
 #endif

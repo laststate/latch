@@ -5,7 +5,18 @@ import sys
 from pathlib import Path
 
 
-SOURCE_SUFFIXES = {".c", ".cc", ".cpp", ".cxx", ".h", ".hh", ".hpp", ".hxx", ".rs"}
+SOURCE_SUFFIXES = {
+    ".c",
+    ".cc",
+    ".cpp",
+    ".cxx",
+    ".h",
+    ".hh",
+    ".hpp",
+    ".hxx",
+    ".rs",
+    ".s",
+}
 EXCLUDED_DIRECTORIES = {".git", ".vs", "build", "target", "__pycache__", "_CPack_Packages"}
 PUNCTUATORS = tuple(
     sorted(
@@ -326,6 +337,24 @@ def minify_rust_source(source):
     return result + "\n" if result else ""
 
 
+def minify_assembly_source(source):
+    lines = []
+    for line in source.splitlines():
+        stripped = line.strip()
+        if stripped:
+            lines.append(" ".join(stripped.split()))
+    return "\n".join(lines) + "\n" if lines else ""
+
+
+def minifier_for_path(path):
+    suffix = path.suffix.lower()
+    if suffix == ".rs":
+        return minify_rust_source
+    if suffix == ".s":
+        return minify_assembly_source
+    return minify_source
+
+
 def is_within(path, parent):
     try:
         path.relative_to(parent)
@@ -356,7 +385,7 @@ def copy_project(source_root, output_root, verify):
             minified_size += destination.stat().st_size
             continue
         source = path.read_text(encoding="utf-8")
-        minifier = minify_rust_source if path.suffix.lower() == ".rs" else minify_source
+        minifier = minifier_for_path(path)
         minified = minifier(source)
         if verify and minifier(minified) != minified:
             raise ValueError(f"minifier is not idempotent for {path}")
@@ -372,10 +401,43 @@ def copy_project(source_root, output_root, verify):
     return {"files": files, "original_bytes": original_size, "output_bytes": minified_size}
 
 
+def minify_project_in_place(source_root, verify):
+    files = []
+    original_size = 0
+    output_size = 0
+    for path in source_root.rglob("*"):
+        relative = path.relative_to(source_root)
+        if not path.is_file() or any(
+            part in EXCLUDED_DIRECTORIES or part.startswith("build-")
+            for part in relative.parts
+        ):
+            continue
+        if path.suffix.lower() not in SOURCE_SUFFIXES:
+            continue
+        source = path.read_text(encoding="utf-8")
+        minifier = minifier_for_path(path)
+        minified = minifier(source)
+        if verify and minifier(minified) != minified:
+            raise ValueError(f"minifier is not idempotent for {path}")
+        path.write_text(minified, encoding="utf-8", newline="\n")
+        original_size += len(source.encode("utf-8"))
+        output_size += len(minified.encode("utf-8"))
+        files.append(
+            {
+                "path": relative.as_posix(),
+                "original_bytes": len(source.encode("utf-8")),
+                "minified_bytes": len(minified.encode("utf-8")),
+            }
+        )
+    return {"files": files, "original_bytes": original_size, "output_bytes": output_size}
+
+
 def parse_arguments():
-    parser = argparse.ArgumentParser(description="Create a compact source distribution without changing the checkout.")
+    parser = argparse.ArgumentParser(description="Create or apply a compact source representation.")
     parser.add_argument("--source", type=Path, default=Path(__file__).resolve().parents[1])
-    parser.add_argument("--output", type=Path, required=True)
+    target = parser.add_mutually_exclusive_group(required=True)
+    target.add_argument("--output", type=Path)
+    target.add_argument("--in-place", action="store_true")
     parser.add_argument("--replace", action="store_true")
     parser.add_argument("--verify", action="store_true")
     return parser.parse_args()
@@ -384,6 +446,12 @@ def parse_arguments():
 def main():
     arguments = parse_arguments()
     source_root = arguments.source.resolve()
+    if arguments.in_place:
+        manifest = minify_project_in_place(source_root, arguments.verify)
+        print(f"minified {len(manifest['files'])} source files in {source_root}")
+        print(f"source files: {manifest['original_bytes']} bytes; output: {manifest['output_bytes']} bytes")
+        return
+
     output_root = arguments.output.resolve()
     if source_root == output_root:
         raise ValueError("output must differ from source")

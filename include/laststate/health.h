@@ -4,7 +4,12 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include "event.h"
-typedef struct { const char *name; uint32_t deadline_ms; uint32_t last_touch_ms; bool expired; } ls_health_t;
+typedef struct {
+    const char *name;
+    uint32_t deadline_ms;
+    uint32_t last_touch_ms;
+    bool expired;
+} ls_health_t;
 typedef struct {
     uint32_t timestamp_ms;
     uint16_t vdd_mv, battery_mv;

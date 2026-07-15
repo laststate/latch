@@ -48,7 +48,9 @@ Keep the checkout formatted for maintenance. To make a separate compact distribu
 python tools/minify_sources.py --output ../latch-production --verify
 ```
 
-The script copies the project, removes comments and unnecessary lexical whitespace from C, C++ and Rust source files, preserves the original checkout, and writes `minify-manifest.json` with the result. It does not replace compiler optimization, link-time optimization, or binary stripping when producing firmware.
+The script copies the project, removes comments and unnecessary lexical whitespace from C, C++, Rust, and assembly source files, preserves the original checkout, and writes `minify-manifest.json` with the result. It does not replace compiler optimization, link-time optimization, or binary stripping when producing firmware.
+
+Development happens on `dev`, where sources stay formatted for review. Production changes target `prod`; the `Compact production sources` workflow applies `python tools/minify_sources.py --in-place --verify` to same-repository pull requests before they are merged. Do not run `--in-place` on `dev`.
 
 ## Libraries
 

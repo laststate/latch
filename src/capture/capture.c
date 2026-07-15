@@ -6,21 +6,18 @@
 static LS_NOINIT volatile ls_minimal_snapshot_t minimal_snapshot;
 static uint32_t minimal_build_hash;
 
-static uint32_t minimal_crc32_update(uint32_t crc,
-                                     const volatile uint8_t *data,
-                                     size_t length) {
+static uint32_t minimal_crc32_update(uint32_t crc, const volatile uint8_t *data, size_t length) {
     while (length-- != 0u) {
         crc ^= *data++;
         for (unsigned bit = 0; bit < 8u; ++bit) {
-            crc = (crc >> 1u) ^
-                  (0xedb88320u & (uint32_t)-(int32_t)(crc & 1u));
+            crc = (crc >> 1u) ^ (0xedb88320u & (uint32_t)-(int32_t)(crc & 1u));
         }
     }
     return crc;
 }
 
-static uint32_t minimal_snapshot_fault_crc(
-    const volatile ls_minimal_snapshot_t *snapshot, size_t length) {
+static uint32_t minimal_snapshot_fault_crc(const volatile ls_minimal_snapshot_t *snapshot,
+                                           size_t length) {
     const uint32_t magic = LS_MINIMAL_MAGIC;
     uint32_t crc = 0xffffffffu;
 
@@ -28,20 +25,16 @@ static uint32_t minimal_snapshot_fault_crc(
         return 0u;
     }
 
-    crc = minimal_crc32_update(
-        crc, (const volatile uint8_t *)(const void *)&magic, sizeof magic);
-    crc = minimal_crc32_update(
-        crc, (const volatile uint8_t *)(const void *)&snapshot->version,
-        length - sizeof magic);
+    crc = minimal_crc32_update(crc, (const volatile uint8_t *)(const void *)&magic, sizeof magic);
+    crc = minimal_crc32_update(crc, (const volatile uint8_t *)(const void *)&snapshot->version,
+                               length - sizeof magic);
     return ~crc;
 }
 
-static void minimal_snapshot_store(uint32_t pc, uint32_t lr, uint32_t msp,
-                                   uint32_t psp, uint32_t cfsr,
-                                   uint32_t hfsr, ls_fault_kind_t fault,
-                                   uint32_t exc_return, uint32_t xpsr,
-                                   uint32_t fpscr, uint32_t flags,
-                                   uint32_t emergency_stack_used,
+static void minimal_snapshot_store(uint32_t pc, uint32_t lr, uint32_t msp, uint32_t psp,
+                                   uint32_t cfsr, uint32_t hfsr, ls_fault_kind_t fault,
+                                   uint32_t exc_return, uint32_t xpsr, uint32_t fpscr,
+                                   uint32_t flags, uint32_t emergency_stack_used,
                                    uint32_t fault_sequence) {
     volatile ls_minimal_snapshot_t *snapshot = &minimal_snapshot;
 
@@ -64,10 +57,9 @@ static void minimal_snapshot_store(uint32_t pc, uint32_t lr, uint32_t msp,
     snapshot->fault_sequence = fault_sequence;
     snapshot->extension_crc = 0u;
 
-    snapshot->crc = minimal_snapshot_fault_crc(
-        snapshot, offsetof(ls_minimal_snapshot_t, crc));
-    snapshot->extension_crc = minimal_snapshot_fault_crc(
-        snapshot, offsetof(ls_minimal_snapshot_t, extension_crc));
+    snapshot->crc = minimal_snapshot_fault_crc(snapshot, offsetof(ls_minimal_snapshot_t, crc));
+    snapshot->extension_crc =
+        minimal_snapshot_fault_crc(snapshot, offsetof(ls_minimal_snapshot_t, extension_crc));
     snapshot->magic = LS_MINIMAL_MAGIC;
 }
 
@@ -75,15 +67,12 @@ void ls_capture_minimal_prepare(void) {
     minimal_build_hash = ls_hash_string(ls_build_id());
 }
 
-void ls_capture_minimal_fault(uint32_t pc, uint32_t lr, uint32_t msp,
-                              uint32_t psp, uint32_t cfsr, uint32_t hfsr,
-                              ls_fault_kind_t fault, uint32_t exc_return,
+void ls_capture_minimal_fault(uint32_t pc, uint32_t lr, uint32_t msp, uint32_t psp, uint32_t cfsr,
+                              uint32_t hfsr, ls_fault_kind_t fault, uint32_t exc_return,
                               uint32_t xpsr, uint32_t fpscr, uint32_t flags,
-                              uint32_t emergency_stack_used,
-                              uint32_t fault_sequence) {
-    minimal_snapshot_store(pc, lr, msp, psp, cfsr, hfsr, fault, exc_return,
-                           xpsr, fpscr, flags, emergency_stack_used,
-                           fault_sequence);
+                              uint32_t emergency_stack_used, uint32_t fault_sequence) {
+    minimal_snapshot_store(pc, lr, msp, psp, cfsr, hfsr, fault, exc_return, xpsr, fpscr, flags,
+                           emergency_stack_used, fault_sequence);
 }
 
 ls_result_t ls_capture_minimal(const ls_arch_context_t *context) {
@@ -103,10 +92,9 @@ ls_result_t ls_capture_minimal(const ls_arch_context_t *context) {
         flags |= LS_MINIMAL_SNAPSHOT_FPU_LAZY;
     }
 
-    ls_capture_minimal_fault(
-        context->pc, context->lr, context->msp, context->psp, context->cfsr,
-        context->hfsr, context->fault, context->exc_return, context->xpsr,
-        context->fpscr, flags, 0u, 0u);
+    ls_capture_minimal_fault(context->pc, context->lr, context->msp, context->psp, context->cfsr,
+                             context->hfsr, context->fault, context->exc_return, context->xpsr,
+                             context->fpscr, flags, 0u, 0u);
     return LS_OK;
 }
 
@@ -124,8 +112,7 @@ bool ls_minimal_snapshot_read(ls_minimal_snapshot_t *snapshot) {
             return false;
         }
     } else if (copy.version == LS_MINIMAL_SNAPSHOT_VERSION) {
-        uint32_t extension_crc = ls_crc32(
-            &copy, offsetof(ls_minimal_snapshot_t, extension_crc));
+        uint32_t extension_crc = ls_crc32(&copy, offsetof(ls_minimal_snapshot_t, extension_crc));
 
         if (copy.crc != prefix_crc || copy.extension_crc != extension_crc) {
             return false;
@@ -155,8 +142,7 @@ ls_result_t ls_capture_cpu_context(const ls_arch_context_t *context) {
         return ls_capture_minimal(context);
     }
 
-    breadcrumb = (ls_breadcrumb_t){"cpu", LS_SEVERITY_FATAL, 1u,
-                                    "cpu_fault", 0, 0u};
+    breadcrumb = (ls_breadcrumb_t){"cpu", LS_SEVERITY_FATAL, 1u, "cpu_fault", 0, 0u};
     ls_breadcrumb_event(&breadcrumb);
 
     fingerprint = context->pc ^ context->lr ^ context->cfsr ^ context->mcause;
@@ -170,8 +156,7 @@ ls_result_t ls_capture_cpu_context(const ls_arch_context_t *context) {
         .severity = LS_SEVERITY_FATAL,
         .message = "exception",
         .cpu = context,
-        .capture_level = LS_ENABLE_STACK_SNAPSHOT ? LS_CAPTURE_STACK
-                                                   : LS_CAPTURE_SNAPSHOT,
+        .capture_level = LS_ENABLE_STACK_SNAPSHOT ? LS_CAPTURE_STACK : LS_CAPTURE_SNAPSHOT,
     };
 
     ls_runtime.previous_crashed = true;

@@ -30,13 +30,38 @@ typedef struct {
     uint8_t window_next, window_count, type;
 } ls_metric_record_t;
 
-typedef struct { char name[LS_BREADCRUMB_CATEGORY_MAX]; uint32_t deadline_ms, last_touch_ms; bool expired; } ls_health_record_t;
-typedef struct { uint16_t id; uint32_t started_ms, elapsed_ms; bool active; } ls_span_record_t;
-typedef struct { const uint8_t *address; size_t length; ls_redaction_mode_t mode; } ls_redaction_t;
-typedef struct { const char *expression, *file, *message; int32_t line; } ls_assert_info_t;
-typedef struct { uint16_t message_id, format_id; uint8_t argument_count; uint32_t arguments[LS_LOG_ARG_MAX]; } ls_log_info_t;
-typedef struct {uint32_t domain_hash;uint16_t sampling_permyriad,rate_maximum,rate_count;uint32_t rate_period_ms,window_started_ms,seen;} ls_policy_record_t;
-typedef struct {uint32_t fingerprint,count,first_seen_ms,last_seen_ms;} ls_dedup_record_t;
+typedef struct {
+    char name[LS_BREADCRUMB_CATEGORY_MAX];
+    uint32_t deadline_ms, last_touch_ms;
+    bool expired;
+} ls_health_record_t;
+typedef struct {
+    uint16_t id;
+    uint32_t started_ms, elapsed_ms;
+    bool active;
+} ls_span_record_t;
+typedef struct {
+    const uint8_t *address;
+    size_t length;
+    ls_redaction_mode_t mode;
+} ls_redaction_t;
+typedef struct {
+    const char *expression, *file, *message;
+    int32_t line;
+} ls_assert_info_t;
+typedef struct {
+    uint16_t message_id, format_id;
+    uint8_t argument_count;
+    uint32_t arguments[LS_LOG_ARG_MAX];
+} ls_log_info_t;
+typedef struct {
+    uint32_t domain_hash;
+    uint16_t sampling_permyriad, rate_maximum, rate_count;
+    uint32_t rate_period_ms, window_started_ms, seen;
+} ls_policy_record_t;
+typedef struct {
+    uint32_t fingerprint, count, first_seen_ms, last_seen_ms;
+} ls_dedup_record_t;
 
 typedef struct {
     ls_event_type_t type;
@@ -51,10 +76,13 @@ typedef struct {
     const ls_peripheral_fault_t *peripheral;
     const ls_log_info_t *log;
     ls_capture_level_t capture_level;
-    uint32_t repeat_count,first_seen_ms,last_seen_ms;
+    uint32_t repeat_count, first_seen_ms, last_seen_ms;
 } ls_event_t;
 
-typedef struct { uint8_t *data; size_t capacity, length; } ls_writer_t;
+typedef struct {
+    uint8_t *data;
+    size_t capacity, length;
+} ls_writer_t;
 
 typedef struct {
     uint32_t magic, version, boot_count, previous_uptime_ms;
@@ -101,7 +129,7 @@ typedef struct {
     ls_policy_record_t policies[LS_POLICY_CAPACITY];
     size_t policy_count;
     ls_dedup_record_t dedup[LS_DEDUP_CAPACITY];
-    size_t dedup_count,dedup_next;
+    size_t dedup_count, dedup_next;
     uint32_t random_state;
     uint8_t security_key[LS_SECURITY_KEY_SIZE];
     size_t security_key_length;
@@ -128,7 +156,8 @@ ls_result_t ls_writer_u16(ls_writer_t *writer, uint16_t value);
 ls_result_t ls_writer_u32(ls_writer_t *writer, uint32_t value);
 ls_result_t ls_writer_u64(ls_writer_t *writer, uint64_t value);
 ls_result_t ls_writer_tlv(ls_writer_t *writer, uint16_t type, const void *value, uint16_t length);
-ls_result_t ls_envelope_encode(const ls_event_t *event, uint8_t *out, size_t capacity, size_t *length);
+ls_result_t ls_envelope_encode(const ls_event_t *event, uint8_t *out, size_t capacity,
+                               size_t *length);
 ls_result_t ls_spool_init(void);
 ls_result_t ls_spool_append(const uint8_t *data, size_t length, ls_priority_t priority);
 ls_result_t ls_spool_flush(void);

@@ -41,12 +41,10 @@ static bool align_size(size_t value, size_t alignment, size_t *result) {
     return add_size(value, alignment - remainder, result);
 }
 
-static bool wear_layout(size_t logical_capacity, size_t erase_size,
-                        size_t write_size, size_t *payload_offset,
-                        size_t *commit_offset, size_t *slot_size) {
-    if (!logical_capacity || !erase_size || !write_size ||
-        write_size > erase_size || erase_size % write_size ||
-        write_size > LS_STORAGE_MAX_WRITE_SIZE) {
+static bool wear_layout(size_t logical_capacity, size_t erase_size, size_t write_size,
+                        size_t *payload_offset, size_t *commit_offset, size_t *slot_size) {
+    if (!logical_capacity || !erase_size || !write_size || write_size > erase_size ||
+        erase_size % write_size || write_size > LS_STORAGE_MAX_WRITE_SIZE) {
         return false;
     }
 
@@ -57,8 +55,7 @@ static bool wear_layout(size_t logical_capacity, size_t erase_size,
     if (!align_size(sizeof(wear_header_t), write_size, &commit) ||
         !add_size(commit, write_size, &metadata_end) ||
         !align_size(metadata_end, write_size, &payload) ||
-        !add_size(payload, logical_capacity, &slot) ||
-        !align_size(slot, erase_size, &slot)) {
+        !add_size(payload, logical_capacity, &slot) || !align_size(slot, erase_size, &slot)) {
         return false;
     }
 
@@ -68,16 +65,12 @@ static bool wear_layout(size_t logical_capacity, size_t erase_size,
     return true;
 }
 
-size_t ls_flash_wear_physical_size(size_t logical_capacity, size_t erase_size,
-                                   size_t slots) {
-    return ls_flash_wear_physical_size_for_write(logical_capacity, erase_size, 1u,
-                                                  slots);
+size_t ls_flash_wear_physical_size(size_t logical_capacity, size_t erase_size, size_t slots) {
+    return ls_flash_wear_physical_size_for_write(logical_capacity, erase_size, 1u, slots);
 }
 
-size_t ls_flash_wear_physical_size_for_write(size_t logical_capacity,
-                                             size_t erase_size,
-                                             size_t write_size,
-                                             size_t slots) {
+size_t ls_flash_wear_physical_size_for_write(size_t logical_capacity, size_t erase_size,
+                                             size_t write_size, size_t slots) {
     size_t payload_offset;
     size_t commit_offset;
     size_t slot_size;
@@ -86,10 +79,9 @@ size_t ls_flash_wear_physical_size_for_write(size_t logical_capacity,
         write_size = 1u;
     }
     if (slots < 2u || slots > LS_FLASH_WEAR_MAX_SLOTS ||
-        !wear_layout(logical_capacity, erase_size, write_size, &payload_offset,
-                     &commit_offset, &slot_size) ||
-        slot_size > SIZE_MAX / slots ||
-        !add_size(0u, slot_size * slots, &total)) {
+        !wear_layout(logical_capacity, erase_size, write_size, &payload_offset, &commit_offset,
+                     &slot_size) ||
+        slot_size > SIZE_MAX / slots || !add_size(0u, slot_size * slots, &total)) {
         return 0;
     }
 
@@ -108,15 +100,14 @@ static bool generation_is_newer(uint32_t candidate, uint32_t reference) {
     return (int32_t)(candidate - reference) > 0;
 }
 
-static bool valid_header(const ls_flash_wear_level_t *wear,
-                         const wear_header_t *header) {
+static bool valid_header(const ls_flash_wear_level_t *wear, const wear_header_t *header) {
     return header->magic == WEAR_MAGIC && header->version == WEAR_VERSION &&
            header->logical_capacity == wear->logical_capacity &&
            header->header_crc == header_crc(header);
 }
 
-static ls_result_t valid_slot(ls_flash_wear_level_t *wear, size_t slot,
-                              wear_header_t *header, int *valid) {
+static ls_result_t valid_slot(ls_flash_wear_level_t *wear, size_t slot, wear_header_t *header,
+                              int *valid) {
     size_t offset = slot_offset(wear, slot);
     uint8_t committed = 0xffu;
     if (!valid) {
@@ -124,8 +115,7 @@ static ls_result_t valid_slot(ls_flash_wear_level_t *wear, size_t slot,
     }
     *valid = 0;
 
-    ls_result_t result = wear->raw->read(wear->raw->context, offset, header,
-                                         sizeof(*header));
+    ls_result_t result = wear->raw->read(wear->raw->context, offset, header, sizeof(*header));
     if (result != LS_OK) {
         return result;
     }
@@ -133,8 +123,8 @@ static ls_result_t valid_slot(ls_flash_wear_level_t *wear, size_t slot,
         return LS_OK;
     }
 
-    result = wear->raw->read(wear->raw->context, offset + wear->commit_offset,
-                             &committed, sizeof(committed));
+    result = wear->raw->read(wear->raw->context, offset + wear->commit_offset, &committed,
+                             sizeof(committed));
     if (result != LS_OK) {
         return result;
     }
@@ -142,8 +132,8 @@ static ls_result_t valid_slot(ls_flash_wear_level_t *wear, size_t slot,
         return LS_OK;
     }
 
-    result = wear->raw->read(wear->raw->context, offset + wear->payload_offset,
-                             wear->workspace, wear->logical_capacity);
+    result = wear->raw->read(wear->raw->context, offset + wear->payload_offset, wear->workspace,
+                             wear->logical_capacity);
     if (result != LS_OK) {
         return result;
     }
@@ -174,16 +164,14 @@ static ls_result_t raw_sync(const ls_flash_wear_level_t *wear) {
     return wear->raw->sync ? wear->raw->sync(wear->raw->context) : LS_OK;
 }
 
-static ls_result_t commit(ls_flash_wear_level_t *wear, size_t slot,
-                          uint32_t generation) {
+static ls_result_t commit(ls_flash_wear_level_t *wear, size_t slot, uint32_t generation) {
     if (wear->erase_counts[slot] == UINT32_MAX) {
         wear->failed_commits++;
         return LS_EOVERFLOW;
     }
 
     size_t offset = slot_offset(wear, slot);
-    ls_result_t result = wear->raw->erase(wear->raw->context, offset,
-                                           wear->slot_size);
+    ls_result_t result = wear->raw->erase(wear->raw->context, offset, wear->slot_size);
     if (result != LS_OK) {
         wear->failed_commits++;
         return result;
@@ -203,16 +191,16 @@ static ls_result_t commit(ls_flash_wear_level_t *wear, size_t slot,
 
     result = ls_storage_program(wear->raw, offset, &header, sizeof(header));
     if (result == LS_OK) {
-        result = ls_storage_program(wear->raw, offset + wear->payload_offset,
-                                    wear->workspace, wear->logical_capacity);
+        result = ls_storage_program(wear->raw, offset + wear->payload_offset, wear->workspace,
+                                    wear->logical_capacity);
     }
     if (result == LS_OK) {
         result = raw_sync(wear);
     }
     if (result == LS_OK) {
         const uint8_t committed = WEAR_COMMITTED;
-        result = ls_storage_program(wear->raw, offset + wear->commit_offset,
-                                    &committed, sizeof(committed));
+        result = ls_storage_program(wear->raw, offset + wear->commit_offset, &committed,
+                                    sizeof(committed));
     }
     if (result == LS_OK) {
         result = raw_sync(wear);
@@ -229,13 +217,11 @@ static ls_result_t commit(ls_flash_wear_level_t *wear, size_t slot,
 
 static ls_result_t read_active(ls_flash_wear_level_t *wear, void *destination) {
     return wear->raw->read(wear->raw->context,
-                           slot_offset(wear, wear->active_slot) +
-                               wear->payload_offset,
-                           destination, wear->logical_capacity);
+                           slot_offset(wear, wear->active_slot) + wear->payload_offset, destination,
+                           wear->logical_capacity);
 }
 
-static ls_result_t wear_read(void *context, size_t offset, void *destination,
-                             size_t length) {
+static ls_result_t wear_read(void *context, size_t offset, void *destination, size_t length) {
     ls_flash_wear_level_t *wear = (ls_flash_wear_level_t *)context;
     if (!wear || (!destination && length) || offset > wear->logical_capacity ||
         length > wear->logical_capacity - offset) {
@@ -243,15 +229,13 @@ static ls_result_t wear_read(void *context, size_t offset, void *destination,
     }
 
     return wear->raw->read(wear->raw->context,
-                           slot_offset(wear, wear->active_slot) +
-                               wear->payload_offset + offset,
+                           slot_offset(wear, wear->active_slot) + wear->payload_offset + offset,
                            destination, length);
 }
 
-static ls_result_t update(ls_flash_wear_level_t *wear, size_t offset,
-                          const void *source, size_t length, bool erase) {
-    if (!wear || (!erase && !source && length) ||
-        offset > wear->logical_capacity ||
+static ls_result_t update(ls_flash_wear_level_t *wear, size_t offset, const void *source,
+                          size_t length, bool erase) {
+    if (!wear || (!erase && !source && length) || offset > wear->logical_capacity ||
         length > wear->logical_capacity - offset) {
         return LS_EINVAL;
     }
@@ -270,8 +254,7 @@ static ls_result_t update(ls_flash_wear_level_t *wear, size_t offset,
     return commit(wear, next_slot(wear), wear->generation + 1u);
 }
 
-static ls_result_t wear_write(void *context, size_t offset, const void *source,
-                              size_t length) {
+static ls_result_t wear_write(void *context, size_t offset, const void *source, size_t length) {
     return update((ls_flash_wear_level_t *)context, offset, source, length, false);
 }
 
@@ -288,14 +271,11 @@ static ls_result_t wear_sync(void *context) {
     return raw_sync(wear);
 }
 
-ls_result_t ls_flash_wear_init(ls_flash_wear_level_t *wear,
-                               ls_storage_backend_t *raw,
-                               uint8_t *workspace,
-                               size_t logical_capacity,
-                               size_t slots) {
-    if (!wear || !raw || !raw->read || !raw->write || !raw->erase ||
-        !workspace || !logical_capacity || logical_capacity > UINT32_MAX ||
-        slots < 2u || slots > LS_FLASH_WEAR_MAX_SLOTS) {
+ls_result_t ls_flash_wear_init(ls_flash_wear_level_t *wear, ls_storage_backend_t *raw,
+                               uint8_t *workspace, size_t logical_capacity, size_t slots) {
+    if (!wear || !raw || !raw->read || !raw->write || !raw->erase || !workspace ||
+        !logical_capacity || logical_capacity > UINT32_MAX || slots < 2u ||
+        slots > LS_FLASH_WEAR_MAX_SLOTS) {
         return LS_EINVAL;
     }
 
@@ -303,8 +283,8 @@ ls_result_t ls_flash_wear_init(ls_flash_wear_level_t *wear,
     size_t payload_offset;
     size_t commit_offset;
     size_t slot_size;
-    if (!wear_layout(logical_capacity, raw->erase_size, write_size,
-                     &payload_offset, &commit_offset, &slot_size)) {
+    if (!wear_layout(logical_capacity, raw->erase_size, write_size, &payload_offset, &commit_offset,
+                     &slot_size)) {
         return LS_EINVAL;
     }
     if (slot_size > SIZE_MAX / slots || raw->capacity < slot_size * slots) {
@@ -333,8 +313,7 @@ ls_result_t ls_flash_wear_init(ls_flash_wear_level_t *wear,
         if (valid_header(wear, &header)) {
             wear->erase_counts[slot] = header.erase_count;
         }
-        if (valid &&
-            (!found || generation_is_newer(header.generation, newest.generation))) {
+        if (valid && (!found || generation_is_newer(header.generation, newest.generation))) {
             found = true;
             newest = header;
             wear->active_slot = (uint8_t)slot;
