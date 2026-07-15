@@ -10,7 +10,16 @@ void ls_watchdog_checkpoint(uint16_t checkpoint_id){ls_runtime.watchdog_checkpoi
 uint16_t ls_watchdog_last_checkpoint(void){return ls_runtime.watchdog_checkpoint;}
 void ls_power_sample(const ls_power_sample_t *sample){
 #if LS_ENABLE_POWER_SAMPLES
-    if(!sample)return;ls_power_sample_t value=*sample;if(!value.timestamp_ms)value.timestamp_ms=ls_uptime_ms();ls_runtime.power_samples[ls_runtime.power_next]=value;ls_runtime.power_next=(ls_runtime.power_next+1u)%LS_POWER_SAMPLE_CAPACITY;if(ls_runtime.power_count<LS_POWER_SAMPLE_CAPACITY)ls_runtime.power_count++;ls_metric_u32("vdd_mv",value.vdd_mv);ls_metric_u32("battery_mv",value.battery_mv);ls_metric_i32("current_ma",value.current_ma);ls_metric_i32("temperature_c",value.temperature_c);
+    if(!sample)return;
+    ls_power_sample_t value=*sample;
+    if(!value.timestamp_ms)value.timestamp_ms=ls_uptime_ms();
+    ls_runtime.power_samples[ls_runtime.power_next]=value;
+    ls_runtime.power_next=(ls_runtime.power_next+1u)%LS_POWER_SAMPLE_CAPACITY;
+    if(ls_runtime.power_count<LS_POWER_SAMPLE_CAPACITY)ls_runtime.power_count++;
+    ls_metric_u32("vdd_mv",value.vdd_mv);
+    ls_metric_u32("battery_mv",value.battery_mv);
+    ls_metric_i32("current_ma",value.current_ma);
+    ls_metric_i32("temperature_c",value.temperature_c);
 #else
     (void)sample;
 #endif
