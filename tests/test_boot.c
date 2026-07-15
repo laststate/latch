@@ -54,9 +54,13 @@ int main(void) {
     ls_capture_minimal_fault(0x0800f001u, 0x0800f101u, 0x20001000u, 0x20002000u, 0x82u, 0x40u,
                              LS_FAULT_HARD, 0xfffffff9u, 0x21000000u, 0u,
                              LS_MINIMAL_SNAPSHOT_FRAME_VALID, 0u, 1u);
+    ls_config_t no_storage_config = {.identity = &identity, .architecture = LS_ARCH_CORTEX_M};
+    CHECK(ls_init(&no_storage_config) == LS_OK);
+    CHECK(ls_boot() == LS_OK);
+    ls_minimal_snapshot_t snapshot;
+    CHECK(ls_minimal_snapshot_read(&snapshot));
     CHECK(configure(&identity, &storage, &transport) == 0);
     CHECK(ls_previous_boot_crashed());
-    ls_minimal_snapshot_t snapshot;
     CHECK(!ls_minimal_snapshot_read(&snapshot));
 
     for (unsigned crash = 0; crash < 3; crash++) {
