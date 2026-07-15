@@ -338,7 +338,7 @@ def should_skip(path, source_root, output_root):
     relative = path.relative_to(source_root)
     if is_within(path, output_root):
         return True
-    return any(part in EXCLUDED_DIRECTORIES for part in relative.parts)
+    return any(part in EXCLUDED_DIRECTORIES or part.startswith("build-") for part in relative.parts)
 
 
 def copy_project(source_root, output_root, verify):
@@ -390,6 +390,8 @@ def main():
     if output_root.exists():
         if not arguments.replace:
             raise ValueError("output already exists; use --replace to recreate it")
+        if not (output_root / "minify-manifest.json").is_file():
+            raise ValueError("refusing to replace a directory not created by this tool")
         shutil.rmtree(output_root)
     output_root.mkdir(parents=True)
     manifest = copy_project(source_root, output_root, arguments.verify)
