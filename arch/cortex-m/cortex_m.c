@@ -37,7 +37,7 @@ void ls_cortex_m_configure_fpu_lazy_stacking(bool enabled){
 }
 void ls_cortex_m_fault_from_saved(const uint32_t *raw_frame,const ls_cortex_m_saved_t *saved){
     ls_arch_context_t context={0};context.architecture=LS_ARCH_CORTEX_M;context.fault=(ls_fault_kind_t)saved->fault_kind;context.msp=saved->msp;context.psp=saved->psp;context.control=saved->control;context.primask=saved->primask;context.basepri=saved->basepri;context.faultmask=saved->faultmask;context.exc_return=saved->exc_return;
-    const bool extended=(saved->exc_return&(1u<<4))==0;const uint32_t *core_frame=extended?raw_frame+18:raw_frame;
+    const bool extended=(saved->exc_return&(1u<<4))==0;const uint32_t *core_frame=raw_frame;if(raw_frame&&extended)core_frame=raw_frame+18;
     if(core_frame){context.r[0]=core_frame[0];context.r[1]=core_frame[1];context.r[2]=core_frame[2];context.r[3]=core_frame[3];for(unsigned i=4;i<=11;i++)context.r[i]=saved->r4_r11[i-4];context.r[12]=core_frame[4];context.lr=core_frame[5];context.pc=core_frame[6];context.xpsr=core_frame[7];for(unsigned i=0;i<13;i++)context.registers[i]=context.r[i];context.registers[14]=context.lr;context.registers[15]=context.pc;}
     context.cfsr=REG32(0xe000ed28u);context.hfsr=REG32(0xe000ed2cu);context.dfsr=REG32(0xe000ed30u);context.afsr=REG32(0xe000ed3cu);context.mmfar=REG32(0xe000ed34u);context.bfar=REG32(0xe000ed38u);context.shcsr=REG32(0xe000ed24u);context.icsr=REG32(0xe000ed04u);context.vtor=REG32(0xe000ed08u);
     if(context.fault==LS_FAULT_SECURE){context.sfsr=REG32(0xe000ede4u);context.sfar=REG32(0xe000ede8u);}
