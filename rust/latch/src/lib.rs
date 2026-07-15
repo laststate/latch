@@ -1,6 +1,6 @@
 #![no_std]
 
-use core::ffi::{c_char, c_void, CStr};
+use core::ffi::{CStr, c_char, c_void};
 
 pub const LEP_HEADER_SIZE: usize = 24;
 pub const LEP_VERSION_1: u8 = 1;

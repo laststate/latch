@@ -33,10 +33,12 @@ static size_t writer_remaining(const ls_writer_t *writer) {
     return writer->capacity - writer->length;
 }
 
+#if LS_STORE_STRINGS
 static size_t string_value_capacity(const ls_writer_t *writer) {
     size_t remaining = writer_remaining(writer);
     return remaining > 2u ? remaining - 2u : 0u;
 }
+#endif
 
 static ls_result_t put_string_field(ls_writer_t *writer, uint8_t field, const char *text,
                                     size_t value_limit, bool *truncated) {
