@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.20)
+project(latch-package-consumer LANGUAGES C CXX)
+find_package(laststate-latch 0.2 REQUIRED CONFIG)
+add_executable(c-consumer main.c)
+target_link_libraries(c-consumer PRIVATE laststate::latch)
+add_executable(cpp-consumer main.cpp)
+target_link_libraries(cpp-consumer PRIVATE laststate::latch-cpp)
