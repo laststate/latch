@@ -38,9 +38,8 @@ ls_result_t ls_boot_state_save(void) {
     ls_runtime.persistent.previous_uptime_ms = ls_uptime_ms();
     ls_runtime.persistent.last_sequence = ls_runtime.sequence;
     ls_runtime.persistent.crc = boot_crc(&ls_runtime.persistent);
-    ls_result_t result =
-        ls_runtime.storage->write(ls_runtime.storage->context, boot_offset(),
-                                  &ls_runtime.persistent, sizeof ls_runtime.persistent);
+    ls_result_t result = ls_storage_program(ls_runtime.storage, boot_offset(),
+                                            &ls_runtime.persistent, sizeof ls_runtime.persistent);
     if (result == LS_OK && ls_runtime.storage->sync)
         result = ls_runtime.storage->sync(ls_runtime.storage->context);
     return result;
