@@ -62,4 +62,9 @@ void ls_capture_minimal_fault(uint32_t pc, uint32_t lr, uint32_t msp, uint32_t p
 
 bool ls_minimal_snapshot_read(ls_minimal_snapshot_t *snapshot);
 void ls_minimal_snapshot_clear(void);
+
+/* Normal-runtime only. Persists a retained fault snapshot after boot and
+   clears it only after
+ * the event reaches the spool. */
+ls_result_t ls_capture_minimal_recover(void);
 #endif

@@ -26,6 +26,8 @@ ls_result_t ls_init(const ls_config_t *config) {
 ls_result_t ls_boot(void) {
     if (!ls_runtime.initialized)
         return LS_EINVAL;
+    ls_minimal_snapshot_t retained_snapshot;
+    bool retained_fault = ls_minimal_snapshot_read(&retained_snapshot);
     ls_result_t result = ls_spool_init();
     if (result != LS_OK)
         return result;
@@ -39,7 +41,7 @@ ls_result_t ls_boot(void) {
     ls_runtime.reset_info = ls_runtime.config.reset_info
                                 ? ls_runtime.config.reset_info(ls_runtime.config.reset_info_context)
                                 : (ls_reset_info_t){LS_RESET_UNKNOWN, 0, 0, 0, false, false, false};
-    ls_runtime.previous_crashed = ls_runtime.persistent.crash_pending != 0;
+    ls_runtime.previous_crashed = ls_runtime.persistent.crash_pending != 0 || retained_fault;
     bool expected = ls_runtime.persistent.expected_reset != 0;
     bool reset_failure = ls_runtime.reset_info.reason == LS_RESET_WATCHDOG ||
                          ls_runtime.reset_info.reason == LS_RESET_INDEPENDENT_WATCHDOG ||
@@ -68,7 +70,12 @@ ls_result_t ls_boot(void) {
     ls_runtime.reset_info.expected = expected;
     ls_runtime.reset_info.crash_pending = ls_runtime.previous_crashed;
     ls_runtime.reset_info.boot_loop = ls_runtime.boot_loop;
-    return ls_boot_state_save();
+    result = ls_boot_state_save();
+    if (result != LS_OK)
+        return result;
+    if (retained_fault)
+        (void)ls_capture_minimal_recover();
+    return LS_OK;
 }
 
 uint32_t ls_uptime_ms(void) {

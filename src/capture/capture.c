@@ -81,9 +81,6 @@ ls_result_t ls_capture_minimal(const ls_arch_context_t *context) {
     if (!context) {
         return LS_EINVAL;
     }
-    if (minimal_build_hash == 0u) {
-        ls_capture_minimal_prepare();
-    }
 
     if (context->has_fpu) {
         flags |= LS_MINIMAL_SNAPSHOT_FPU_FRAME;
@@ -127,6 +124,53 @@ bool ls_minimal_snapshot_read(ls_minimal_snapshot_t *snapshot) {
 
 void ls_minimal_snapshot_clear(void) {
     minimal_snapshot.magic = 0u;
+}
+
+ls_result_t ls_capture_minimal_recover(void) {
+    ls_minimal_snapshot_t snapshot;
+    ls_arch_context_t context;
+    ls_event_t event;
+    ls_result_t result;
+
+    if (!ls_minimal_snapshot_read(&snapshot)) {
+        return LS_OK;
+    }
+    if (!ls_runtime.storage) {
+        return LS_EAGAIN;
+    }
+
+    context = (ls_arch_context_t){
+        .architecture = ls_runtime.config.architecture,
+        .fault = (ls_fault_kind_t)snapshot.fault,
+        .lr = snapshot.lr,
+        .pc = snapshot.pc,
+        .xpsr = snapshot.xpsr,
+        .msp = snapshot.msp,
+        .psp = snapshot.psp,
+        .exc_return = snapshot.exc_return,
+        .cfsr = snapshot.cfsr,
+        .hfsr = snapshot.hfsr,
+        .fpscr = snapshot.fpscr,
+        .has_fpu = (snapshot.flags & LS_MINIMAL_SNAPSHOT_FPU_FRAME) != 0u,
+        .fpu_lazy = (snapshot.flags & LS_MINIMAL_SNAPSHOT_FPU_LAZY) != 0u,
+    };
+    event = (ls_event_t){
+        .type = LS_EVENT_CRASH,
+        .priority = LS_PRIORITY_CRITICAL,
+        .timestamp_ms = ls_uptime_ms(),
+        .fingerprint = snapshot.pc ^ snapshot.lr ^ snapshot.cfsr ^ snapshot.hfsr,
+        .domain = "fault",
+        .code = (int32_t)snapshot.fault,
+        .severity = LS_SEVERITY_FATAL,
+        .message = "retained_fault",
+        .cpu = &context,
+        .capture_level = LS_CAPTURE_SNAPSHOT,
+    };
+    result = ls_capture_event(&event);
+    if (result == LS_OK) {
+        ls_minimal_snapshot_clear();
+    }
+    return result;
 }
 
 ls_result_t ls_capture_cpu_context(const ls_arch_context_t *context) {
