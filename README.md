@@ -52,6 +52,8 @@ The script copies the project, removes comments and unnecessary lexical whitespa
 
 Development happens on `dev`, where sources stay formatted for review. Production changes target `prod`; the `Compact production sources` workflow applies `python tools/minify_sources.py --in-place --verify` to same-repository pull requests before they are merged. Do not run `--in-place` on `dev`.
 
+After publishing the branches, protect `prod` from direct pushes and require the `Compact production sources / production-source-agent` check before merging. Those GitHub repository settings are intentionally not changed by this local checkout.
+
 ## Libraries
 
 Use `laststate::latch` for the complete portable runtime, or link the modular archives explicitly:
