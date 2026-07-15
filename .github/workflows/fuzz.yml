@@ -1,0 +1,30 @@
+name: Fuzz
+on:
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+  pull_request:
+    paths: ['src/envelope/**', 'src/security/**', 'include/laststate/envelope.h', 'include/laststate/security.h', 'include/laststate/compression.h', 'fuzz/**']
+permissions:
+  contents: read
+jobs:
+  libfuzzer:
+    runs-on: ubuntu-latest
+    env:
+      CC: clang
+      CXX: clang++
+    steps:
+      - uses: actions/checkout@v6
+      - run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLS_BUILD_TESTS=OFF -DLS_BUILD_FUZZERS=ON
+      - run: cmake --build build --parallel
+      - run: mkdir -p corpus/lep corpus/compression corpus/aead artifacts
+      - run: build/fuzz-lep corpus/lep -artifact_prefix=artifacts/ -max_total_time=120 -timeout=5
+      - run: build/fuzz-compression corpus/compression -artifact_prefix=artifacts/ -max_total_time=120 -timeout=5
+      - run: build/fuzz-aead corpus/aead -artifact_prefix=artifacts/ -max_total_time=180 -timeout=5
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: fuzz-corpus-and-crashes
+          path: |
+            corpus
+            artifacts

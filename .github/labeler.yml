@@ -1,0 +1,30 @@
+core:
+  - changed-files:
+      - any-glob-to-any-file: ['src/core/**', 'include/laststate/{latch,event,identity,config,boot,build_id,policy}.h']
+capture:
+  - changed-files:
+      - any-glob-to-any-file: ['src/capture/**', 'arch/**', 'ports/**', 'include/laststate/capture.h']
+protocol:
+  - changed-files:
+      - any-glob-to-any-file: ['src/envelope/**', 'include/laststate/{envelope,compression}.h', 'tests/vectors/**']
+storage:
+  - changed-files:
+      - any-glob-to-any-file: ['src/{spool,storage}/**', 'include/laststate/{storage,storage_sim,flash_storage}.h']
+transport:
+  - changed-files:
+      - any-glob-to-any-file: ['src/transport/**', 'include/laststate/*transport.h']
+security:
+  - changed-files:
+      - any-glob-to-any-file: ['src/security/**', 'include/laststate/security.h', 'SECURITY.md']
+tests:
+  - changed-files:
+      - any-glob-to-any-file: ['tests/**', 'fuzz/**', 'benchmarks/**']
+ci:
+  - changed-files:
+      - any-glob-to-any-file: ['.github/**', 'cmake/**', 'CMakeLists.txt', 'CMakePresets.json']
+rust:
+  - changed-files:
+      - any-glob-to-any-file: ['rust/**']
+documentation:
+  - changed-files:
+      - any-glob-to-any-file: ['**/*.md']

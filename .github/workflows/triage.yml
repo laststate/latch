@@ -1,0 +1,79 @@
+name: Repository triage bot
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+  issues:
+    types: [opened]
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+jobs:
+  ensure-labels:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create managed labels
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh label create core --repo "$REPO" --color 0052cc --force
+          gh label create capture --repo "$REPO" --color 5319e7 --force
+          gh label create protocol --repo "$REPO" --color 1d76db --force
+          gh label create storage --repo "$REPO" --color 0e8a16 --force
+          gh label create transport --repo "$REPO" --color fbca04 --force
+          gh label create security --repo "$REPO" --color b60205 --force
+          gh label create tests --repo "$REPO" --color c5def5 --force
+          gh label create ci --repo "$REPO" --color 006b75 --force
+          gh label create rust --repo "$REPO" --color dea584 --force
+          gh label create documentation --repo "$REPO" --color 0075ca --force
+          gh label create dependencies --repo "$REPO" --color 0366d6 --force
+          gh label create triage --repo "$REPO" --color d4c5f9 --force
+          gh label create automation-failure --repo "$REPO" --color d73a4a --force
+          gh label create stale --repo "$REPO" --color eeeeee --force
+          gh label create size/xs --repo "$REPO" --color c2e0c6 --force
+          gh label create size/s --repo "$REPO" --color 7fdbb6 --force
+          gh label create size/m --repo "$REPO" --color fbca04 --force
+          gh label create size/l --repo "$REPO" --color f9d0c4 --force
+          gh label create size/xl --repo "$REPO" --color b60205 --force
+  label-pr:
+    if: github.event_name == 'pull_request_target'
+    needs: ensure-labels
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/labeler@v6
+        with:
+          repo-token: ${{ github.token }}
+          sync-labels: true
+      - name: Apply size label
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          changed=$(gh pr view "$PR_URL" --json additions,deletions --jq '.additions + .deletions')
+          for label in size/xs size/s size/m size/l size/xl; do
+            gh pr edit "$PR_URL" --remove-label "$label" 2>/dev/null || true
+          done
+          if [ "$changed" -lt 10 ]; then label=size/xs
+          elif [ "$changed" -lt 50 ]; then label=size/s
+          elif [ "$changed" -lt 250 ]; then label=size/m
+          elif [ "$changed" -lt 1000 ]; then label=size/l
+          else label=size/xl
+          fi
+          gh pr edit "$PR_URL" --add-label "$label"
+      - name: Label dependency updates
+        if: github.actor == 'dependabot[bot]'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: gh pr edit "$PR_URL" --add-label dependencies
+  label-issue:
+    if: github.event_name == 'issues'
+    needs: ensure-labels
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+        run: gh issue edit "$ISSUE_URL" --add-label triage

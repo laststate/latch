@@ -1,0 +1,29 @@
+name: Hardware in the loop
+on:
+  workflow_dispatch:
+    inputs:
+      board_config:
+        description: Board JSON path present on the self-hosted runner
+        required: true
+        default: C:\latch-hil\stm32u5.json
+      scenario:
+        type: choice
+        options: [brownout, watchdog, mpu, trustzone, fpu-lazy, flash, reset-registers]
+        required: true
+permissions:
+  contents: read
+concurrency:
+  group: latch-hil-${{ inputs.board_config }}
+  cancel-in-progress: false
+jobs:
+  destructive-hil:
+    runs-on: [self-hosted, latch-hil]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --disable-pip-version-check pyserial==3.5
+      - name: Run physical fault scenario
+        run: python hil/runner.py --board "${{ inputs.board_config }}" --scenario "${{ inputs.scenario }}"

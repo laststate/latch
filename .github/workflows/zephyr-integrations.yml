@@ -1,0 +1,39 @@
+name: Zephyr native integrations
+on:
+  pull_request:
+    paths: ["ports/zephyr/**", "tests/zephyr/**", "include/laststate/**", ".github/workflows/zephyr-integrations.yml"]
+  push:
+    paths: ["ports/zephyr/**", "tests/zephyr/**", "include/laststate/**", ".github/workflows/zephyr-integrations.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-stack-compile:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - board: nrf52840dk/nrf52840
+            config: ble.conf
+            name: ble-gatt
+          - board: nucleo_h753zi
+            config: can.conf
+            name: can-fd
+          - board: b_l072z_lrwan1
+            config: lorawan.conf
+            name: lorawan
+          - board: native_sim/native/64
+            config: tls.conf
+            name: tls-cellular-socket
+    name: ${{ matrix.name }} (${{ matrix.board }})
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: zephyrproject-rtos/action-zephyr-setup@v1
+        with:
+          app-path: tests/zephyr
+          toolchains: arm-zephyr-eabi
+      - run: west build -b "${{ matrix.board }}" tests/zephyr -- -DCONF_FILE="${{ matrix.config }}"

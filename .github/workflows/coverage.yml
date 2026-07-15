@@ -1,0 +1,27 @@
+name: Coverage
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - run: sudo apt-get update && sudo apt-get install -y lcov ninja-build
+      - run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DLS_BUILD_TESTS=ON -DCMAKE_C_FLAGS=--coverage -DCMAKE_CXX_FLAGS=--coverage -DCMAKE_EXE_LINKER_FLAGS=--coverage
+      - run: cmake --build build --parallel
+      - run: ctest --test-dir build --output-on-failure
+      - run: lcov --capture --directory build --output-file coverage.info --ignore-errors mismatch && lcov --remove coverage.info '/usr/*' '*/tests/*' '*/build/*' --output-file coverage.info
+      - uses: codecov/codecov-action@v6
+        with:
+          files: coverage.info
+          fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - uses: actions/upload-artifact@v7
+        with:
+          name: coverage
+          path: coverage.info

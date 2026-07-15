@@ -1,0 +1,52 @@
+name: Release
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  validate:
+    uses: ./.github/workflows/ci.yml
+  package:
+    needs: validate
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v6
+      - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DLS_BUILD_TESTS=OFF
+      - run: cmake --build build --config Release --parallel
+      - run: cpack --config build/CPackConfig.cmake -C Release
+      - uses: actions/upload-artifact@v7
+        with:
+          name: release-${{ matrix.os }}
+          path: laststate-latch-*
+  publish:
+    needs: package
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v7
+        with:
+          pattern: release-*
+          path: dist
+          merge-multiple: true
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - run: python tools/generate_sbom.py dist/latch.spdx.json
+      - run: sha256sum dist/* | tee dist/SHA256SUMS
+      - uses: actions/attest@v4
+        with:
+          subject-path: |
+            dist/*.zip
+            dist/*.tar.gz
+      - run: gh release create "${GITHUB_REF_NAME}" dist/* --generate-notes --verify-tag
+        env:
+          GH_TOKEN: ${{ github.token }}

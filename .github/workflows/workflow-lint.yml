@@ -1,0 +1,20 @@
+name: Workflow lint
+on:
+  pull_request:
+    paths: ['.github/**']
+  push:
+    paths: ['.github/**']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  actionlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
+        with:
+          go-version: stable
+          cache: false
+      - run: go install github.com/rhysd/actionlint/cmd/actionlint@latest
+      - run: actionlint -color

@@ -1,0 +1,21 @@
+name: Reproducible build
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    env:
+      SOURCE_DATE_EPOCH: 1704067200
+    steps:
+      - uses: actions/checkout@v6
+      - run: cmake -S . -B build-a -G Ninja -DCMAKE_BUILD_TYPE=Release -DLS_BUILD_TESTS=OFF
+      - run: cmake --build build-a --parallel
+      - run: cmake -S . -B build-b -G Ninja -DCMAKE_BUILD_TYPE=Release -DLS_BUILD_TESTS=OFF
+      - run: cmake --build build-b --parallel
+      - name: Compare portable archives
+        run: cmp build-a/liblatch.a build-b/liblatch.a

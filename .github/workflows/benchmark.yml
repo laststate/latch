@@ -1,0 +1,21 @@
+name: Benchmarks
+on:
+  schedule:
+    - cron: '5 5 * * 1'
+  workflow_dispatch:
+  pull_request:
+    paths: ['src/**', 'include/**', 'benchmarks/**']
+permissions:
+  contents: read
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DLS_BUILD_TESTS=OFF -DLS_BUILD_BENCHMARKS=ON
+      - run: cmake --build build --parallel
+      - run: build/latch-benchmark | tee benchmark.json
+      - uses: actions/upload-artifact@v7
+        with:
+          name: benchmark-${{ github.sha }}
+          path: benchmark.json

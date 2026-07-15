@@ -1,0 +1,48 @@
+name: Cryptography assurance
+on:
+  push:
+    paths: ["src/security/**", "src/storage/secure_storage.c", "src/envelope/lep.c", "include/laststate/security.h", "include/laststate/secure_storage.h", "tests/test_crypto*", "tests/test_secure*", ".github/workflows/security-crypto.yml"]
+  pull_request:
+    paths: ["src/security/**", "src/storage/secure_storage.c", "src/envelope/lep.c", "include/laststate/security.h", "include/laststate/secure_storage.h", "tests/test_crypto*", "tests/test_secure*", ".github/workflows/security-crypto.yml"]
+  schedule:
+    - cron: "31 2 * * 2"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  sanitizers:
+    runs-on: ubuntu-latest
+    env:
+      CC: clang
+      CXX: clang++
+      ASAN_OPTIONS: detect_leaks=1:strict_string_checks=1:check_initialization_order=1
+      UBSAN_OPTIONS: print_stacktrace=1:halt_on_error=1
+    steps:
+      - uses: actions/checkout@v6
+      - run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLS_BUILD_TESTS=ON -DCMAKE_C_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer" -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer" -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address,undefined"
+      - run: cmake --build build --parallel
+      - run: ctest --test-dir build --output-on-failure
+  libsodium-interoperability:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - run: sudo apt-get update && sudo apt-get install -y libsodium-dev ninja-build
+      - run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DLS_BUILD_TESTS=ON -DLS_TEST_LIBSODIUM=ON
+      - run: cmake --build build --parallel
+      - run: ctest --test-dir build -R "crypto|security|secure|sodium" --output-on-failure
+  valgrind:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - run: sudo apt-get update && sudo apt-get install -y valgrind ninja-build
+      - run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DLS_BUILD_TESTS=ON
+      - run: cmake --build build --parallel
+      - run: valgrind --error-exitcode=99 --leak-check=full --track-origins=yes build/latch-crypto-vectors-tests
+      - run: valgrind --error-exitcode=99 --leak-check=full --track-origins=yes build/latch-secure-power-loss-tests
+  mbedtls-adapter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - run: sudo apt-get update && sudo apt-get install -y libmbedtls-dev ninja-build
+      - run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DLS_BUILD_TESTS=OFF -DLS_BUILD_MBEDTLS_PORT=ON
+      - run: cmake --build build --parallel

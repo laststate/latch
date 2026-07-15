@@ -1,0 +1,62 @@
+name: PR autofix bot
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+permissions:
+  actions: write
+  contents: write
+concurrency:
+  group: autofix-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  format-and-commit:
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.actor != 'dependabot[bot]' &&
+      github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - name: Format changed native files
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          git diff --name-only --diff-filter=ACMR "$BASE_SHA...HEAD" \
+            | grep -E '\.(c|h|cpp|hpp)$' \
+            | while IFS= read -r file; do
+                test -f "$file" && clang-format -i "$file"
+              done || true
+      - name: Format Rust
+        run: cargo fmt --manifest-path rust/latch/Cargo.toml
+      - name: Commit safe formatting fixes
+        id: commit
+        env:
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          if git diff --quiet; then
+            echo "No formatting fixes required"
+            echo "created=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name "latch-autofix[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add --all
+          git commit -m "style: apply automated formatting"
+          git push origin "HEAD:$HEAD_REF"
+          echo "created=true" >> "$GITHUB_OUTPUT"
+      - name: Re-run required checks on the bot commit
+        if: steps.commit.outputs.created == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          gh workflow run ci.yml --ref "$HEAD_REF"
+          gh workflow run quality.yml --ref "$HEAD_REF"
+          gh workflow run rust.yml --ref "$HEAD_REF"
+          gh workflow run workflow-lint.yml --ref "$HEAD_REF"

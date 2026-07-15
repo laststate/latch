@@ -1,0 +1,16 @@
+changelog:
+  exclude:
+    labels: [skip-changelog, dependencies]
+  categories:
+    - title: Breaking changes
+      labels: [breaking-change]
+    - title: Security
+      labels: [security]
+    - title: Runtime and capture
+      labels: [core, capture]
+    - title: Protocol, storage and transports
+      labels: [protocol, storage, transport]
+    - title: Tooling and SDKs
+      labels: [rust, ci, documentation]
+    - title: Other changes
+      labels: ['*']

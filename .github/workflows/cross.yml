@@ -1,0 +1,35 @@
+name: Cross toolchains
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cortex-m:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - run: sudo apt-get update && sudo apt-get install -y gcc-arm-none-eabi ninja-build
+      - run: cmake --preset arm-cortex-m4
+      - run: cmake --build --preset arm-cortex-m4 --parallel
+      - run: python tools/check_size.py build/arm-cortex-m4/liblatch.a
+  riscv32:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - run: sudo apt-get update && sudo apt-get install -y gcc-riscv64-unknown-elf ninja-build
+      - run: cmake --preset riscv32
+      - run: cmake --build --preset riscv32 --parallel
+  compile-profiles:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        strings: [0, 1]
+        breadcrumbs: [0, 1]
+        metrics: [0, 1]
+        dumps: [0, 1]
+    steps:
+      - uses: actions/checkout@v6
+      - run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DLS_BUILD_TESTS=OFF -DLS_STORE_STRINGS=${{ matrix.strings }} -DLS_ENABLE_BREADCRUMBS=${{ matrix.breadcrumbs }} -DLS_ENABLE_METRICS=${{ matrix.metrics }} -DLS_ENABLE_DUMPS=${{ matrix.dumps }}
+      - run: cmake --build build --parallel

@@ -1,0 +1,28 @@
+name: Rust no_std
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+          targets: thumbv7em-none-eabihf,riscv32imac-unknown-none-elf
+      - uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            rust/latch/target
+          key: rust-${{ runner.os }}-${{ hashFiles('rust/latch/Cargo.lock', 'rust/latch/Cargo.toml') }}
+      - run: cargo fmt --manifest-path rust/latch/Cargo.toml -- --check
+      - run: cargo clippy --manifest-path rust/latch/Cargo.toml --all-targets -- -D warnings
+      - run: cargo test --manifest-path rust/latch/Cargo.toml
+      - run: cargo check --manifest-path rust/latch/Cargo.toml --target thumbv7em-none-eabihf
+      - run: cargo check --manifest-path rust/latch/Cargo.toml --target riscv32imac-unknown-none-elf

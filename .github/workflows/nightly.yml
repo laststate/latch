@@ -1,0 +1,23 @@
+name: Nightly stress
+on:
+  schedule:
+    - cron: '29 2 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  stress:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - run: sudo apt-get update && sudo apt-get install -y valgrind ninja-build
+      - run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DLS_BUILD_TESTS=ON -DLS_BUILD_TOOLS=ON -DLS_BUILD_BENCHMARKS=ON
+      - run: cmake --build build --parallel
+      - run: ctest --test-dir build --output-on-failure --repeat until-pass:3 --timeout 120
+      - run: valgrind --error-exitcode=1 --leak-check=full build/latch-tests
+      - run: valgrind --error-exitcode=1 --leak-check=full build/latch-envelope-fuzz-tests
+      - run: build/latch-benchmark > benchmark.json
+      - uses: actions/upload-artifact@v7
+        with:
+          name: nightly-results
+          path: benchmark.json

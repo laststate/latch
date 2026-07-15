@@ -1,0 +1,61 @@
+name: CI
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            cc: gcc
+            cxx: g++
+            build_type: Debug
+            linux_port: ON
+          - os: ubuntu-latest
+            cc: clang
+            cxx: clang++
+            build_type: Release
+            linux_port: ON
+          - os: macos-latest
+            cc: clang
+            cxx: clang++
+            build_type: Debug
+            linux_port: OFF
+          - os: windows-latest
+            cc: cl
+            cxx: cl
+            build_type: Debug
+            linux_port: OFF
+    runs-on: ${{ matrix.os }}
+    env:
+      CC: ${{ matrix.cc }}
+      CXX: ${{ matrix.cxx }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DLS_BUILD_TESTS=ON -DLS_FREESTANDING_CHECK=ON -DLS_BUILD_LINUX=${{ matrix.linux_port }} -DLS_BUILD_XTENSA=ON -DLS_BUILD_TOOLS=ON -DLS_BUILD_BENCHMARKS=ON
+      - name: Build
+        run: cmake --build build --config ${{ matrix.build_type }} --parallel
+      - name: Test
+        run: ctest --test-dir build -C ${{ matrix.build_type }} --output-on-failure --timeout 60
+      - name: Test installed CMake package
+        run: |
+          cmake --install build --config ${{ matrix.build_type }} --prefix build/install
+          cmake -S tests/package -B build/consumer -DCMAKE_PREFIX_PATH=${{ github.workspace }}/build/install
+          cmake --build build/consumer --config ${{ matrix.build_type }}
+      - name: Package
+        run: cpack --config build/CPackConfig.cmake -C ${{ matrix.build_type }}
+      - uses: actions/upload-artifact@v7
+        with:
+          name: latch-${{ matrix.os }}-${{ matrix.cc }}
+          path: laststate-latch-*
+          if-no-files-found: error
