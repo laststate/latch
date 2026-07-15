@@ -16,7 +16,7 @@
 #define TLV_MEMORY LS_TLV_MEMORY
 #define TLV_STACK LS_TLV_STACK
 #define TLV_HEAP LS_TLV_HEAP
-static uint16_t read_u16(const uint8_t *p){return (uint16_t)p[0]|((uint16_t)p[1]<<8);}
+static uint16_t read_u16(const uint8_t *p){return (uint16_t)((uint16_t)p[0]|((uint16_t)p[1]<<8));}
 static uint32_t read_u32(const uint8_t *p){return (uint32_t)p[0]|((uint32_t)p[1]<<8)|((uint32_t)p[2]<<16)|((uint32_t)p[3]<<24);}
 static ls_result_t put_string_field(ls_writer_t *writer,uint8_t field,const char *text){size_t length=ls_string_length(text);if(length>255)length=255;ls_result_t result=ls_writer_u8(writer,field);if(result==LS_OK)result=ls_writer_u8(writer,(uint8_t)length);if(result==LS_OK)result=ls_writer_write(writer,text,length);return result;}
 static ls_result_t put_identity(ls_writer_t *writer){
