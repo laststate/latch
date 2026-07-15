@@ -17,6 +17,7 @@ jobs:
       - run: ctest --test-dir build --output-on-failure
       - run: lcov --capture --directory build --output-file coverage.info --ignore-errors mismatch && lcov --remove coverage.info '/usr/*' '*/tests/*' '*/build/*' --output-file coverage.info
       - uses: codecov/codecov-action@v7
+        if: ${{ secrets.CODECOV_TOKEN != '' }}
         with:
           files: coverage.info
           fail_ci_if_error: true

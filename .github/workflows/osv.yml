@@ -7,19 +7,16 @@ on:
   schedule:
     - cron: '47 8 * * 4'
   workflow_dispatch:
-permissions: read-all
+permissions:
+  contents: read
 jobs:
-  scan-pr:
-    if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
-    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@v2.3.8
-    permissions:
-      security-events: write
-      contents: read
-      actions: read
   scan-repository:
-    if: github.event_name != 'pull_request' && github.event_name != 'merge_group'
-    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v2.3.8
-    permissions:
-      security-events: write
-      contents: read
-      actions: read
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Scan dependencies for known vulnerabilities
+        uses: google/osv-scanner-action/osv-scanner-action@8dc09193bb540e09b23da07ad7e30bd33bf87018
+        with:
+          scan-args: |-
+            --recursive
+            ./

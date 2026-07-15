@@ -9,10 +9,17 @@ int _fltused;
 
 void *ls_memcpy(void *destination, const void *source, size_t length) {
     uint8_t *dst=(uint8_t *)destination; const uint8_t *src=(const uint8_t *)source;
-    while(length--) *dst++=*src++; return destination;
+    while(length--) {
+        *dst++=*src++;
+    }
+    return destination;
 }
 void *ls_memset(void *destination, int value, size_t length) {
-    uint8_t *dst=(uint8_t *)destination; while(length--) *dst++=(uint8_t)value; return destination;
+    uint8_t *dst=(uint8_t *)destination;
+    while(length--) {
+        *dst++=(uint8_t)value;
+    }
+    return destination;
 }
 int ls_memcmp(const void *left,const void *right,size_t length) {
     const uint8_t *a=(const uint8_t *)left,*b=(const uint8_t *)right;
