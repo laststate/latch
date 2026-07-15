@@ -34,6 +34,8 @@ jobs:
           python-version: "3.12"
       - uses: zephyrproject-rtos/action-zephyr-setup@v1
         with:
-          app-path: tests/zephyr
+          app-path: zephyr
+          base-path: tests
           toolchains: arm-zephyr-eabi
-      - run: west build -b "${{ matrix.board }}" tests/zephyr -- -DCONF_FILE="${{ matrix.config }}"
+      - working-directory: tests
+        run: west build -b "${{ matrix.board }}" zephyr -- -DCONF_FILE="${{ matrix.config }}"

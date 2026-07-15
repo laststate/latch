@@ -20,7 +20,7 @@ After the workflows are committed to GitHub, configure the repository with:
 1. Actions workflow permissions set to read and write.
 2. “Allow GitHub Actions to create and approve pull requests” enabled so the maintenance bot can open its PR. The bots do not approve their own changes.
 3. Auto-merge enabled for Dependabot automation.
-4. A branch protection rule or ruleset for `main` requiring CI, quality, Rust and security checks before merge.
+4. A branch protection rule or ruleset for `prod` requiring CI, quality, Rust, security and `Compact production sources / production-source-agent` before merge, while blocking direct pushes.
 5. Code scanning enabled if SARIF results from CodeQL, OpenSSF Scorecard and OSV should appear in the Security tab.
 
 Fork pull requests never receive write credentials. Autofix commits are limited to branches in the same repository, and `pull_request_target` workflows do not checkout or execute pull-request code.

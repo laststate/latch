@@ -5,6 +5,9 @@ permissions:
   contents: read
 jobs:
   review:
+    if: >-
+      github.event.repository.visibility == 'public' ||
+      vars.DEPENDENCY_REVIEW_ENABLED == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7

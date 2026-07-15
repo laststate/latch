@@ -1,5 +1,6 @@
 #ifndef LASTSTATE_LATCH_H
 #define LASTSTATE_LATCH_H
+
 #include "config.h"
 #include "identity.h"
 #include "event.h"
@@ -27,10 +28,40 @@
 #include "security.h"
 #include "secure_element.h"
 #include "version.h"
+
 #ifdef __cplusplus
-extern"C"{
+extern "C" {
 #endif
-typedef uint32_t(*ls_timestamp_fn)(void*context);typedef void(*ls_reset_fn)(void*context);typedef void(*ls_critical_fn)(void*context);typedef struct{const ls_identity_t*identity;ls_architecture_t architecture;const char*rtos;const char*region;const char*device_group;ls_timestamp_fn timestamp_ms;void*timestamp_context;ls_reset_fn reset;void*reset_context;ls_reset_info_t(*reset_info)(void*context);void*reset_info_context;ls_critical_fn enter_critical;ls_critical_fn leave_critical;void*critical_context;}ls_config_t;ls_result_t ls_init(const ls_config_t*config);ls_result_t ls_boot(void);ls_result_t ls_flush(void);void ls_capture_error(const ls_error_t*error);void ls_capture_message(const char*message,ls_severity_t severity);ls_result_t ls_capture_cpu_context(const ls_arch_context_t*context);bool ls_previous_boot_crashed(void);bool ls_boot_loop_detected(void);ls_reset_info_t ls_get_reset_info(void);uint32_t ls_uptime_ms(void);
+typedef uint32_t (*ls_timestamp_fn)(void *context);
+typedef void (*ls_reset_fn)(void *context);
+typedef void (*ls_critical_fn)(void *context);
+typedef struct {
+    const ls_identity_t *identity;
+    ls_architecture_t architecture;
+    const char *rtos;
+    const char *region;
+    const char *device_group;
+    ls_timestamp_fn timestamp_ms;
+    void *timestamp_context;
+    ls_reset_fn reset;
+    void *reset_context;
+    ls_reset_info_t (*reset_info)(void *context);
+    void *reset_info_context;
+    ls_critical_fn enter_critical;
+    ls_critical_fn leave_critical;
+    void *critical_context;
+} ls_config_t;
+ls_result_t ls_init(const ls_config_t *config);
+ls_result_t ls_boot(void);
+ls_result_t ls_flush(void);
+void ls_capture_error(const ls_error_t *error);
+void ls_capture_message(const char *message, ls_severity_t severity);
+/* Normal-runtime only; not safe in an ISR or fault handler. */
+ls_result_t ls_capture_cpu_context(const ls_arch_context_t *context);
+bool ls_previous_boot_crashed(void);
+bool ls_boot_loop_detected(void);
+ls_reset_info_t ls_get_reset_info(void);
+uint32_t ls_uptime_ms(void);
 #if LS_ENABLE_ASSERTS
 #define LS_ASSERT(expr)                                                                            \
     do {                                                                                           \
