@@ -3,7 +3,7 @@ name: Compact production sources
 on:
   pull_request:
     branches: [prod]
-    types: [opened, synchronize, reopened, ready_for_review]
+    types: [opened, synchronize, reopened, ready_for_review, edited]
 
 permissions:
   contents: write
@@ -14,9 +14,7 @@ concurrency:
 
 jobs:
   production-source-agent:
-    if: >-
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      github.event.pull_request.draft == false
+    if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
