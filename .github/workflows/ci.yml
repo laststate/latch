@@ -40,7 +40,7 @@ jobs:
       CC: ${{ matrix.cc }}
       CXX: ${{ matrix.cxx }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Configure
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DLS_BUILD_TESTS=ON -DLS_FREESTANDING_CHECK=ON -DLS_BUILD_LINUX=${{ matrix.linux_port }} -DLS_BUILD_XTENSA=ON -DLS_BUILD_TOOLS=ON -DLS_BUILD_BENCHMARKS=ON
       - name: Build

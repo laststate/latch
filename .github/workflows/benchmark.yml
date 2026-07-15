@@ -11,7 +11,7 @@ jobs:
   benchmark:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DLS_BUILD_TESTS=OFF -DLS_BUILD_BENCHMARKS=ON
       - run: cmake --build build --parallel
       - run: build/latch-benchmark | tee benchmark.json
