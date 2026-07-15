@@ -154,12 +154,21 @@ def read_rust_character_or_lifetime(source, index):
     if cursor >= len(source) or source[cursor] == "\n":
         return "'", cursor
     if source[cursor] == "\\":
-        cursor += 2
-        if cursor < len(source) and source[cursor - 1] == "u" and source[cursor] == "{":
+        cursor += 1
+        if cursor >= len(source):
+            raise ValueError("unterminated Rust character escape")
+        if source[cursor] == "u":
+            cursor += 1
+            if cursor >= len(source) or source[cursor] != "{":
+                return "'", index + 1
             closing = source.find("}", cursor + 1)
             if closing == -1:
                 raise ValueError("unterminated Rust character escape")
             cursor = closing + 1
+        elif source[cursor] == "x":
+            cursor += 3
+        else:
+            cursor += 1
     else:
         cursor += 1
     if cursor < len(source) and source[cursor] == "'":

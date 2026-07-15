@@ -33,6 +33,11 @@ class MinifySourceTests(unittest.TestCase):
         expected = 'unsafe extern "C"{fn value(name:&\'static str){let raw=br#"a\\\\b"#;}}\n'
         self.assertEqual(MINIFY.minify_rust_source(source), expected)
 
+    def test_preserves_rust_character_literals_and_lifetimes(self):
+        source = "let byte = '\\x7f'; let escaped = '\\n'; let name: &'static str = \"x\";\n"
+        expected = "let byte='\\x7f';let escaped='\\n';let name:&'static str=\"x\";\n"
+        self.assertEqual(MINIFY.minify_rust_source(source), expected)
+
 
 if __name__ == "__main__":
     unittest.main()
