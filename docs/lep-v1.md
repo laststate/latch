@@ -24,7 +24,7 @@ The total length is `24 + metadata_length + payload_length + 4 + authentication_
 
 ## Flags and security layouts
 
-`AUTHENTICATED` is bit 0, `ENCRYPTED` bit 1, `AEAD` bit 2 and `TRUNCATED` bit 3. No other bit is valid. `ENCRYPTED` and `AEAD` must either both be set or both be clear; AEAD also requires `AUTHENTICATED`.
+`AUTHENTICATED` is bit 0, `ENCRYPTED` bit 1, `AEAD` bit 2 and `TRUNCATED` bit 3. Gateways may use bit 4 `COMPRESSED` (zstd); Latch devices do not set bit 4. No other bits are valid. `ENCRYPTED` and `AEAD` must either both be set or both be clear; AEAD also requires `AUTHENTICATED`.
 
 Without AEAD, metadata length is zero and the payload immediately follows the header. The four-byte payload CRC32 follows the payload. If only `AUTHENTICATED` is set, a 32-byte HMAC-SHA-256 of header, payload and payload CRC follows the CRC.
 

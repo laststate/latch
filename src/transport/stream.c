@@ -172,3 +172,25 @@ size_t ls_stream_transport_max_payload(void *context) {
     }
     return stream->maximum_envelope ? stream->maximum_envelope : LS_MAX_EVENT_SIZE;
 }
+
+ls_result_t ls_lsak_parse(const uint8_t *data, size_t length, ls_lsak_t *out) {
+    if (!data || !out || length < LS_LSAK_SIZE) {
+        return LS_EINVAL;
+    }
+    if (data[0] != (uint8_t)'L' || data[1] != (uint8_t)'S' || data[2] != (uint8_t)'A' ||
+        data[3] != (uint8_t)'K') {
+        return LS_ECORRUPT;
+    }
+    if (data[4] != LS_LSAK_VERSION) {
+        return LS_ENOTSUP;
+    }
+    out->version = data[4];
+    out->status = data[5];
+    out->event_id = (uint32_t)data[8] | ((uint32_t)data[9] << 8) | ((uint32_t)data[10] << 16) |
+                    ((uint32_t)data[11] << 24);
+    return LS_OK;
+}
+
+bool ls_lsak_is_success(uint8_t status) {
+    return status == LS_LSAK_ACK_STORED || status == LS_LSAK_ACK_DUPLICATE;
+}
