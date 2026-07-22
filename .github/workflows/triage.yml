@@ -42,7 +42,7 @@ jobs:
     needs: ensure-labels
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/labeler@v6
+      - uses: actions/labeler@v7
         with:
           repo-token: ${{ github.token }}
           sync-labels: true
