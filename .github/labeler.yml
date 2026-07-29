@@ -28,3 +28,24 @@ rust:
 documentation:
   - changed-files:
       - any-glob-to-any-file: ['**/*.md']
+tooling:
+  - changed-files:
+      - any-glob-to-any-file: ['tools/**']
+build:
+  - changed-files:
+      - any-glob-to-any-file: ['CMakeLists.txt', 'CMakePresets.json', 'cmake/**', 'tests/package/**']
+example:
+  - changed-files:
+      - any-glob-to-any-file: ['examples/**']
+hardware:
+  - changed-files:
+      - any-glob-to-any-file: ['arch/**', 'ports/**', 'docs/hil.md']
+zephyr:
+  - changed-files:
+      - any-glob-to-any-file: ['ports/zephyr/**', 'tests/zephyr/**', '.github/workflows/zephyr-integrations.yml']
+freertos:
+  - changed-files:
+      - any-glob-to-any-file: ['ports/freertos/**']
+fuzzing:
+  - changed-files:
+      - any-glob-to-any-file: ['fuzz/**', '.github/workflows/fuzz.yml']

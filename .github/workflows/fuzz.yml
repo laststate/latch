@@ -4,7 +4,7 @@ on:
     - cron: '17 3 * * *'
   workflow_dispatch:
   pull_request:
-    paths: ['src/envelope/**', 'src/security/**', 'include/laststate/envelope.h', 'include/laststate/security.h', 'include/laststate/compression.h', 'fuzz/**']
+    paths: ['src/envelope/**', 'src/security/**', 'include/laststate/envelope.h', 'include/laststate/security.h', 'include/laststate/compression.h', 'fuzz/**', 'tests/vectors/**', 'tools/seed_fuzz_corpora.py', 'CMakeLists.txt']
 permissions:
   contents: read
 jobs:
@@ -13,11 +13,14 @@ jobs:
     env:
       CC: clang
       CXX: clang++
+      ASAN_OPTIONS: abort_on_error=1:detect_leaks=1
+      UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
     steps:
       - uses: actions/checkout@v7
       - run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLS_BUILD_TESTS=OFF -DLS_BUILD_FUZZERS=ON
       - run: cmake --build build --parallel
-      - run: mkdir -p corpus/lep corpus/compression corpus/aead artifacts
+      - run: python tools/seed_fuzz_corpora.py --output corpus
+      - run: mkdir -p artifacts
       - run: build/fuzz-lep corpus/lep -artifact_prefix=artifacts/ -max_total_time=120 -timeout=5
       - run: build/fuzz-compression corpus/compression -artifact_prefix=artifacts/ -max_total_time=120 -timeout=5
       - run: build/fuzz-aead corpus/aead -artifact_prefix=artifacts/ -max_total_time=180 -timeout=5

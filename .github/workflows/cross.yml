@@ -1,6 +1,7 @@
 name: Cross toolchains
 on:
   push:
+    branches: [prod]
   pull_request:
   workflow_dispatch:
 permissions:

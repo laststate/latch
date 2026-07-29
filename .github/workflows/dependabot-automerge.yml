@@ -10,7 +10,14 @@ jobs:
     if: github.actor == 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
-      - name: Enable squash auto-merge after required checks
+      - id: metadata
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: ${{ github.token }}
+      - name: Enable squash auto-merge for patch updates
+        if: >-
+          steps.metadata.outputs.update-type == 'version-update:semver-patch' &&
+          steps.metadata.outputs.dependency-group == ''
         env:
           GH_TOKEN: ${{ github.token }}
           PR_URL: ${{ github.event.pull_request.html_url }}

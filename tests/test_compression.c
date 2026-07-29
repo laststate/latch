@@ -45,6 +45,13 @@ int main(void) {
           LS_OK);
     CHECK(ls_delta_u32_decode(compressed, encoded_length, decoded, 256, &count) == LS_OK);
     CHECK(count == 256 && !memcmp(values, decoded, sizeof values));
+    const uint32_t wrapping_values[] = {0x70000000u, 0xe0000000u, 0x10000000u};
+    CHECK(ls_delta_u32_encode(wrapping_values, sizeof wrapping_values / sizeof wrapping_values[0],
+                              compressed, sizeof compressed, &encoded_length) == LS_OK);
+    CHECK(ls_delta_u32_decode(compressed, encoded_length, decoded,
+                              sizeof wrapping_values / sizeof wrapping_values[0], &count) == LS_OK);
+    CHECK(count == sizeof wrapping_values / sizeof wrapping_values[0] &&
+          !memcmp(wrapping_values, decoded, sizeof wrapping_values));
     CHECK(ls_rle_decompress((uint8_t[]){0x82}, 1, output, sizeof output, &count) == LS_ECORRUPT);
     return 0;
 }

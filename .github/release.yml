@@ -1,6 +1,6 @@
 changelog:
   exclude:
-    labels: [skip-changelog, dependencies]
+    labels: [skip-changelog]
   categories:
     - title: Breaking changes
       labels: [breaking-change]
@@ -12,5 +12,7 @@ changelog:
       labels: [protocol, storage, transport]
     - title: Tooling and SDKs
       labels: [rust, ci, documentation]
+    - title: Dependencies
+      labels: [dependencies]
     - title: Other changes
       labels: ['*']

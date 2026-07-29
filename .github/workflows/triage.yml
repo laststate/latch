@@ -18,31 +18,45 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
         run: |
-          gh label create core --repo "$REPO" --color 0052cc --force
-          gh label create capture --repo "$REPO" --color 5319e7 --force
-          gh label create protocol --repo "$REPO" --color 1d76db --force
-          gh label create storage --repo "$REPO" --color 0e8a16 --force
-          gh label create transport --repo "$REPO" --color fbca04 --force
-          gh label create security --repo "$REPO" --color b60205 --force
-          gh label create tests --repo "$REPO" --color c5def5 --force
-          gh label create ci --repo "$REPO" --color 006b75 --force
-          gh label create rust --repo "$REPO" --color dea584 --force
-          gh label create documentation --repo "$REPO" --color 0075ca --force
-          gh label create dependencies --repo "$REPO" --color 0366d6 --force
-          gh label create triage --repo "$REPO" --color d4c5f9 --force
-          gh label create automation-failure --repo "$REPO" --color d73a4a --force
-          gh label create stale --repo "$REPO" --color eeeeee --force
-          gh label create size/xs --repo "$REPO" --color c2e0c6 --force
-          gh label create size/s --repo "$REPO" --color 7fdbb6 --force
-          gh label create size/m --repo "$REPO" --color fbca04 --force
-          gh label create size/l --repo "$REPO" --color f9d0c4 --force
-          gh label create size/xl --repo "$REPO" --color b60205 --force
+          gh label create core --repo "$REPO" --color 0052cc --description "Portable runtime and public core API" --force
+          gh label create capture --repo "$REPO" --color 5319e7 --description "Fault, reset, and diagnostic capture paths" --force
+          gh label create protocol --repo "$REPO" --color 1d76db --description "LEP encoding, decoding, and compatibility" --force
+          gh label create storage --repo "$REPO" --color 0e8a16 --description "Retained, Flash, spool, and recovery behavior" --force
+          gh label create transport --repo "$REPO" --color fbca04 --description "Delivery, framing, retries, and acknowledgements" --force
+          gh label create security --repo "$REPO" --color b60205 --description "Cryptography, provisioning, privacy, and redaction" --force
+          gh label create tests --repo "$REPO" --color c5def5 --description "Tests, vectors, simulators, and qualification evidence" --force
+          gh label create ci --repo "$REPO" --color 006b75 --description "Build, packaging, and repository automation" --force
+          gh label create rust --repo "$REPO" --color dea584 --description "Rust no_std SDK and FFI boundary" --force
+          gh label create documentation --repo "$REPO" --color 0075ca --description "Documentation improvements" --force
+          gh label create tooling --repo "$REPO" --color 6f42c1 --description "Host tools and developer utilities" --force
+          gh label create build --repo "$REPO" --color 0e8a16 --description "CMake, package consumers, and toolchains" --force
+          gh label create example --repo "$REPO" --color 1d76db --description "Runnable examples and integration samples" --force
+          gh label create hardware --repo "$REPO" --color d93f0b --description "Requires or reports real-board validation" --force
+          gh label create zephyr --repo "$REPO" --color 6438b4 --description "Zephyr integration and samples" --force
+          gh label create freertos --repo "$REPO" --color 2ea44f --description "FreeRTOS integration and samples" --force
+          gh label create fuzzing --repo "$REPO" --color bfdadc --description "Fuzz targets, corpora, and long-running campaigns" --force
+          gh label create dependencies --repo "$REPO" --color 0366d6 --description "Dependency updates" --force
+          gh label create triage --repo "$REPO" --color d4c5f9 --description "Needs initial maintainer triage" --force
+          gh label create blocked --repo "$REPO" --color b60205 --description "Cannot progress until a named dependency is resolved" --force
+          gh label create needs-reproduction --repo "$REPO" --color fbca04 --description "Needs a minimal reproducible case" --force
+          gh label create maintenance --repo "$REPO" --color c5def5 --description "Repository upkeep and release hygiene" --force
+          gh label create breaking-change --repo "$REPO" --color b60205 --description "Changes a public compatibility contract" --force
+          gh label create skip-changelog --repo "$REPO" --color eeeeee --description "Exclude from generated release notes" --force
+          gh label create "good first issue" --repo "$REPO" --color 7057ff --description "Curated, bounded work for a new contributor" --force
+          gh label create "help wanted" --repo "$REPO" --color 008672 --description "Maintainers especially welcome outside help" --force
+          gh label create automation-failure --repo "$REPO" --color d73a4a --description "Scheduled or default-branch automation failed" --force
+          gh label create stale --repo "$REPO" --color eeeeee --description "No recent activity; never closes issues automatically" --force
+          gh label create size/xs --repo "$REPO" --color c2e0c6 --description "Fewer than 10 changed lines" --force
+          gh label create size/s --repo "$REPO" --color 7fdbb6 --description "10-49 changed lines" --force
+          gh label create size/m --repo "$REPO" --color fbca04 --description "50-249 changed lines" --force
+          gh label create size/l --repo "$REPO" --color f9d0c4 --description "250-999 changed lines" --force
+          gh label create size/xl --repo "$REPO" --color b60205 --description "At least 1000 changed lines" --force
   label-pr:
     if: github.event_name == 'pull_request_target'
     needs: ensure-labels
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/labeler@v6
+      - uses: actions/labeler@v7
         with:
           repo-token: ${{ github.token }}
           sync-labels: true

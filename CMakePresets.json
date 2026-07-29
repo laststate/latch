@@ -15,7 +15,8 @@
         "LS_BUILD_TESTS": "ON",
         "LS_FREESTANDING_CHECK": "ON",
         "LS_BUILD_TOOLS": "ON",
-        "LS_BUILD_BENCHMARKS": "ON"
+        "LS_BUILD_BENCHMARKS": "ON",
+        "LS_BUILD_EXAMPLES": "ON"
       }
     },
     {
@@ -35,7 +36,8 @@
         "LS_BUILD_TESTS": "ON",
         "LS_FREESTANDING_CHECK": "ON",
         "LS_BUILD_TOOLS": "ON",
-        "LS_BUILD_BENCHMARKS": "ON"
+        "LS_BUILD_BENCHMARKS": "ON",
+        "LS_BUILD_EXAMPLES": "ON"
       }
     },
     {

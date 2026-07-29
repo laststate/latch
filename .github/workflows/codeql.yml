@@ -1,7 +1,7 @@
 name: CodeQL
 on:
   push:
-    branches: [main]
+    branches: [prod]
   pull_request:
   schedule:
     - cron: '41 4 * * 2'
@@ -31,4 +31,3 @@ jobs:
       - uses: github/codeql-action/analyze@v4
         with:
           category: /language:${{ matrix.language }}
-          upload: never

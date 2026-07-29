@@ -1,6 +1,7 @@
 name: Rust no_std
 on:
   push:
+    branches: [prod]
   pull_request:
   workflow_dispatch:
 permissions:

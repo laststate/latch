@@ -1,14 +1,13 @@
-name: Maintenance PR bot
+name: Maintenance health bot
 on:
   schedule:
     - cron: '23 6 1 * *'
   workflow_dispatch:
 permissions:
-  actions: write
-  contents: write
-  pull-requests: write
+  contents: read
+  issues: write
 concurrency:
-  group: maintenance-pr
+  group: maintenance-health
   cancel-in-progress: false
 jobs:
   autofix:
@@ -32,27 +31,37 @@ jobs:
           cmake --build build --parallel
           ctest --test-dir build --output-on-failure
           cargo test --manifest-path rust/latch/Cargo.toml
-      - name: Open or refresh maintenance PR
+      - name: Report maintenance drift
         env:
           GH_TOKEN: ${{ github.token }}
-          BRANCH: automation/maintenance
+          REPO: ${{ github.repository }}
         run: |
+          title="Repository maintenance drift"
+          number="$(gh issue list --repo "$REPO" --state open --limit 100 \
+            --json number,title --jq 'map(select(.title == "Repository maintenance drift"))[0].number // empty')"
           if git diff --quiet; then
-            echo "Repository already normalized"
+            if [ -n "$number" ]; then
+              gh issue close "$number" --repo "$REPO" \
+                --comment "The scheduled maintenance check is clean again."
+            fi
             exit 0
           fi
-          git config user.name "latch-maintenance[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout -B "$BRANCH"
-          git add --all
-          git commit -m "chore: apply repository maintenance fixes"
-          git push --force origin "$BRANCH"
-          if ! gh pr list --head "$BRANCH" --state open --json number --jq 'length > 0' | grep -q true; then
-            gh pr create --base "${{ github.event.repository.default_branch }}" --head "$BRANCH" \
-              --title "chore: automated repository maintenance" \
-              --body "Automated formatting and safe maintenance fixes. Tests passed before this PR was opened."
+          {
+            echo "The monthly formatter pass changed tracked files, and the formatted tree passed its local tests."
+            echo
+            echo "Run the checked-in formatters locally and open a normal pull request."
+            echo
+            echo '```text'
+            git diff --name-only
+            echo '```'
+          } > "$RUNNER_TEMP/maintenance-drift.md"
+          if [ -n "$number" ]; then
+            gh issue edit "$number" --repo "$REPO" \
+              --body-file "$RUNNER_TEMP/maintenance-drift.md" \
+              --add-label maintenance
+          else
+            gh issue create --repo "$REPO" \
+              --title "$title" \
+              --body-file "$RUNNER_TEMP/maintenance-drift.md" \
+              --label maintenance
           fi
-          gh workflow run ci.yml --ref "$BRANCH"
-          gh workflow run quality.yml --ref "$BRANCH"
-          gh workflow run rust.yml --ref "$BRANCH"
-          gh workflow run workflow-lint.yml --ref "$BRANCH"
