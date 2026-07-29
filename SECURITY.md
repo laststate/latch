@@ -1,6 +1,6 @@
 # Security policy
 
-Report suspected vulnerabilities privately through GitHub Security Advisories. Do not open a public issue containing device keys, captured memory, exploit details or production endpoint credentials.
+Report suspected vulnerabilities through the repository's [private vulnerability reporting form](https://github.com/laststate/latch/security/advisories/new). Do not open a public issue containing device keys, captured memory, exploit details or production endpoint credentials.
 
 ## Cryptographic design
 

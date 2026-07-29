@@ -41,7 +41,7 @@ jobs:
       CC: ${{ matrix.cc }}
       CXX: ${{ matrix.cxx }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - name: Configure
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DLS_BUILD_TESTS=ON -DLS_FREESTANDING_CHECK=ON -DLS_BUILD_LINUX=${{ matrix.linux_port }} -DLS_BUILD_XTENSA=ON -DLS_BUILD_TOOLS=ON -DLS_BUILD_BENCHMARKS=ON -DLS_BUILD_EXAMPLES=ON
       - name: Build
@@ -55,7 +55,7 @@ jobs:
           cmake --build build/consumer --config ${{ matrix.build_type }}
       - name: Package
         run: cpack --config build/CPackConfig.cmake -C ${{ matrix.build_type }}
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: latch-${{ matrix.os }}-${{ matrix.cc }}
           path: laststate-latch-*

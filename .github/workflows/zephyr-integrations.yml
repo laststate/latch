@@ -29,11 +29,11 @@ jobs:
             name: tls-cellular-socket
     name: ${{ matrix.name }} (${{ matrix.board }})
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
           python-version: "3.12"
-      - uses: zephyrproject-rtos/action-zephyr-setup@v1
+      - uses: zephyrproject-rtos/action-zephyr-setup@be8136a8bba01580485d98b7ad2d32477c36a49a # v1
         with:
           app-path: zephyr
           base-path: tests
