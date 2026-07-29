@@ -67,7 +67,7 @@ jobs:
       - run: python tools/generate_sbom.py dist/latch.spdx.json
       - name: Generate portable checksum file
         working-directory: dist
-        run: sha256sum * > SHA256SUMS
+        run: sha256sum ./* > SHA256SUMS
       - uses: actions/attest@v4
         with:
           subject-path: |
