@@ -5,6 +5,7 @@ Latch preserves the device's last useful state across reset, then queues it for 
 The embedded runtime is heap-free C11 with bounded buffers: you keep control of storage, transport, and reset policy.
 
 [![CI](https://github.com/laststate/latch/actions/workflows/ci.yml/badge.svg?branch=prod)](https://github.com/laststate/latch/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/github/laststate/latch/graph/badge.svg?token=DHKY7LVLFN)](https://codecov.io/github/laststate/latch)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![C11](https://img.shields.io/badge/C-C11-00599C.svg)](CMakeLists.txt)
 [![Rust no_std](https://img.shields.io/badge/Rust-no__std-000000.svg)](rust/README.md)
