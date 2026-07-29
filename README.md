@@ -53,6 +53,16 @@ LEP v1 type=2 arch=0 flags=0x00 sequence=1 event=b63f7832 payload=263
 
 See [the complete host example](examples/host/main.c) for initialization, in-memory storage, and transport registration.
 
+### Inspect a hexadecimal LEP vector
+
+`latch-dump` keeps its existing binary-file interface and also accepts bounded hexadecimal input with `--hex`. From the repository root:
+
+```sh
+build/host-debug/latch-dump --hex tests/vectors/lep-v1-basic.hex
+```
+
+ASCII whitespace is accepted between hexadecimal digits. Decoded input is limited to `LS_MAX_EVENT_SIZE`; odd-length, non-hexadecimal, and oversized inputs fail before envelope validation.
+
 ## What survives the reboot
 
 Latch is built for failures where ordinary logging becomes least reliable:

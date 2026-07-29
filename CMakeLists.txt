@@ -259,6 +259,12 @@ endif()
 if(LS_BUILD_TOOLS)
   add_executable(latch-dump tools/latch_dump.c)
   target_link_libraries(latch-dump PRIVATE latch)
+  if(LS_BUILD_TESTS)
+    find_package(Python3 COMPONENTS Interpreter REQUIRED)
+    add_test(NAME latch-dump-hex-tests
+      COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_latch_dump.py
+        $<TARGET_FILE:latch-dump> ${CMAKE_CURRENT_SOURCE_DIR}/tests/vectors/lep-v1-basic.hex)
+  endif()
 endif()
 if(LS_BUILD_EXAMPLES)
   if(CMAKE_CROSSCOMPILING)
