@@ -135,8 +135,18 @@ Latch supports XChaCha20-Poly1305 envelopes, HKDF-SHA-256 domain separation, rep
 
 The portable runtime and wire format are extensively host-tested. Hardware fault entry, linker placement, flash geometry, reset registers, vendor networking, TrustZone boundaries, and secure elements **must be qualified on each selected board and toolchain**. Host tests are not hardware certification. The exact release gates are in [production readiness](docs/production-readiness.md) and [implementation status](docs/implementation-status.md).
 
+On 2026-07-29 the complete flash → panic → reboot → UART → durable ACK path
+was verified on a physical ESP32-D0WD-V3 with ESP-IDF 5.5.0 against the
+production LastState Relay collector. Relay validates and persists LEP
+envelopes before acknowledging them; it is a private LastState component and
+was not publicly released on that date. Latch does not depend on Relay—the
+[`ESP32 HIL fixture`](hil/esp32_relay/README.md) documents the public framing
+contract, the from-zero procedure, decoded evidence, fixes and remaining
+Xtensa panic-hook limitation.
+
 ## Documentation
 
+- [v0.2.0 release notes](docs/releases/v0.2.0.md)
 - [Integration overview](docs/integration-overview.md)
 - [Architecture](docs/architecture.md)
 - [LEP v1 wire format](docs/lep-v1.md)

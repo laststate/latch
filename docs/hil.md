@@ -1,5 +1,33 @@
 # Hardware-in-the-loop validation
 
+## Verified ESP32 fixture
+
+The first public physical-board evidence is the
+[`hil/esp32_relay`](../hil/esp32_relay/README.md) fixture. On 2026-07-29 it
+verified an ESP32-D0WD-V3 revision 3.1 with ESP-IDF 5.5.0 and 4 MB of flash:
+
+- atomic mirrored-flash initialization and real erase/program/readback;
+- capture before an intentional ESP-IDF panic;
+- reset classification as `LS_RESET_LOCKUP`;
+- recovery of multiple queued LEP envelopes after reboot;
+- `latch-stream` framing over the board's UART;
+- durable `LSAK` acknowledgement;
+- post-recovery capture and collector spool consistency.
+
+The collector was the production LastState Relay. Relay validates and stores
+LEP envelopes before acknowledging them and checks its durable spool. It is a
+private LastState component and, as of 2026-07-29, is not publicly released.
+Latch itself remains independent: the stream and ACK formats are public, so a
+compatible collector can reproduce the transport side of the test.
+
+The complete setup, destructive-test warning, commands, expected output,
+problems found, corrections, decoded events, and remaining Xtensa panic-hook
+gap are recorded in the fixture
+[`README`](../hil/esp32_relay/README.md) and
+[`EVIDENCE`](../hil/esp32_relay/EVIDENCE.md).
+
+## Automated board matrix
+
 The `Hardware in the loop` workflow is manual and targets a runner labelled `self-hosted` and `latch-hil`. Destructive tests are never scheduled on shared runners.
 
 The board firmware must accept `HIL:RUN:<scenario>` over its control UART, emit `HIL:ARMED:<SCENARIO>` immediately before the fault, reboot, inspect the retained Latch event and hardware reset registers, then emit `HIL:PASS:<SCENARIO>`. Supported scenarios are brownout, watchdog, MPU, TrustZone, lazy FPU stacking, real Flash and reset registers.

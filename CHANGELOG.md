@@ -2,9 +2,9 @@
 
 All notable changes to Latch are recorded here. The project follows [Semantic Versioning](https://semver.org/) while it is pre-1.0, and the format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-The first public tag will establish the `v0.2.0` baseline. Until that tag exists, the public-preview work remains under `Unreleased`.
-
 ## [Unreleased]
+
+## [0.2.0] - 2026-07-29
 
 ### Added
 
@@ -15,6 +15,9 @@ The first public tag will establish the `v0.2.0` baseline. Until that tag exists
 - C++ wrapper, Rust `#![no_std]` SDK, host decoder, fuzz targets, hardware-in-the-loop entry points, packages, SBOM, and provenance automation.
 - Runnable host demo that captures an envelope and validates it with `latch-dump`.
 - Public roadmap, contribution guide, issue forms, support policy, and community code of conduct.
+- Reproducible physical ESP32 HIL fixture with a dedicated flash partition,
+  intentional panic/reboot recovery, public stream/ACK contract and retained
+  evidence from validation against the private production LastState Relay.
 
 ### Changed
 
@@ -27,6 +30,11 @@ The first public tag will establish the `v0.2.0` baseline. Until that tag exists
 - Instrumented the portable runtime itself during libFuzzer builds instead of instrumenting only the thin fuzz harnesses, and seeded all three fuzz targets deterministically.
 - Made the previously unbuilt host example use a valid build ID and enough retained storage for the configured spool.
 - Removed signed-overflow undefined behavior from delta decoding when valid values cross the signed 32-bit boundary.
+- Corrected the ESP32 fixture's flash-size/vendor configuration, panic-phase
+  selection and ESP-IDF component discovery after exercising them on physical
+  hardware.
+- Avoided a constant-false ChaCha20 length warning on 32-bit targets while
+  retaining the overflow guard on wider `size_t` implementations.
 
 ### Security
 
