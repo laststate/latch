@@ -160,8 +160,8 @@ static bool init_latch(void) {
         .erase = raw_erase,
         .sync = raw_sync,
     };
-    ls_result_t result = ls_flash_mirror_init(&flash_mirror, &raw_flash, flash_workspace,
-                                               sizeof flash_workspace);
+    ls_result_t result =
+        ls_flash_mirror_init(&flash_mirror, &raw_flash, flash_workspace, sizeof flash_workspace);
     if (result != LS_OK) {
         printf("HIL:FAIL:flash-mirror:%d\n", (int)result);
         return false;
