@@ -15,7 +15,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
         run: gh label create stale --repo "$REPO" --color eeeeee --force
-      - uses: actions/stale@v10
+      - uses: actions/stale@v11
         with:
           repo-token: ${{ github.token }}
           stale-issue-message: This issue has had no activity for 60 days. Comment or remove the stale label to keep it open.
