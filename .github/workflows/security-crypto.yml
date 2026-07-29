@@ -1,6 +1,7 @@
 name: Cryptography assurance
 on:
   push:
+    branches: [prod]
     paths: ["src/security/**", "src/storage/secure_storage.c", "src/envelope/lep.c", "include/laststate/security.h", "include/laststate/secure_storage.h", "tests/test_crypto*", "tests/test_secure*", ".github/workflows/security-crypto.yml"]
   pull_request:
     paths: ["src/security/**", "src/storage/secure_storage.c", "src/envelope/lep.c", "include/laststate/security.h", "include/laststate/secure_storage.h", "tests/test_crypto*", "tests/test_secure*", ".github/workflows/security-crypto.yml"]

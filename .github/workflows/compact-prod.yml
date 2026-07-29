@@ -1,42 +1,33 @@
-name: Compact production sources
+name: Compact source distribution
 
 on:
-  pull_request:
-    branches: [prod]
-    types: [opened, synchronize, reopened, ready_for_review, edited]
+  workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: compact-prod-${{ github.event.pull_request.number }}
+  group: compact-source-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  production-source-agent:
-    if: >-
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      github.event.pull_request.head.ref != 'dev'
+  compact-source:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-          fetch-depth: 0
       - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
-      - name: Compact production source files
-        run: python tools/minify_sources.py --in-place --verify
-      - name: Commit production formatting
-        env:
-          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+      - name: Create compact source distribution
+        run: python tools/minify_sources.py --output build/latch-production --verify
+      - name: Build and test compact distribution
         run: |
-          if git diff --quiet; then
-            exit 0
-          fi
-          git config user.name "latch-prod-minifier[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add --all
-          git commit -m "style(prod): compact production sources"
-          git push origin "HEAD:$HEAD_REF"
+          cmake -S build/latch-production -B build/compact-check -G Ninja -DCMAKE_BUILD_TYPE=Release -DLS_BUILD_TESTS=ON
+          cmake --build build/compact-check --parallel
+          ctest --test-dir build/compact-check --output-on-failure --timeout 120
+      - uses: actions/upload-artifact@v7
+        with:
+          name: latch-compact-source
+          path: build/latch-production
+          if-no-files-found: error
+          retention-days: 14

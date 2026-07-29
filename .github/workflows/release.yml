@@ -2,12 +2,30 @@ name: Release
 on:
   push:
     tags: ['v*']
-  workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 jobs:
+  verify-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Require a version-matched tag reachable from prod
+        run: |
+          git fetch --no-tags origin prod
+          git merge-base --is-ancestor "${GITHUB_SHA}" origin/prod || {
+            echo "Release tags must point to a commit reachable from prod" >&2
+            exit 1
+          }
+          project_version="$(sed -n 's/project(latch VERSION \([^ ]*\).*/\1/p' CMakeLists.txt)"
+          test "v${project_version}" = "${GITHUB_REF_NAME}" || {
+            echo "Tag ${GITHUB_REF_NAME} does not match project version v${project_version}" >&2
+            exit 1
+          }
   validate:
-    uses: ./.github/workflows/ci.yml
+    needs: verify-tag
+    uses: ./.github/workflows/required.yml
   package:
     needs: validate
     strategy:
@@ -23,6 +41,7 @@ jobs:
         with:
           name: release-${{ matrix.os }}
           path: laststate-latch-*
+          if-no-files-found: error
   publish:
     needs: package
     runs-on: ubuntu-latest
@@ -40,8 +59,15 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: '3.13'
+      - name: Create compact source archive
+        run: |
+          compact_name="latch-${GITHUB_REF_NAME}-compact-source"
+          python tools/minify_sources.py --output "${RUNNER_TEMP}/${compact_name}" --verify
+          tar -C "${RUNNER_TEMP}" -czf "dist/${compact_name}.tar.gz" "${compact_name}"
       - run: python tools/generate_sbom.py dist/latch.spdx.json
-      - run: sha256sum dist/* | tee dist/SHA256SUMS
+      - name: Generate portable checksum file
+        working-directory: dist
+        run: sha256sum * > SHA256SUMS
       - uses: actions/attest@v4
         with:
           subject-path: |

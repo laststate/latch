@@ -1,0 +1,63 @@
+name: Bug report
+description: Report reproducible incorrect behavior without sharing sensitive device data.
+title: "[Bug]: "
+labels:
+  - bug
+  - triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve Latch. Never include device keys, private endpoints, customer memory, or exploit details here. Use private vulnerability reporting for sensitive reports.
+  - type: input
+    id: version
+    attributes:
+      label: Latch version or commit
+      placeholder: v0.2.0 or a full commit SHA
+    validations:
+      required: true
+  - type: textarea
+    id: target
+    attributes:
+      label: Target environment
+      description: Include MCU/board, RTOS or bare metal, compiler and version, linker setup, and storage backend where relevant.
+      placeholder: STM32U5 / Zephyr 4.x / arm-none-eabi-gcc ... / retained RAM ...
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: What happened?
+      description: Describe the observed result and its impact.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: List exact commands, configuration, and steps. Link to a minimal public repository if useful.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Sanitized evidence
+      description: Add logs, result codes, or register summaries only after removing identifiers and sensitive memory.
+      render: text
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I searched existing issues for the same behavior.
+          required: true
+        - label: This report contains no secrets, customer memory, or private firmware.
+          required: true
+        - label: I can help test a fix on the target described above.
+          required: false

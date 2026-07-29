@@ -3,6 +3,7 @@ on:
   pull_request:
     paths: ["ports/zephyr/**", "tests/zephyr/**", "include/laststate/**", ".github/workflows/zephyr-integrations.yml"]
   push:
+    branches: [prod]
     paths: ["ports/zephyr/**", "tests/zephyr/**", "include/laststate/**", ".github/workflows/zephyr-integrations.yml"]
   workflow_dispatch:
 permissions:

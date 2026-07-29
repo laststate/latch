@@ -143,7 +143,7 @@ ls_result_t ls_delta_u32_decode(const uint8_t *input, size_t length, uint32_t *v
         ls_result_t result = ls_varint_u32_decode(input + at, length - at, &encoded, &consumed);
         if (result != LS_OK)
             return result;
-        previous = (uint32_t)((int32_t)previous + zigzag_decode(encoded));
+        previous += (uint32_t)zigzag_decode(encoded);
         values[items++] = previous;
         at += consumed;
     }

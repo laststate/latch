@@ -3,6 +3,7 @@ on:
   pull_request:
     paths: ['.github/**']
   push:
+    branches: [prod]
     paths: ['.github/**']
   workflow_dispatch:
 permissions:
@@ -16,5 +17,5 @@ jobs:
         with:
           go-version: stable
           cache: false
-      - run: go install github.com/rhysd/actionlint/cmd/actionlint@latest
+      - run: go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
       - run: actionlint -color

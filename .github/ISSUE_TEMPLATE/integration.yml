@@ -1,0 +1,58 @@
+name: Platform integration or qualification
+description: Propose or report work for a board, architecture, RTOS, transport, or storage backend.
+title: "[Integration]: "
+labels:
+  - hardware
+  - help wanted
+  - triage
+body:
+  - type: input
+    id: target
+    attributes:
+      label: Target
+      placeholder: nRF52840 DK with Zephyr, ESP32-S3 with ESP-IDF, bare-metal STM32U5...
+    validations:
+      required: true
+  - type: textarea
+    id: versions
+    attributes:
+      label: Exact versions
+      description: Include board revision, SDK/RTOS, compiler, linker script or memory placement, and Latch commit.
+    validations:
+      required: true
+  - type: dropdown
+    id: stage
+    attributes:
+      label: Stage
+      options:
+        - Proposal
+        - Compile-tested
+        - Simulator-tested
+        - Tested on hardware
+        - Qualification evidence
+    validations:
+      required: true
+  - type: textarea
+    id: scenario
+    attributes:
+      label: Scenario and expected evidence
+      description: Name the fault/reset, retained or Flash path, reboot behavior, and result that should be observed.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Current evidence
+      description: Add sanitized commands, logs, register summaries, or links to a reproducible example.
+  - type: textarea
+    id: unknowns
+    attributes:
+      label: Open hardware assumptions
+      description: List anything not yet verified, such as cache state, lazy FPU stacking, reset masks, or Flash timing.
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Data safety
+      options:
+        - label: The report contains no production keys, customer memory, private firmware, or proprietary endpoints.
+          required: true

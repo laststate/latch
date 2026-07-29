@@ -5,12 +5,18 @@ import datetime
 import hashlib
 import json
 import pathlib
+import re
 import subprocess
 
 parser = argparse.ArgumentParser()
 parser.add_argument("output", type=pathlib.Path)
 args = parser.parse_args()
 root = pathlib.Path(__file__).resolve().parents[1]
+cmake_project = (root / "CMakeLists.txt").read_text(encoding="utf-8")
+version_match = re.search(r"project\s*\(\s*latch\s+VERSION\s+([0-9]+\.[0-9]+\.[0-9]+)", cmake_project)
+if version_match is None:
+    raise SystemExit("could not read the Latch version from CMakeLists.txt")
+project_version = version_match.group(1)
 git_revision = subprocess.run(
     ["git", "rev-parse", "HEAD"], cwd=root, text=True, capture_output=True, check=False
 )
@@ -39,7 +45,7 @@ document = {
         {
             "name": "laststate-latch",
             "SPDXID": "SPDXRef-Package-Latch",
-            "versionInfo": "0.2.0",
+            "versionInfo": project_version,
             "downloadLocation": "https://github.com/laststate/latch",
             "filesAnalyzed": False,
             "licenseConcluded": "Apache-2.0",

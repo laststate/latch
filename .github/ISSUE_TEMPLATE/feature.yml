@@ -1,0 +1,44 @@
+name: Feature or design proposal
+description: Propose a capability by starting with the embedded problem it should solve.
+title: "[Proposal]: "
+labels:
+  - enhancement
+  - triage
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What failure, integration cost, or diagnostic gap cannot be handled well today?
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: Concrete use case
+      description: Include the target, failure mode, and why existing Latch APIs are insufficient.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed direction
+      description: Describe the smallest useful change. API sketches are welcome but not required.
+    validations:
+      required: true
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Constraints and trade-offs
+      description: Consider fault-context safety, memory bounds, wire compatibility, power loss, privacy, and portability.
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I would be willing to implement or test this proposal.
+        - label: This changes a public API, LEP, cryptography, or persistent layout and should be discussed before implementation.

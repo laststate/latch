@@ -4,8 +4,12 @@ if(POLICY CMP0184)
 endif()
 set(CMAKE_MSVC_RUNTIME_CHECKS "$<$<BOOL:0>:StackFrameErrorCheck>")
 project(latch VERSION 0.2.0 LANGUAGES C CXX)
-option(LS_BUILD_TESTS "Build host tests" ON)
-option(LS_FREESTANDING_CHECK "Compile the portable runtime without hosted assumptions" ON)
+set(LS_TOP_LEVEL_DEFAULT OFF)
+if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+  set(LS_TOP_LEVEL_DEFAULT ON)
+endif()
+option(LS_BUILD_TESTS "Build host tests" ${LS_TOP_LEVEL_DEFAULT})
+option(LS_FREESTANDING_CHECK "Compile the portable runtime without hosted assumptions" ${LS_TOP_LEVEL_DEFAULT})
 option(LS_BUILD_CORTEX_M "Build Cortex-M port with an ARM toolchain" OFF)
 option(LS_BUILD_RISCV "Build RV32 trap port with a RISC-V toolchain" OFF)
 option(LS_BUILD_XTENSA "Build Xtensa frame adapter" OFF)
@@ -13,9 +17,11 @@ option(LS_BUILD_LINUX "Build Linux signal and file ports" OFF)
 option(LS_BUILD_FUZZERS "Build libFuzzer targets (Clang only)" OFF)
 option(LS_BUILD_TOOLS "Build host LEP tools" OFF)
 option(LS_BUILD_BENCHMARKS "Build host benchmarks" OFF)
+option(LS_BUILD_EXAMPLES "Build host examples" OFF)
 option(LS_BUILD_MBEDTLS_PORT "Build the mbedTLS session transport adapter" OFF)
 option(LS_BUILD_CRYPTOAUTHLIB_PORT "Build the Microchip CryptoAuthLib secure-element adapter" OFF)
 option(LS_TEST_LIBSODIUM "Cross-check XChaCha20-Poly1305 against libsodium" OFF)
+unset(LS_TOP_LEVEL_DEFAULT)
 include(GNUInstallDirs)
 include(cmake/GenerateBuildId.cmake)
 
@@ -229,6 +235,19 @@ if(LS_BUILD_FUZZERS)
   if(NOT CMAKE_C_COMPILER_ID MATCHES "Clang")
     message(FATAL_ERROR "LS_BUILD_FUZZERS requires Clang")
   endif()
+  foreach(target
+      latch-core_obj
+      latch-capture_obj
+      latch-envelope_obj
+      latch-spool_obj
+      latch-storage-memory_obj
+      latch-transport_obj
+      latch-metrics_obj
+      latch-security_obj)
+    target_compile_options(${target} PRIVATE
+      -fsanitize=fuzzer-no-link,address,undefined
+      -fno-omit-frame-pointer)
+  endforeach()
   foreach(fuzzer lep compression aead)
     add_executable(fuzz-${fuzzer} fuzz/fuzz_${fuzzer}.c)
     target_link_libraries(fuzz-${fuzzer} PRIVATE latch)
@@ -240,6 +259,25 @@ endif()
 if(LS_BUILD_TOOLS)
   add_executable(latch-dump tools/latch_dump.c)
   target_link_libraries(latch-dump PRIVATE latch)
+endif()
+if(LS_BUILD_EXAMPLES)
+  if(CMAKE_CROSSCOMPILING)
+    message(FATAL_ERROR "LS_BUILD_EXAMPLES builds hosted examples and cannot be used with a cross toolchain")
+  endif()
+  add_executable(latch-host-example examples/host/main.c)
+  target_link_libraries(latch-host-example PRIVATE latch)
+  if(LS_BUILD_TESTS)
+    add_test(NAME latch-host-example COMMAND latch-host-example)
+    set_tests_properties(latch-host-example PROPERTIES
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+    if(LS_BUILD_TOOLS)
+      add_test(NAME latch-host-example-dump
+        COMMAND latch-dump ${CMAKE_CURRENT_BINARY_DIR}/latch-demo.lst)
+      set_tests_properties(latch-host-example-dump PROPERTIES
+        DEPENDS latch-host-example
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+    endif()
+  endif()
 endif()
 if(LS_BUILD_BENCHMARKS)
   add_executable(latch-benchmark benchmarks/benchmark.c)

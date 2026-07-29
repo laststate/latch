@@ -3,6 +3,7 @@ on:
   pull_request:
     paths: ['**/*.md', '.github/workflows/**']
   push:
+    branches: [prod]
     paths: ['**/*.md', '.github/workflows/**']
 permissions:
   contents: read

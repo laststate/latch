@@ -13,6 +13,6 @@
 - Run the HIL scenarios on every supported board, linker script and toolchain: HardFault, MSP, PSP, corrupt PSP, stack overflow, nested faults, watchdog, brownout, Flash and reset registers.
 - Qualify vendor integrations for TLS, BLE, LoRaWAN, CAN, secure elements, TrustZone placement and RISC-V trap ownership.
 - Obtain an independent cryptographic, side-channel and provisioning review. Repository tests are not an audit or certification.
-- Protect `prod`, require the validation and source-compaction checks, publish the release artifacts, and retain the HIL evidence with the release record.
+- Protect `prod`, require the stable validation check, build and test the separate compact source artifact, publish the release artifacts, and retain the HIL evidence with the release record.
 
 No release gate is considered complete merely because host tests pass.

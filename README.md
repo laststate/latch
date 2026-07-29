@@ -1,92 +1,165 @@
 # Latch
 
-Latch is Last State's heap-free C11 runtime for capturing, preserving and delivering the last known state of an embedded device.
+**When embedded firmware crashes, the reboot usually erases the evidence that explains why.**
+Latch preserves the device's last useful state across reset, then queues it for delivery when the device is back.
+The embedded runtime is heap-free C11 with bounded buffers: you keep control of storage, transport, and reset policy.
 
-The current implementation includes:
+[![CI](https://github.com/laststate/latch/actions/workflows/ci.yml/badge.svg?branch=prod)](https://github.com/laststate/latch/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![C11](https://img.shields.io/badge/C-C11-00599C.svg)](CMakeLists.txt)
+[![Rust no_std](https://img.shields.io/badge/Rust-no__std-000000.svg)](rust/README.md)
 
-- deterministic LEP v1 envelopes, length-checked TLVs, public validation/visitor APIs and CRC32;
-- persistent boot counters, previous uptime, pending-crash association, expected reset tracking, boot-loop detection and OTA state;
-- fixed breadcrumb, metric-window, power-sample, health, watchdog and performance buffers;
-- binary logs, runtime/compile-time filters, structured breadcrumb values and optional production builds without stored strings;
-- assertions with continue/reset/halt/breakpoint/callback policies;
-- authorized selective dumps, bounded stack snapshots, full authorized coredumps and zero/hash/exclude redaction;
-- atomic spool records, priority-aware retention, recovery, retry counters, ACK-aware delivery and transport fragmentation;
-- Cortex-M fault preservation with dedicated handlers, emergency stack, M0/M0+/M3/M4/M7/M23/M33-safe assembly paths, FPU frame decoding and TrustZone fault status;
-- RV32 trap entry, Xtensa frame adapter, Linux signal capture and STM32/RP/ESP-IDF reset ports;
-- generic acknowledged stream framing for UART, USB CDC and RS-485;
-- XChaCha20-Poly1305 authenticated envelope encryption, HKDF-SHA-256 domain separation, CSPRNG enforcement, replay windows and legacy HMAC verification;
-- native mbedTLS and Zephyr verified-TLS socket transports, encrypted BLE GATT, fragmented CAN/CAN-FD and LoRaWAN transports, including cellular modem socket offload;
-- dual-bank mirroring, multi-slot Flash wear leveling, authenticated at-rest storage and interrupted-write simulation;
-- secure-element contracts plus a CryptoAuthLib adapter for hardware RNG, P-256 signing, key derivation and X.509 certificate reconstruction;
-- C++ RAII wrapper and a Rust `#![no_std]` SDK;
-- separate CMake libraries for core, capture, envelope, spool, storage, transport and metrics.
+```text
+without Latch  HardFault -> reboot -> "could not reproduce"
 
-## Build
+with Latch     HardFault -> retained snapshot -> reboot -> persistent spool -> your transport
+                                  +-> CPU context, reset reason, build ID,
+                                      breadcrumbs, metrics, and health data
+```
+
+Once Latch is initialized, its storage and transport are registered, and `ls_boot()` has completed, useful evidence is three calls away:
+
+```c
+ls_breadcrumb("sensor:read");
+ls_metric_u32("battery_mv", 3264);
+ls_capture_message("sensor timeout", LS_SEVERITY_ERROR);
+```
+
+Architecture ports can capture fault state automatically. On the next boot, Latch promotes the retained snapshot into a transactional spool; normal runtime can then call `ls_flush()` to deliver a deterministic [LEP v1](docs/lep-v1.md) envelope through the best available transport.
+
+## Try it in 60 seconds
+
+You need CMake 3.20+, Ninja, and a C/C++ compiler. The host demo uses the same public in-memory storage, transport, capture, and decoding APIs as an embedded integration.
 
 ```sh
-cmake -S . -B build
-cmake --build build
-ctest --test-dir build --output-on-failure
+git clone https://github.com/laststate/latch.git
+cd latch
+cmake --preset host-debug
+cmake --build --preset host-debug
+ctest --preset host-debug
+cd build/host-debug
+./latch-host-example
+./latch-dump latch-demo.lst
+```
+
+On Windows, use `latch-host-example.exe` and `latch-dump.exe`. The demo writes a binary envelope, and `latch-dump` validates its header and walks every length-checked TLV.
+
+```text
+Captured 291-byte LEP envelope in latch-demo.lst
+LEP v1 type=2 arch=0 flags=0x00 sequence=1 event=b63f7832 payload=263
+  tlv type=1 length=71
+  ...
+```
+
+See [the complete host example](examples/host/main.c) for initialization, in-memory storage, and transport registration.
+
+## What survives the reboot
+
+Latch is built for failures where ordinary logging becomes least reliable:
+
+- CPU context and fault status on supported Cortex-M, RV32, and Xtensa integrations;
+- reset reason, boot counters, previous uptime, boot-loop and OTA state;
+- fixed-capacity breadcrumbs, metrics, logs, power, health, and performance samples;
+- selected stack or memory regions with explicit exclude, zero, or hash redaction;
+- firmware identity and a reproducible build ID;
+- retry and acknowledgement state in a CRC-protected persistent spool.
+
+No allocator, scheduler, network stack, or hardware register map is hidden inside the core. Integrators provide the memory, timestamp, reset normalization, storage backend, and one or more transports.
+
+## How it works
+
+```text
+fault -> retained minimal snapshot -> reboot -> LEP envelope --+
+                                                               |
+error -----------> bounded state snapshot -> LEP envelope -----+-> persistent spool
+                                                                        |
+                                                                        v
+                                                    normal runtime -> transport -> ACK
+```
+
+The critical path stays deliberately small. Unknown LEP TLVs are skippable, interrupted spool records are ignored during recovery, and retained fault state is cleared only after it is promoted successfully. Read the [architecture](docs/architecture.md), [concurrency contract](docs/concurrency.md), and [wire format](docs/lep-v1.md) for the invariants.
+
+## Integrate Latch
+
+1. Link `laststate::latch` or the smaller modules you need.
+2. Provide identity and a monotonic timestamp to `ls_init()`.
+3. Register retained or flash-backed storage and at least one transport.
+4. Call `ls_boot()` early, after the backend needed to recover the previous boot is ready.
+5. Add breadcrumbs and metrics around the paths that are expensive to reproduce.
+6. Call `ls_flush()` from normal runtime when delivery is allowed.
+7. Install the architecture fault/trap integration and qualify it on the real board and toolchain.
+
+For a vendored CMake checkout:
+
+```cmake
+add_subdirectory(third_party/latch)
+target_link_libraries(firmware PRIVATE laststate::latch)
+```
+
+Start with the [integration overview](docs/integration-overview.md), then choose a [port](docs/ports.md) or a [native integration](docs/native-integrations.md). Rust firmware can use the [`#![no_std]` SDK](rust/README.md) over the C runtime.
+
+## Why not just log to UART or flash?
+
+| Failure mode | Ordinary logging | Latch |
+|---|---|---|
+| Fault occurs while the scheduler or heap is damaged | May allocate or depend on a task | Bounded, heap-free capture path |
+| Device resets before upload | Last lines are often lost | Retained snapshot and persistent spool |
+| Link is unavailable during the incident | Delivery fails in the fault path | Retry after boot through another transport |
+| Firmware changed before reproduction | Logs may lack exact identity | Build ID travels with the envelope |
+| Captured memory contains secrets | Ad hoc filtering | Registered regions and explicit redaction policies |
+
+Latch is not a hosted observability backend and does not own the product's networking. It produces a portable, verifiable evidence envelope and hands it to infrastructure you control.
+
+## Targets and modules
+
+The portable runtime is split into `core`, `capture`, `envelope`, `spool`, `storage`, `transport`, `metrics`, and `security` libraries. The complete target is `laststate::latch`.
+
+Architecture and platform support includes Cortex-M, RV32, Xtensa/ESP-IDF, Linux signal capture, STM32/RP reset ports, FreeRTOS, Zephyr, generic acknowledged streams, mbedTLS, BLE GATT, CAN/CAN-FD, LoRaWAN, cellular socket offload, and a CryptoAuthLib secure-element adapter.
+
+Feature switches and buffer capacities live in [`include/laststate/config.h`](include/laststate/config.h). Production profiles can remove stored strings, disable features, and shrink buffers that the firmware does not need.
+
+## Security and production status
+
+Latch supports XChaCha20-Poly1305 envelopes, HKDF-SHA-256 domain separation, replay windows, authenticated at-rest storage, and hardware-backed key contracts. These mechanisms still require a hardware CSPRNG, per-device provisioning, verified TLS, and an independent review for the product threat model. Read the [security policy](SECURITY.md) before enabling encryption or dumps.
+
+The portable runtime and wire format are extensively host-tested. Hardware fault entry, linker placement, flash geometry, reset registers, vendor networking, TrustZone boundaries, and secure elements **must be qualified on each selected board and toolchain**. Host tests are not hardware certification. The exact release gates are in [production readiness](docs/production-readiness.md) and [implementation status](docs/implementation-status.md).
+
+## Documentation
+
+- [Integration overview](docs/integration-overview.md)
+- [Architecture](docs/architecture.md)
+- [LEP v1 wire format](docs/lep-v1.md)
+- [Security and storage](docs/security-and-storage.md)
+- [Ports](docs/ports.md) and [native integrations](docs/native-integrations.md)
+- [Hardware-in-the-loop qualification](docs/hil.md)
+- [Production readiness](docs/production-readiness.md)
+- [Roadmap](ROADMAP.md) and [changelog](CHANGELOG.md)
+
+## Contributing
+
+New contributors should start with a [`good first issue`](https://github.com/laststate/latch/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22). Integration experience, documentation fixes, test vectors, board reports, and small tooling improvements are all valuable.
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md) for the fastest validation path and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for the community standard. Use [GitHub Discussions](https://github.com/laststate/latch/discussions) for integration questions and design ideas. Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
+
+The maintainer target is to acknowledge new issues and pull requests within 72 hours. It is a target, not an SLA; one friendly ping after seven days is welcome.
+
+## Build and package
+
+```sh
+cmake --preset host-debug
+cmake --build --preset host-debug
+ctest --preset host-debug
 cargo check --manifest-path rust/latch/Cargo.toml
 ```
 
-On Windows with Visual Studio 2022, use the checked-in `host-msvc` preset:
-
-```sh
-cmake --preset host-msvc
-cmake --build --preset host-msvc
-ctest --preset host-msvc
-```
-
-CMake generates a 128-bit printable Build ID from the project version, Git revision and source hashes. Applications may override it with `LS_BUILD_ID` or `identity.firmware_build_id`; invalid IDs are rejected by `ls_init`.
-
-## Compact production source
-
-Keep the checkout formatted for maintenance. To make a separate compact distribution, run:
+For a separate compact source distribution, while keeping the reviewable checkout untouched:
 
 ```sh
 python tools/minify_sources.py --output ../latch-production --verify
 ```
 
-The script copies the project, removes comments and unnecessary lexical whitespace from C, C++, Rust, and assembly source files, preserves the original checkout, and writes `minify-manifest.json` with the result. It does not replace compiler optimization, link-time optimization, or binary stripping when producing firmware.
+Release automation validates that compact distribution and publishes packages, checksums, an SPDX SBOM, and build provenance. Repository automation is documented in [docs/automation.md](docs/automation.md).
 
-Development happens on `dev`, where sources stay formatted for review. Production changes target `prod`; the `Compact production sources` workflow applies `python tools/minify_sources.py --in-place --verify` to same-repository pull requests before they are merged. Do not run `--in-place` on `dev`.
+## License
 
-After publishing the branches, protect `prod` from direct pushes and require the `Compact production sources / production-source-agent` check before merging. Those GitHub repository settings are intentionally not changed by this local checkout.
-
-## Libraries
-
-Use `laststate::latch` for the complete portable runtime, or link the modular archives explicitly:
-
-- `latch-core`
-- `latch-capture`
-- `latch-envelope`
-- `latch-spool`
-- `latch-storage-memory`
-- `latch-transport`
-- `latch-metrics`
-- `latch-security`
-
-Architecture and platform libraries include `latch-cortex-m`, `latch-riscv`, `latch-xtensa`, `latch-linux`, `latch-port-stm32`, `latch-port-rp`, `latch-port-esp-idf`, `latch-port-freertos` and `latch-port-zephyr`.
-
-Optional integrations are enabled with `LS_BUILD_MBEDTLS_PORT=ON` and `LS_BUILD_CRYPTOAUTHLIB_PORT=ON`.
-
-## Storage
-
-Call `ls_storage_required_size()` before allocating retained storage. `ls_memory_storage_*` adapts a byte buffer; place it in `.noinit` with `LS_NOINIT` for reset persistence. `ls_flash_wear_init()` distributes complete transactional images over 2–32 erase slots. `ls_secure_storage_init()` can wrap that logical backend with generation-keyed XChaCha20-Poly1305 encryption. The provided workspace must be retained only while the backend is active and is wiped after each operation.
-
-## Security setup
-
-Register a hardware CSPRNG with `ls_security_set_random_provider()`, then provision exactly 32 bytes with `ls_security_set_key()`. A configured key makes new envelopes encrypted and authenticated by default. See [SECURITY.md](SECURITY.md) for nonce, rotation and provisioning requirements and [docs/security-and-storage.md](docs/security-and-storage.md) for integration examples.
-
-## Fault integration
-
-For Cortex-M, call `ls_cortex_m_init()` during early boot and install the dedicated handler symbols in the vector table. For RV32, initialize `mscratch` with `ls_riscv_init()` and point `mtvec` at `ls_riscv_trap_handler`. Xtensa/ESP-IDF panic integration passes the vendor exception frame through `ls_xtensa_capture_frame()`.
-
-Ports that touch CPU exception state still require validation on each MCU/toolchain combination before production deployment; host tests cannot prove interrupt-vector, MPU or vendor reset-register behavior.
-
-Physical brownout, watchdog, MPU, TrustZone, lazy-FPU, Flash and reset-register scenarios are driven by the self-hosted HIL workflow described in [docs/hil.md](docs/hil.md). Native transport and secure-element integration is described in [docs/native-integrations.md](docs/native-integrations.md).
-
-Licensed under Apache-2.0.
-
-Repository validation, maintenance bots and the GitHub settings required for automated fix commits are documented in [docs/automation.md](docs/automation.md).
+Apache-2.0. See [LICENSE](LICENSE).

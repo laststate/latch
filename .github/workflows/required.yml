@@ -1,0 +1,60 @@
+name: Required
+
+on:
+  push:
+    branches: [prod]
+  pull_request:
+    branches: [prod]
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: required-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  required:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - uses: actions/setup-go@v6
+        with:
+          go-version: stable
+          cache: false
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+          targets: thumbv7em-none-eabihf,riscv32imac-unknown-none-elf
+      - name: Build portable runtime, tools, and example
+        run: |
+          cmake --preset host-debug
+          cmake --build --preset host-debug --parallel
+      - name: Run portable tests
+        run: ctest --preset host-debug --timeout 120
+      - name: Validate documentation, vectors, and source distribution
+        run: |
+          python tools/check_docs.py
+          python tools/check_test_vector.py
+          python tools/test_minify_sources.py
+          python tools/seed_fuzz_corpora.py --output build/fuzz-seeds
+          python tools/minify_sources.py --output build/compact-source --verify
+          cmake -S build/compact-source -B build/compact-check -G Ninja -DCMAKE_BUILD_TYPE=Release -DLS_BUILD_TESTS=ON
+          cmake --build build/compact-check --parallel
+          ctest --test-dir build/compact-check --output-on-failure --timeout 120
+      - name: Validate GitHub Actions
+        run: |
+          go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
+          actionlint -color
+      - name: Validate Rust SDK
+        run: |
+          cargo fmt --manifest-path rust/latch/Cargo.toml -- --check
+          cargo clippy --manifest-path rust/latch/Cargo.toml --all-targets -- -D warnings
+          cargo test --manifest-path rust/latch/Cargo.toml
+          cargo check --manifest-path rust/latch/Cargo.toml --target thumbv7em-none-eabihf
+          cargo check --manifest-path rust/latch/Cargo.toml --target riscv32imac-unknown-none-elf

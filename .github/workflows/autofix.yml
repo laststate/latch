@@ -3,7 +3,6 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
 permissions:
-  actions: write
   contents: write
 concurrency:
   group: autofix-${{ github.event.pull_request.number }}
@@ -13,8 +12,7 @@ jobs:
     if: >-
       github.event.pull_request.head.repo.full_name == github.repository &&
       github.actor != 'dependabot[bot]' &&
-      github.event.pull_request.draft == false &&
-      github.event.pull_request.base.ref != 'prod'
+      github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -51,13 +49,3 @@ jobs:
           git commit -m "style: apply automated formatting"
           git push origin "HEAD:$HEAD_REF"
           echo "created=true" >> "$GITHUB_OUTPUT"
-      - name: Re-run required checks on the bot commit
-        if: steps.commit.outputs.created == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          HEAD_REF: ${{ github.event.pull_request.head.ref }}
-        run: |
-          gh workflow run ci.yml --ref "$HEAD_REF"
-          gh workflow run quality.yml --ref "$HEAD_REF"
-          gh workflow run rust.yml --ref "$HEAD_REF"
-          gh workflow run workflow-lint.yml --ref "$HEAD_REF"
