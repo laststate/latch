@@ -12,6 +12,14 @@ static void poly_pad16(ls_poly1305_context_t *context, size_t length) {
     if (remainder)
         ls_poly1305_update(context, zero, 16u - remainder);
 }
+static bool chacha20_length_overflows(size_t length) {
+#if SIZE_MAX > UINT32_MAX
+    return (uint64_t)length > UINT64_C(0xffffffff) * 64u;
+#else
+    (void)length;
+    return false;
+#endif
+}
 static void calculate_tag(const uint8_t key[32], const uint8_t nonce[12], const uint8_t *aad,
                           size_t aad_length, const uint8_t *ciphertext, size_t length,
                           uint8_t tag[16]) {
@@ -39,7 +47,7 @@ ls_result_t ls_chacha20_poly1305_encrypt(const uint8_t key[32], const uint8_t no
     if (!key || !nonce || !tag || (!aad && aad_length) || (!plaintext && length) ||
         (!ciphertext && length))
         return LS_EINVAL;
-    if ((uint64_t)length > UINT64_C(0xffffffff) * 64u)
+    if (chacha20_length_overflows(length))
         return LS_EOVERFLOW;
     if (length)
         ls_chacha20_xor(key, nonce, 1, plaintext, ciphertext, length);
@@ -53,7 +61,7 @@ ls_result_t ls_chacha20_poly1305_decrypt(const uint8_t key[32], const uint8_t no
     uint8_t expected[16];
     if (!key || !nonce || !tag || (!aad && aad_length) || (!ciphertext && length))
         return LS_EINVAL;
-    if ((uint64_t)length > UINT64_C(0xffffffff) * 64u)
+    if (chacha20_length_overflows(length))
         return LS_EOVERFLOW;
     calculate_tag(key, nonce, aad, aad_length, ciphertext, length, expected);
     bool valid = ls_constant_time_equal(expected, tag, sizeof expected);
