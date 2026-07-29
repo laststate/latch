@@ -99,9 +99,8 @@ static int setup(void) {
 
 static int test_health_and_power(void) {
     static const char *health_names[LS_HEALTH_CAPACITY + 1] = {
-        "task00", "task01", "task02", "task03", "task04", "task05",
-        "task06", "task07", "task08", "task09", "task10", "task11",
-        "task12", "task13", "task14", "task15", "overflow",
+        "task00", "task01", "task02", "task03", "task04", "task05", "task06", "task07",   "task08",
+        "task09", "task10", "task11", "task12", "task13", "task14", "task15", "overflow",
     };
 
     ls_health_register(0, 10);

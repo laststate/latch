@@ -12,7 +12,7 @@ jobs:
     env:
       SOURCE_DATE_EPOCH: 1704067200
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - run: cmake -S . -B build-a -G Ninja -DCMAKE_BUILD_TYPE=Release -DLS_BUILD_TESTS=OFF
       - run: cmake --build build-a --parallel
       - run: cmake -S . -B build-b -G Ninja -DCMAKE_BUILD_TYPE=Release -DLS_BUILD_TESTS=OFF

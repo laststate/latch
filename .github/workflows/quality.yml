@@ -15,14 +15,14 @@ jobs:
       ASAN_OPTIONS: detect_leaks=1:strict_string_checks=1:check_initialization_order=1
       UBSAN_OPTIONS: print_stacktrace=1:halt_on_error=1
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DLS_BUILD_TESTS=ON -DCMAKE_C_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer" -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer" -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address,undefined"
       - run: cmake --build build --parallel
       - run: ctest --test-dir build --output-on-failure --timeout 60
   static-analysis:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - run: sudo apt-get update && sudo apt-get install -y clang-tidy cppcheck ninja-build
       - run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLS_BUILD_TESTS=ON
       - run: cppcheck --error-exitcode=1 --enable=warning,performance,portability --inline-suppr -I include src arch ports
@@ -33,7 +33,7 @@ jobs:
       matrix:
         compiler: [gcc, clang]
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DLS_BUILD_TESTS=ON -DCMAKE_C_FLAGS=-Werror -DCMAKE_CXX_FLAGS=-Werror
         env:
           CC: ${{ matrix.compiler }}

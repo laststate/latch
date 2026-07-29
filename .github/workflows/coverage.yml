@@ -12,19 +12,19 @@ jobs:
     env:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - run: sudo apt-get update && sudo apt-get install -y lcov ninja-build
       - run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DLS_BUILD_TESTS=ON -DCMAKE_C_FLAGS=--coverage -DCMAKE_CXX_FLAGS=--coverage -DCMAKE_EXE_LINKER_FLAGS=--coverage
       - run: cmake --build build --parallel
       - run: ctest --test-dir build --output-on-failure
       - run: lcov --capture --directory build --output-file coverage.info --ignore-errors mismatch && lcov --remove coverage.info '*/tests/*' '*/build/*' --output-file coverage.info --ignore-errors unused
-      - uses: codecov/codecov-action@v7
+      - uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7
         if: env.CODECOV_TOKEN != ''
         with:
           files: coverage.info
           fail_ci_if_error: true
           token: ${{ secrets.CODECOV_TOKEN }}
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: coverage
           path: coverage.info

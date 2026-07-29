@@ -1,0 +1,6 @@
+# Default ownership keeps security-sensitive changes visible to the maintainer.
+* @TheusHen
+
+# Supply-chain automation and disclosure policy require explicit owner review.
+/.github/workflows/ @TheusHen
+/SECURITY.md @TheusHen
