@@ -18,6 +18,14 @@ with Latch     HardFault -> retained snapshot -> reboot -> persistent spool -> y
                                       breadcrumbs, metrics, and health data
 ```
 
+[![Latch physical ESP32 crash, reboot, recovery, and durable ACK demonstration](docs/assets/latch-esp32-demo.gif)](hil/esp32_relay/README.md)
+
+_Live capture of a physical ESP32 executing the intentional-panic fixture:
+Latch persists the event, the board aborts and reboots, then a public collector
+validates both LEP envelopes and returns durable acknowledgements. Idle time is
+compressed. The complete procedure, decoded evidence, and current Xtensa
+limitation are documented in the [ESP32 HIL fixture](hil/esp32_relay/README.md)._
+
 Once Latch is initialized, its storage and transport are registered, and `ls_boot()` has completed, useful evidence is three calls away:
 
 ```c
