@@ -13,6 +13,8 @@ if(CONFIG_LATCH)
     ${LATCH_CORE} ${LATCH_CAPTURE} ${LATCH_ENVELOPE} ${LATCH_SPOOL}
     ${LATCH_STORAGE} ${LATCH_TRANSPORT} ${LATCH_METRICS} ${LATCH_SECURITY}
     ${LATCH_ROOT}/ports/zephyr/zephyr_latch.c)
-  zephyr_library_include_directories(${LATCH_ROOT}/include ${LATCH_ROOT}/ports/zephyr)
+  # Public Latch headers must also be visible to the application target. The
+  # library-scoped helper only exposes them while compiling Latch itself.
+  zephyr_include_directories(${LATCH_ROOT}/include ${LATCH_ROOT}/ports/zephyr)
   zephyr_library_compile_definitions(LS_MAX_EVENT_SIZE=${CONFIG_LATCH_MAX_EVENT_SIZE})
 endif()
