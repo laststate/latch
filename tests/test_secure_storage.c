@@ -40,6 +40,12 @@ static int contains(const uint8_t *haystack, size_t haystack_length, const uint8
             return 1;
     return 0;
 }
+static int all_zero(const uint8_t *data, size_t length) {
+    for (size_t index = 0; index < length; ++index)
+        if (data[index] != 0u)
+            return 0;
+    return 1;
+}
 int main(void) {
     memset(physical, 0xff, sizeof physical);
     ls_storage_sim_t sim = {physical, sizeof physical, true, 0, 0, 0};
@@ -88,8 +94,20 @@ int main(void) {
     CHECK(ls_secure_storage_rotate_key(&reopened, 0, 9) == LS_EINVAL);
     CHECK(ls_secure_storage_rotate_key(&reopened, rotated_key, 0) == LS_EINVAL);
     CHECK(ls_secure_storage_rotate_key(&reopened, rotated_key, 8) == LS_EINVAL);
+    ls_storage_backend_t *saved_storage = reopened.storage;
+    uint8_t *saved_workspace = reopened.workspace;
+    reopened.storage = 0;
+    CHECK(ls_secure_storage_rotate_key(&reopened, rotated_key, 9) == LS_EINVAL);
+    reopened.storage = saved_storage;
+    reopened.workspace = 0;
+    CHECK(ls_secure_storage_rotate_key(&reopened, rotated_key, 9) == LS_EINVAL);
+    reopened.workspace = saved_workspace;
     uint8_t failed_key[32];
     memset(failed_key, 0x91, sizeof failed_key);
+    ls_storage_sim_fail_at(&sim, 1, 0);
+    CHECK(ls_secure_storage_rotate_key(&reopened, failed_key, 9) != LS_OK);
+    CHECK(reopened.key_id == 8u && all_zero(reopened.workspace, reopened.workspace_size));
+    ls_storage_sim_reset_faults(&sim);
     /* Operation 1 is the read performed by load_image(); fail the first
        persistence
      * operation so rotation must restore the old in-memory key. */

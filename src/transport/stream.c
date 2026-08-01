@@ -222,7 +222,7 @@ ls_result_t ls_stream_frame_parse(const uint8_t *data, size_t length, size_t max
         return LS_ENOSPACE;
     }
     size_t overhead = LS_STREAM_TRANSPORT_HEADER_SIZE + LS_STREAM_TRANSPORT_TRAILER_SIZE;
-    if ((size_t)encoded_length > SIZE_MAX - overhead || length != overhead + encoded_length) {
+    if ((size_t)encoded_length != length - overhead) {
         return LS_ECORRUPT;
     }
     const uint8_t *envelope = data + LS_STREAM_TRANSPORT_HEADER_SIZE;

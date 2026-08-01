@@ -138,6 +138,10 @@ int main(void) {
     CHECK(ls_stream_frame_parse(stream_bytes, stream_length, LS_MAX_EVENT_SIZE, &parsed_frame) ==
           LS_ECORRUPT);
     stream_bytes[0] = 'L';
+    stream_bytes[1] = 'X';
+    CHECK(ls_stream_frame_parse(stream_bytes, stream_length, LS_MAX_EVENT_SIZE, &parsed_frame) ==
+          LS_ECORRUPT);
+    stream_bytes[1] = 'S';
     stream_bytes[2] = 0xffu;
     CHECK(ls_stream_frame_parse(stream_bytes, stream_length, LS_MAX_EVENT_SIZE, &parsed_frame) ==
           LS_ENOTSUP);
@@ -194,9 +198,14 @@ int main(void) {
     ack[0] = 'X';
     CHECK(ls_lsak_parse(ack, sizeof ack, &parsed_ack) == LS_ECORRUPT);
     ack[0] = 'L';
+    ack[7] = 1u;
+    CHECK(ls_lsak_parse(ack, sizeof ack, &parsed_ack) == LS_ECORRUPT);
+    ack[7] = 0u;
     ack[6] = 1u;
     CHECK(ls_lsak_parse(ack, sizeof ack, &parsed_ack) == LS_ECORRUPT);
     ack[6] = 0u;
+    ack[5] = 0u;
+    CHECK(ls_lsak_parse(ack, sizeof ack, &parsed_ack) == LS_ECORRUPT);
     ack[5] = 0xffu;
     CHECK(ls_lsak_parse(ack, sizeof ack, &parsed_ack) == LS_ECORRUPT);
     ack[5] = LS_LSAK_ACK_STORED;

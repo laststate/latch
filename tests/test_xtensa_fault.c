@@ -1,6 +1,8 @@
 #include <stdio.h>
+#include <stddef.h>
 #include "xtensa.h"
 #include "laststate/latch.h"
+#include "../src/core/internal.h"
 
 #define CHECK(x)                                                                                   \
     do {                                                                                           \
@@ -11,6 +13,68 @@
     } while (0)
 
 static uint8_t retained[50000];
+
+static void refresh_snapshot_crcs(ls_minimal_snapshot_t *snapshot) {
+    snapshot->crc = ls_crc32(snapshot, offsetof(ls_minimal_snapshot_t, crc));
+    snapshot->extension_crc =
+        ls_crc32(snapshot, offsetof(ls_minimal_snapshot_t, extension_crc));
+    snapshot->context_crc = ls_crc32(snapshot, offsetof(ls_minimal_snapshot_t, context_crc));
+}
+
+static int test_snapshot_versions(const ls_minimal_snapshot_t *source) {
+    ls_minimal_snapshot_t snapshot;
+
+    CHECK(!ls_minimal_snapshot_validate(0));
+    snapshot = *source;
+    snapshot.magic = 0u;
+    CHECK(!ls_minimal_snapshot_validate(&snapshot));
+
+    snapshot = *source;
+    snapshot.version = 1u;
+    refresh_snapshot_crcs(&snapshot);
+    CHECK(ls_minimal_snapshot_validate(&snapshot));
+    CHECK(snapshot.fault == 0u && snapshot.architecture == 0u && snapshot.context_crc == 0u);
+    snapshot = *source;
+    snapshot.version = 1u;
+    refresh_snapshot_crcs(&snapshot);
+    snapshot.crc ^= 1u;
+    CHECK(!ls_minimal_snapshot_validate(&snapshot));
+
+    snapshot = *source;
+    snapshot.version = 2u;
+    refresh_snapshot_crcs(&snapshot);
+    CHECK(ls_minimal_snapshot_validate(&snapshot));
+    CHECK(snapshot.fault == (uint32_t)source->fault && snapshot.architecture == 0u &&
+          snapshot.context_crc == 0u);
+    snapshot = *source;
+    snapshot.version = 2u;
+    refresh_snapshot_crcs(&snapshot);
+    snapshot.crc ^= 1u;
+    CHECK(!ls_minimal_snapshot_validate(&snapshot));
+    snapshot = *source;
+    snapshot.version = 2u;
+    refresh_snapshot_crcs(&snapshot);
+    snapshot.extension_crc ^= 1u;
+    CHECK(!ls_minimal_snapshot_validate(&snapshot));
+
+    snapshot = *source;
+    CHECK(ls_minimal_snapshot_validate(&snapshot));
+    snapshot = *source;
+    snapshot.crc ^= 1u;
+    CHECK(!ls_minimal_snapshot_validate(&snapshot));
+    snapshot = *source;
+    snapshot.extension_crc ^= 1u;
+    CHECK(!ls_minimal_snapshot_validate(&snapshot));
+    snapshot = *source;
+    snapshot.context_crc ^= 1u;
+    CHECK(!ls_minimal_snapshot_validate(&snapshot));
+
+    snapshot = *source;
+    snapshot.version = LS_MINIMAL_SNAPSHOT_VERSION + 1u;
+    refresh_snapshot_crcs(&snapshot);
+    CHECK(!ls_minimal_snapshot_validate(&snapshot));
+    return 0;
+}
 
 int main(void) {
     ls_xtensa_frame_t frame = {
@@ -63,6 +127,12 @@ int main(void) {
     CHECK(snapshot.pc == frame.pc && snapshot.lr == frame.a[0]);
     CHECK(snapshot.registers[15] == frame.a[15]);
     CHECK(snapshot.exccause == frame.exccause && snapshot.excvaddr == frame.excvaddr);
+    CHECK(test_snapshot_versions(&snapshot) == 0);
+    CHECK(ls_capture_minimal_recover() == LS_OK);
+    CHECK(!ls_minimal_snapshot_read(&snapshot));
+    direct.architecture = (ls_architecture_t)(LS_ARCH_LINUX + 1u);
+    CHECK(ls_capture_minimal(&direct) == LS_OK);
+    CHECK(ls_capture_minimal_recover() == LS_OK);
     ls_minimal_snapshot_clear();
     puts("xtensa retained fault tests passed");
     return 0;

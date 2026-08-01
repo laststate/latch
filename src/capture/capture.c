@@ -111,7 +111,6 @@ ls_result_t ls_capture_minimal(const ls_arch_context_t *context) {
 
 bool ls_minimal_snapshot_read(ls_minimal_snapshot_t *snapshot) {
     ls_minimal_snapshot_t copy;
-    uint32_t prefix_crc;
 
     if (!snapshot) {
         return false;
@@ -126,37 +125,46 @@ bool ls_minimal_snapshot_read(ls_minimal_snapshot_t *snapshot) {
         destination[index] = source[index];
     }
 
-    if (copy.magic != LS_MINIMAL_MAGIC) {
+    if (!ls_minimal_snapshot_validate(&copy)) {
         return false;
     }
 
-    prefix_crc = ls_crc32(&copy, offsetof(ls_minimal_snapshot_t, crc));
-    if (copy.version == 1u) {
-        if (copy.crc != prefix_crc) {
-            return false;
-        }
-        ls_memset((uint8_t *)&copy + offsetof(ls_minimal_snapshot_t, fault), 0,
-                  sizeof copy - offsetof(ls_minimal_snapshot_t, fault));
-    } else if (copy.version == 2u) {
-        uint32_t extension_crc = ls_crc32(&copy, offsetof(ls_minimal_snapshot_t, extension_crc));
+    ls_memcpy(snapshot, &copy, sizeof copy);
+    return true;
+}
 
-        if (copy.crc != prefix_crc || copy.extension_crc != extension_crc) {
+bool ls_minimal_snapshot_validate(ls_minimal_snapshot_t *snapshot) {
+    if (!snapshot || snapshot->magic != LS_MINIMAL_MAGIC) {
+        return false;
+    }
+
+    uint32_t prefix_crc = ls_crc32(snapshot, offsetof(ls_minimal_snapshot_t, crc));
+    if (snapshot->version == 1u) {
+        if (snapshot->crc != prefix_crc) {
             return false;
         }
-        ls_memset((uint8_t *)&copy + offsetof(ls_minimal_snapshot_t, architecture), 0,
-                  sizeof copy - offsetof(ls_minimal_snapshot_t, architecture));
-    } else if (copy.version == LS_MINIMAL_SNAPSHOT_VERSION) {
-        uint32_t extension_crc = ls_crc32(&copy, offsetof(ls_minimal_snapshot_t, extension_crc));
-        uint32_t context_crc = ls_crc32(&copy, offsetof(ls_minimal_snapshot_t, context_crc));
-        if (copy.crc != prefix_crc || copy.extension_crc != extension_crc ||
-            copy.context_crc != context_crc) {
+        ls_memset((uint8_t *)snapshot + offsetof(ls_minimal_snapshot_t, fault), 0,
+                  sizeof *snapshot - offsetof(ls_minimal_snapshot_t, fault));
+    } else if (snapshot->version == 2u) {
+        uint32_t extension_crc =
+            ls_crc32(snapshot, offsetof(ls_minimal_snapshot_t, extension_crc));
+
+        if (snapshot->crc != prefix_crc || snapshot->extension_crc != extension_crc) {
+            return false;
+        }
+        ls_memset((uint8_t *)snapshot + offsetof(ls_minimal_snapshot_t, architecture), 0,
+                  sizeof *snapshot - offsetof(ls_minimal_snapshot_t, architecture));
+    } else if (snapshot->version == LS_MINIMAL_SNAPSHOT_VERSION) {
+        uint32_t extension_crc =
+            ls_crc32(snapshot, offsetof(ls_minimal_snapshot_t, extension_crc));
+        uint32_t context_crc = ls_crc32(snapshot, offsetof(ls_minimal_snapshot_t, context_crc));
+        if (snapshot->crc != prefix_crc || snapshot->extension_crc != extension_crc ||
+            snapshot->context_crc != context_crc) {
             return false;
         }
     } else {
         return false;
     }
-
-    ls_memcpy(snapshot, &copy, sizeof copy);
     return true;
 }
 
