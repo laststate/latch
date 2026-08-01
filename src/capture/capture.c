@@ -113,13 +113,17 @@ bool ls_minimal_snapshot_read(ls_minimal_snapshot_t *snapshot) {
     ls_minimal_snapshot_t copy;
     uint32_t prefix_crc;
 
+    if (!snapshot) {
+        return false;
+    }
+
     const volatile uint8_t *source = (const volatile uint8_t *)(const void *)&minimal_snapshot;
     uint8_t *destination = (uint8_t *)(void *)&copy;
     for (size_t index = 0; index < sizeof copy; ++index) {
         destination[index] = source[index];
     }
 
-    if (!snapshot || copy.magic != LS_MINIMAL_MAGIC) {
+    if (copy.magic != LS_MINIMAL_MAGIC) {
         return false;
     }
 

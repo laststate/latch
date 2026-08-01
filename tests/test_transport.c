@@ -13,6 +13,15 @@ static uint8_t retained[50000], envelope[LS_MAX_EVENT_SIZE], stream_bytes[LS_MAX
 static size_t envelope_length, stream_length, retry_stream_length;
 static uint32_t ack_event;
 static unsigned mqtt_calls, http_calls, retry_ack_calls;
+static uint32_t test_crc32(const uint8_t *data, size_t length) {
+    uint32_t crc = 0xffffffffu;
+    for (size_t index = 0; index < length; ++index) {
+        crc ^= data[index];
+        for (unsigned bit = 0; bit < 8u; ++bit)
+            crc = (crc >> 1u) ^ (0xedb88320u & (uint32_t) - (int32_t)(crc & 1u));
+    }
+    return ~crc;
+}
 static bool yes(void *x) {
     (void)x;
     return true;
@@ -113,6 +122,10 @@ int main(void) {
     ls_stream_frame_t parsed_frame;
     CHECK(ls_stream_frame_parse(stream_bytes, stream_length, LS_MAX_EVENT_SIZE, &parsed_frame) ==
           LS_OK);
+    CHECK(ls_stream_frame_parse(stream_bytes, stream_length, 0, &parsed_frame) == LS_OK);
+    CHECK(ls_stream_frame_parse(0, stream_length, LS_MAX_EVENT_SIZE, &parsed_frame) == LS_EINVAL);
+    CHECK(ls_stream_frame_parse(stream_bytes, stream_length, LS_MAX_EVENT_SIZE, 0) == LS_EINVAL);
+    CHECK(ls_stream_frame_parse(stream_bytes, 4, LS_MAX_EVENT_SIZE, &parsed_frame) == LS_EINVAL);
     CHECK(parsed_frame.envelope_length == envelope_length &&
           !memcmp(parsed_frame.envelope, envelope, envelope_length));
     CHECK(ls_stream_frame_parse(stream_bytes, stream_length, envelope_length - 1u, &parsed_frame) ==
@@ -121,6 +134,34 @@ int main(void) {
     CHECK(ls_stream_frame_parse(stream_bytes, stream_length, LS_MAX_EVENT_SIZE, &parsed_frame) ==
           LS_ECORRUPT);
     stream_bytes[stream_length - 1u] ^= 1u;
+    stream_bytes[0] = 'X';
+    CHECK(ls_stream_frame_parse(stream_bytes, stream_length, LS_MAX_EVENT_SIZE, &parsed_frame) ==
+          LS_ECORRUPT);
+    stream_bytes[0] = 'L';
+    stream_bytes[2] = 0xffu;
+    CHECK(ls_stream_frame_parse(stream_bytes, stream_length, LS_MAX_EVENT_SIZE, &parsed_frame) ==
+          LS_ENOTSUP);
+    stream_bytes[2] = LS_STREAM_TRANSPORT_VERSION;
+    stream_bytes[3] = 1u;
+    CHECK(ls_stream_frame_parse(stream_bytes, stream_length, LS_MAX_EVENT_SIZE, &parsed_frame) ==
+          LS_ENOTSUP);
+    stream_bytes[3] = 0u;
+    CHECK(ls_stream_frame_parse(stream_bytes, stream_length - 1u, LS_MAX_EVENT_SIZE,
+                                &parsed_frame) == LS_ECORRUPT);
+    stream_bytes[LS_STREAM_TRANSPORT_HEADER_SIZE] ^= 1u;
+    uint32_t damaged_crc =
+        test_crc32(stream_bytes + LS_STREAM_TRANSPORT_HEADER_SIZE, envelope_length);
+    for (unsigned index = 0; index < 4u; ++index)
+        stream_bytes[LS_STREAM_TRANSPORT_HEADER_SIZE + envelope_length + index] =
+            (uint8_t)(damaged_crc >> (index * 8u));
+    CHECK(ls_stream_frame_parse(stream_bytes, stream_length, LS_MAX_EVENT_SIZE, &parsed_frame) ==
+          LS_ECORRUPT);
+    stream_bytes[LS_STREAM_TRANSPORT_HEADER_SIZE] ^= 1u;
+    uint32_t restored_crc =
+        test_crc32(stream_bytes + LS_STREAM_TRANSPORT_HEADER_SIZE, envelope_length);
+    for (unsigned index = 0; index < 4u; ++index)
+        stream_bytes[LS_STREAM_TRANSPORT_HEADER_SIZE + envelope_length + index] =
+            (uint8_t)(restored_crc >> (index * 8u));
     ls_stream_transport_t retry_stream = {.write = write_retry_stream,
                                           .wait_ack = wait_ack_after_retry,
                                           .maximum_envelope = LS_MAX_EVENT_SIZE,
@@ -145,10 +186,20 @@ int main(void) {
                                  9,   0,   0,   0};
     ls_lsak_t parsed_ack;
     CHECK(ls_lsak_parse(ack, sizeof ack, &parsed_ack) == LS_OK && parsed_ack.event_id == 9u);
+    CHECK(ls_lsak_is_success(parsed_ack.status));
+    CHECK(ls_lsak_parse(0, sizeof ack, &parsed_ack) == LS_EINVAL);
+    CHECK(ls_lsak_parse(ack, sizeof ack, 0) == LS_EINVAL);
     CHECK(ls_lsak_parse(ack, sizeof ack - 1u, &parsed_ack) == LS_EINVAL);
+    CHECK(ls_lsak_parse(ack, sizeof ack + 1u, &parsed_ack) == LS_EINVAL);
+    ack[0] = 'X';
+    CHECK(ls_lsak_parse(ack, sizeof ack, &parsed_ack) == LS_ECORRUPT);
+    ack[0] = 'L';
     ack[6] = 1u;
     CHECK(ls_lsak_parse(ack, sizeof ack, &parsed_ack) == LS_ECORRUPT);
     ack[6] = 0u;
+    ack[5] = 0xffu;
+    CHECK(ls_lsak_parse(ack, sizeof ack, &parsed_ack) == LS_ECORRUPT);
+    ack[5] = LS_LSAK_ACK_STORED;
     ack[4] = 0xffu;
     CHECK(ls_lsak_parse(ack, sizeof ack, &parsed_ack) == LS_ENOTSUP);
     return 0;

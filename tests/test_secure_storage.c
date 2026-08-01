@@ -84,6 +84,21 @@ int main(void) {
                                  &rng) == LS_OK);
     CHECK(reopened.backend.read(reopened.backend.context, 100, readback, sizeof readback) == LS_OK);
     CHECK(!memcmp(secret, readback, sizeof secret));
+    CHECK(ls_secure_storage_rotate_key(0, rotated_key, 9) == LS_EINVAL);
+    CHECK(ls_secure_storage_rotate_key(&reopened, 0, 9) == LS_EINVAL);
+    CHECK(ls_secure_storage_rotate_key(&reopened, rotated_key, 0) == LS_EINVAL);
+    CHECK(ls_secure_storage_rotate_key(&reopened, rotated_key, 8) == LS_EINVAL);
+    uint8_t failed_key[32];
+    memset(failed_key, 0x91, sizeof failed_key);
+    /* Operation 1 is the read performed by load_image(); fail the first
+       persistence
+     * operation so rotation must restore the old in-memory key. */
+    ls_storage_sim_fail_at(&sim, 2, 0);
+    CHECK(ls_secure_storage_rotate_key(&reopened, failed_key, 9) != LS_OK);
+    CHECK(reopened.key_id == 8u);
+    ls_storage_sim_reset_faults(&sim);
+    CHECK(reopened.backend.read(reopened.backend.context, 100, readback, sizeof readback) == LS_OK);
+    CHECK(!memcmp(secret, readback, sizeof secret));
     uint8_t wrong[32];
     memset(wrong, 0xaa, sizeof wrong);
     ls_secure_storage_t rejected;
