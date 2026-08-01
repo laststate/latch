@@ -12,7 +12,14 @@ The RV32 trap entry exchanges the failing stack pointer with the emergency point
 
 ## Xtensa and ESP-IDF
 
-Xtensa exception frames vary between windowed and call0 ABIs, so the port accepts a normalized `ls_xtensa_frame_t`. An ESP-IDF panic hook should translate the SDK frame and call `ls_xtensa_capture_frame()`.
+Xtensa exception frames vary between windowed and call0 ABIs, so the port accepts a normalized `ls_xtensa_frame_t`. Normal-context integrations call `ls_xtensa_capture_frame()`; panic handlers call the retained-memory-only `ls_xtensa_capture_minimal_frame()`.
+
+The copyable ESP32 example contains an opt-in ESP-IDF 5.5 adapter. Because
+ESP-IDF does not expose a stable application panic hook, it uses the GNU linker
+`--wrap=esp_panic_handler` contract, performs only a bounded retained-memory
+write, then delegates to ESP-IDF. Treat the exact vendor ABI as part of the
+board/toolchain qualification and do not carry the wrapper across ESP-IDF
+upgrades without rebuilding and rerunning HIL.
 
 ## STM32 and RP2040/RP2350
 

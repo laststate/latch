@@ -1,0 +1,10 @@
+sample:
+  name: Latch first capture
+  description: Captures and delivers a LEP event using public Latch APIs.
+common:
+  platform_allow:
+    - native_sim/native/64
+  integration_platforms:
+    - native_sim/native/64
+tests:
+  sample.latch.first_capture: {}

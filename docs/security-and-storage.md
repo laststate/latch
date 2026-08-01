@@ -36,3 +36,10 @@ ls_storage_register(&secure.backend);
 The raw Flash capacity must be at least `ls_flash_wear_physical_size(sealed, erase_size, slots)`. Each logical update creates a complete encrypted candidate in a different slot, verifies structural CRCs on boot and selects only the newest committed authenticated image. `ls_flash_wear_stats()` exposes erase distribution and failed commits.
 
 Never reuse a workspace between concurrently active backends. Call `ls_secure_storage_destroy()` before releasing or repurposing its key/workspace memory.
+
+For key replacement, use an atomic mirror/wear-level backend and follow the
+dual-acceptance procedure in the [threat model](threat-model.md). The
+`ls_secure_storage_rotate_key()` API decrypts the current committed image,
+re-seals it under a new nonzero key ID, and restores the in-memory old-key state
+if the commit fails. Envelope keys must be switched separately after old queued
+events are drained.

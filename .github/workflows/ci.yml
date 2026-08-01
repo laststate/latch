@@ -53,8 +53,25 @@ jobs:
           cmake --install build --config ${{ matrix.build_type }} --prefix build/install
           cmake -S tests/package -B build/consumer -DCMAKE_PREFIX_PATH=${{ github.workspace }}/build/install
           cmake --build build/consumer --config ${{ matrix.build_type }}
+      - name: Test add_subdirectory consumer
+        run: cmake -S examples/add-subdirectory -B build/add-subdirectory-consumer -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+      - name: Build add_subdirectory consumer
+        run: cmake --build build/add-subdirectory-consumer --config ${{ matrix.build_type }}
+      - name: Run add_subdirectory consumer
+        run: ctest --test-dir build/add-subdirectory-consumer -C ${{ matrix.build_type }} --output-on-failure
+      - name: Test FetchContent consumer against checkout
+        run: cmake -S examples/fetch-content -B build/fetch-content-consumer -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DFETCHCONTENT_SOURCE_DIR_LATCH=${{ github.workspace }}
+      - name: Build FetchContent consumer
+        run: cmake --build build/fetch-content-consumer --config ${{ matrix.build_type }}
+      - name: Run FetchContent consumer
+        run: ctest --test-dir build/fetch-content-consumer -C ${{ matrix.build_type }} --output-on-failure
       - name: Package
         run: cpack --config build/CPackConfig.cmake -C ${{ matrix.build_type }}
+      - name: Test extracted package archive
+        shell: bash
+        run: |
+          archive=$(find . -maxdepth 1 -name 'laststate-latch-*.zip' -print -quit)
+          python tools/test_cpack_archive.py "$archive" --consumer tests/package --config ${{ matrix.build_type }}
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: latch-${{ matrix.os }}-${{ matrix.cc }}

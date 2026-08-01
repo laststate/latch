@@ -4,6 +4,35 @@ All notable changes to Latch are recorded here. The project follows [Semantic Ve
 
 ## [Unreleased]
 
+### Added
+
+- Copyable ESP32/ESP-IDF 5.5 crash tutorial with flash-backed capture,
+  intentional panic, reboot recovery, retained Xtensa registers and an
+  NVS-committed durable ACK.
+- Public durable Python reference collector, bounded C stream-frame parser,
+  stream/LSAK fuzz target and JSON output for `latch-dump`.
+- Standalone `add_subdirectory` and `FetchContent` consumers, extracted CPack
+  smoke test, Zephyr module/native sample and PlatformIO link check.
+- PlatformIO and crates.io manifests, registry-package CI, Rust crate metadata,
+  threat model and registry publication runbook.
+- Version 3 retained snapshots with Xtensa A0-A15/special registers and a
+  host-tested fault-safe normalized-frame adapter.
+- Transactional secure-storage key rotation with failure rollback of in-memory
+  key state.
+
+### Changed
+
+- Coverage collection now includes branches and uses explicit project/patch
+  targets; LSAK parsing rejects non-canonical sizes, status and reserved bytes.
+- Curated contributor issues no longer retain the contradictory `triage` label,
+  and first issues include effort, size, hardware and maintainer-help metadata.
+
+### Fixed
+
+- Initialized the spool append slot before the checked lookup, avoiding a GCC
+  release-build false-positive that became fatal under `-Werror`.
+- Applied the repository formatter drift reported by maintenance automation.
+
 ## [0.2.0] - 2026-07-29
 
 ### Added

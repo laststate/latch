@@ -166,6 +166,7 @@ ls_result_t ls_boot_state_load(void);
 ls_result_t ls_boot_state_save(void);
 void ls_boot_state_mark_crash(uint32_t event_id);
 ls_result_t ls_capture_event(const ls_event_t *event);
+bool ls_minimal_snapshot_validate(ls_minimal_snapshot_t *snapshot);
 bool ls_policy_apply(ls_event_t *event);
 ls_redaction_mode_t ls_redaction_for(const void *address, size_t length, bool *matched);
 void ls_enter_critical(void);

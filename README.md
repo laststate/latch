@@ -62,6 +62,11 @@ LEP v1 type=2 arch=0 flags=0x00 sequence=1 event=b63f7832 payload=263
 
 See [the complete host example](examples/host/main.c) for initialization, in-memory storage, and transport registration.
 
+Have an ESP32? The copyable
+[`ESP32 first crash`](examples/esp32-first-crash/README.md) tutorial starts with
+only `idf.py`, triggers a real panic, recovers the flash-backed event after
+reboot, and stores a durable ACK without requiring a hosted service.
+
 ### Inspect a hexadecimal LEP vector
 
 `latch-dump` keeps its existing binary-file interface and also accepts bounded hexadecimal input with `--hex`. From the repository root:
@@ -70,7 +75,15 @@ See [the complete host example](examples/host/main.c) for initialization, in-mem
 build/host-debug/latch-dump --hex tests/vectors/lep-v1-basic.hex
 ```
 
-ASCII whitespace is accepted between hexadecimal digits. Decoded input is limited to `LS_MAX_EVENT_SIZE`; odd-length, non-hexadecimal, and oversized inputs fail before envelope validation.
+ASCII whitespace is accepted between hexadecimal digits. Decoded input is limited to `LS_MAX_EVENT_SIZE`; odd-length, non-hexadecimal, and oversized inputs fail before envelope validation. Add `--json` (before or after `--hex`) for a dependency-free machine-readable document whose byte values are lowercase hexadecimal:
+
+```sh
+build/host-debug/latch-dump --json --hex tests/vectors/lep-v1-basic.hex
+```
+
+The documented top-level keys and TLV order are stable for the 0.x line;
+consumers must ignore additional JSON keys. `value_hex` is always lowercase,
+two characters per byte, and malformed input emits no partial JSON document.
 
 ## What survives the reboot
 
@@ -115,6 +128,23 @@ add_subdirectory(third_party/latch)
 target_link_libraries(firmware PRIVATE laststate::latch)
 ```
 
+Or pin a release with CMake `FetchContent`:
+
+```cmake
+include(FetchContent)
+FetchContent_Declare(
+  latch
+  GIT_REPOSITORY https://github.com/laststate/latch.git
+  GIT_TAG v0.2.0
+)
+FetchContent_MakeAvailable(latch)
+target_link_libraries(firmware PRIVATE laststate::latch)
+```
+
+Both paths have standalone, CI-tested examples under
+[`examples/add-subdirectory`](examples/add-subdirectory) and
+[`examples/fetch-content`](examples/fetch-content).
+
 Start with the [integration overview](docs/integration-overview.md), then choose a [port](docs/ports.md) or a [native integration](docs/native-integrations.md). Rust firmware can use the [`#![no_std]` SDK](rust/README.md) over the C runtime.
 
 ## Why not just log to UART or flash?
@@ -149,8 +179,8 @@ production LastState Relay collector. Relay validates and persists LEP
 envelopes before acknowledging them; it is a private LastState component and
 was not publicly released on that date. Latch does not depend on Relay—the
 [`ESP32 HIL fixture`](hil/esp32_relay/README.md) documents the public framing
-contract, the from-zero procedure, decoded evidence, fixes and remaining
-Xtensa panic-hook limitation.
+contract, the from-zero procedure, decoded evidence, fixes and the
+version-pinned Xtensa panic-hook boundary.
 
 ## Documentation
 
@@ -159,6 +189,8 @@ Xtensa panic-hook limitation.
 - [Architecture](docs/architecture.md)
 - [LEP v1 wire format](docs/lep-v1.md)
 - [Security and storage](docs/security-and-storage.md)
+- [Threat model and key rotation](docs/threat-model.md)
+- [Registry packages](docs/registries.md)
 - [Ports](docs/ports.md) and [native integrations](docs/native-integrations.md)
 - [Hardware-in-the-loop qualification](docs/hil.md)
 - [Production readiness](docs/production-readiness.md)

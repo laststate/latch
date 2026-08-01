@@ -1,10 +1,10 @@
 name: Zephyr native integrations
 on:
   pull_request:
-    paths: ["ports/zephyr/**", "tests/zephyr/**", "include/laststate/**", ".github/workflows/zephyr-integrations.yml"]
+    paths: ["ports/zephyr/**", "zephyr/**", "tests/zephyr/**", "examples/zephyr-first-capture/**", "include/laststate/**", ".github/workflows/zephyr-integrations.yml"]
   push:
     branches: [prod]
-    paths: ["ports/zephyr/**", "tests/zephyr/**", "include/laststate/**", ".github/workflows/zephyr-integrations.yml"]
+    paths: ["ports/zephyr/**", "zephyr/**", "tests/zephyr/**", "examples/zephyr-first-capture/**", "include/laststate/**", ".github/workflows/zephyr-integrations.yml"]
   workflow_dispatch:
 permissions:
   contents: read
@@ -40,3 +40,19 @@ jobs:
           toolchains: arm-zephyr-eabi
       - working-directory: tests
         run: west build -b "${{ matrix.board }}" zephyr -- -DCONF_FILE="${{ matrix.config }}"
+  first-capture-sample:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: "3.12"
+      - uses: zephyrproject-rtos/action-zephyr-setup@be8136a8bba01580485d98b7ad2d32477c36a49a # v1
+        with:
+          app-path: zephyr-first-capture
+          base-path: examples
+          toolchains: arm-zephyr-eabi
+      - working-directory: examples
+        run: west build -b native_sim/native/64 zephyr-first-capture -- -DZEPHYR_EXTRA_MODULES=${{ github.workspace }}
+      - working-directory: examples
+        run: west build -t run

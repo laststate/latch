@@ -6,6 +6,7 @@ from __future__ import annotations
 import subprocess
 import sys
 import tempfile
+import json
 from pathlib import Path
 
 
@@ -40,6 +41,15 @@ def main() -> int:
         assert result.returncode == 0, result.stderr
         assert "LEP v1" in result.stdout
 
+        result = run(decoder, "--json", "--hex", str(valid))
+        assert result.returncode == 0, result.stderr
+        decoded = json.loads(result.stdout)
+        assert decoded["version"] == 1
+        assert decoded["sequence"] == 7
+        assert decoded["event_id"] == 9
+        assert decoded["event_id_hex"] == "00000009"
+        assert decoded["tlvs"] == [{"type": 1, "length": 2, "value_hex": "aabb"}]
+
         result = run(decoder, "--hex")
         assert result.returncode == 2
         assert "usage:" in result.stderr
@@ -61,6 +71,12 @@ def main() -> int:
         result = run(decoder, "--hex", str(oversized))
         assert result.returncode != 0
         assert "exceeds LS_MAX_EVENT_SIZE" in result.stderr
+
+        corrupt = root / "corrupt.lst"
+        corrupt.write_bytes(binary.read_bytes()[:-1] + b"\x00")
+        result = run(decoder, "--json", str(corrupt))
+        assert result.returncode != 0
+        assert result.stdout == ""
 
     return 0
 

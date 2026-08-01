@@ -232,6 +232,11 @@ if(LS_BUILD_TESTS)
   target_link_libraries(latch-cortex-m-fault-tests PRIVATE latch)
   ls_configure_target(latch-cortex-m-fault-tests)
   add_test(NAME latch-cortex-m-fault-tests COMMAND latch-cortex-m-fault-tests)
+  add_executable(latch-xtensa-fault-tests tests/test_xtensa_fault.c arch/xtensa/xtensa.c)
+  target_include_directories(latch-xtensa-fault-tests PRIVATE arch/xtensa)
+  target_link_libraries(latch-xtensa-fault-tests PRIVATE latch)
+  ls_configure_target(latch-xtensa-fault-tests)
+  add_test(NAME latch-xtensa-fault-tests COMMAND latch-xtensa-fault-tests)
 endif()
 
 if(LS_BUILD_FUZZERS)
@@ -251,7 +256,7 @@ if(LS_BUILD_FUZZERS)
       -fsanitize=fuzzer-no-link,address,undefined
       -fno-omit-frame-pointer)
   endforeach()
-  foreach(fuzzer lep compression aead)
+  foreach(fuzzer lep compression aead stream)
     add_executable(fuzz-${fuzzer} fuzz/fuzz_${fuzzer}.c)
     target_link_libraries(fuzz-${fuzzer} PRIVATE latch)
     target_compile_options(fuzz-${fuzzer} PRIVATE -fsanitize=fuzzer,address,undefined -fno-omit-frame-pointer)
@@ -267,6 +272,9 @@ if(LS_BUILD_TOOLS)
     add_test(NAME latch-dump-hex-tests
       COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_latch_dump.py
         $<TARGET_FILE:latch-dump> ${CMAKE_CURRENT_SOURCE_DIR}/tests/vectors/lep-v1-basic.hex)
+    add_test(NAME latch-reference-collector-tests
+      COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_latch_collector.py
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/vectors/lep-v1-basic.hex)
   endif()
 endif()
 if(LS_BUILD_EXAMPLES)

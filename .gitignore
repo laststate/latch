@@ -1,6 +1,9 @@
 /build/
 /build-*/
 **/target/
+**/.pio/
+**/sdkconfig.*
+!**/sdkconfig.defaults
 *.o
 *.obj
 *.elf

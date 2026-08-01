@@ -1,0 +1,29 @@
+name: Registry packages
+on:
+  pull_request:
+    paths: ["library.json", "rust/latch/**", "src/**", "include/**", "ports/**", ".github/workflows/registry-packages.yml"]
+  push:
+    branches: [prod]
+    paths: ["library.json", "rust/latch/**", "src/**", "include/**", "ports/**", ".github/workflows/registry-packages.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: "3.12"
+      - uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4 # stable
+      - run: python -m pip install platformio==6.1.18
+      - run: mkdir -p build && pio pkg pack . --output build/laststate-latch-platformio.tar.gz
+      - run: pio run -d examples/platformio-link-check
+      - run: cargo publish --manifest-path rust/latch/Cargo.toml --dry-run --allow-dirty
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: registry-package-candidates
+          path: |
+            build/laststate-latch-platformio.tar.gz
+            rust/latch/target/package/*.crate

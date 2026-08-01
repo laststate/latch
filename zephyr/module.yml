@@ -1,0 +1,4 @@
+name: latch
+build:
+  cmake: zephyr
+  kconfig: zephyr/Kconfig

@@ -41,7 +41,13 @@ def main() -> None:
     write_seed(output / "compression" / "short-runs", b"\x00\x00\x00\x01\x01\xff\xff")
     write_seed(output / "aead" / "zero-length-plaintext", bytes(56))
     write_seed(output / "aead" / "aad-and-plaintext", bytes(range(96)))
-    print(f"seeded {vector_count} LEP vectors and 4 codec/AEAD inputs in {output}")
+    basic = bytes.fromhex((vectors / "lep-v1-basic.hex").read_text(encoding="utf-8"))
+    stream = b"LS\x01\x00" + len(basic).to_bytes(4, "little") + basic
+    import binascii
+    stream += (binascii.crc32(basic) & 0xFFFFFFFF).to_bytes(4, "little")
+    write_seed(output / "stream" / "basic-frame", stream)
+    write_seed(output / "stream" / "stored-ack", b"LSAK\x01\x01\x00\x00\x09\x00\x00\x00")
+    print(f"seeded {vector_count} LEP vectors and 6 codec/AEAD/stream inputs in {output}")
 
 
 if __name__ == "__main__":
