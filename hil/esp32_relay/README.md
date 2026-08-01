@@ -127,6 +127,9 @@ The first physical result and decoded event IDs are retained in
 | Package mirrors returned partial tool archives during first-time setup | Toolchain installation stalled or lacked files | Re-ran the PlatformIO package installation with mirror fallback and verified package manifests before building |
 | The isolated Python environment initially lacked `pip` | PlatformIO could not install esptool's Python dependencies | Bootstrapped it with `python -m ensurepip --upgrade` |
 
-The remaining product limitation is automatic Xtensa panic-frame capture.
-Reset classification and post-reset recovery are verified; an ESP-IDF panic
-hook for automatic register/stack capture is still future work.
+The remaining product limitation is physical qualification of automatic Xtensa
+panic-frame capture. An ESP-IDF 5.5 wrapper now exists and is host-tested and
+firmware compile-checked, but it was not part of this earlier physical run.
+Reset classification and post-reset recovery are verified here; re-run this
+fixture with the wrapper and decode the promoted register event before treating
+automatic register/stack capture as hardware-qualified.

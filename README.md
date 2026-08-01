@@ -194,13 +194,14 @@ version-pinned Xtensa panic-hook boundary.
 - [Ports](docs/ports.md) and [native integrations](docs/native-integrations.md)
 - [Hardware-in-the-loop qualification](docs/hil.md)
 - [Production readiness](docs/production-readiness.md)
+- [AI-assisted development](docs/ai/README.md)
 - [Roadmap](ROADMAP.md) and [changelog](CHANGELOG.md)
 
 ## Contributing
 
 New contributors should start with a [`good first issue`](https://github.com/laststate/latch/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22). Integration experience, documentation fixes, test vectors, board reports, and small tooling improvements are all valuable.
 
-Read [CONTRIBUTING.md](CONTRIBUTING.md) for the fastest validation path and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for the community standard. Use [GitHub Discussions](https://github.com/laststate/latch/discussions) for integration questions and design ideas. Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
+Read [CONTRIBUTING.md](CONTRIBUTING.md) for the fastest validation path and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for the community standard. AI-assisted contributions should also follow the tool-neutral [agent guide](AGENT.md). Use [GitHub Discussions](https://github.com/laststate/latch/discussions) for integration questions and design ideas. Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
 
 The maintainer target is to acknowledge new issues and pull requests within 72 hours. It is a target, not an SLA; one friendly ping after seven days is welcome.
 

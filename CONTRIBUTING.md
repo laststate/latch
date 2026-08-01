@@ -11,6 +11,21 @@ Thank you for helping make embedded failures easier to diagnose. Contributions d
 
 Comment on an issue before starting substantial work so contributors do not duplicate effort. For protocol, public API, cryptography, persistent layout, or cross-cutting architecture changes, start a discussion first.
 
+## AI-assisted contributions
+
+AI-assisted work is welcome when it is focused, reviewable, and held to the
+same evidence standard as any other contribution. Before editing, read the
+tool-neutral [agent guide](AGENT.md) and the scoped `AGENTS.md` instructions in
+the directories you touch. The guide is available through the native entry
+points for Codex, Claude, Gemini, and GitHub Copilot.
+
+AI assistance does not substitute for contributor or maintainer judgment. Do
+not claim a board run, benchmark, security audit, compatibility guarantee, or
+production qualification without the exact supporting evidence. Do not expose
+keys, memory captures, private collector details, endpoints, credentials, or
+proprietary firmware. The reusable task brief and review material is in
+[docs/ai/](docs/ai/README.md).
+
 ## Maintainer response target
 
 We aim to acknowledge new issues and pull requests within 72 hours and provide an initial triage within seven days. This is a maintainer target, not an SLA. If there is no response after seven days, one friendly ping is welcome.
@@ -70,6 +85,9 @@ Use the narrowest useful loop while developing:
 - Persistent writes remain recoverable after interruption.
 - New platform code includes a simulator test where possible and names every unverified hardware assumption.
 - Security-sensitive data is minimized and redacted before capture, not only before transport.
+- AI-generated or human-authored changes use the same focused review, test, and
+  evidence requirements; unverified hardware work is explicitly
+  `not hardware-tested`.
 
 Do not include device secrets, production keys, captured customer memory, private endpoints, or proprietary firmware in fixtures, fuzz corpora, issues, or pull requests. Report vulnerabilities privately through the process in [SECURITY.md](SECURITY.md).
 
