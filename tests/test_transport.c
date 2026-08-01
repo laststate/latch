@@ -110,6 +110,17 @@ int main(void) {
     CHECK(ls_stream_transport_send(&stream, envelope, envelope_length) == LS_OK);
     CHECK(stream_length == envelope_length + 12 && stream_bytes[0] == 'L' &&
           stream_bytes[1] == 'S' && ack_event == info.event_id);
+    ls_stream_frame_t parsed_frame;
+    CHECK(ls_stream_frame_parse(stream_bytes, stream_length, LS_MAX_EVENT_SIZE, &parsed_frame) ==
+          LS_OK);
+    CHECK(parsed_frame.envelope_length == envelope_length &&
+          !memcmp(parsed_frame.envelope, envelope, envelope_length));
+    CHECK(ls_stream_frame_parse(stream_bytes, stream_length, envelope_length - 1u, &parsed_frame) ==
+          LS_ENOSPACE);
+    stream_bytes[stream_length - 1u] ^= 1u;
+    CHECK(ls_stream_frame_parse(stream_bytes, stream_length, LS_MAX_EVENT_SIZE, &parsed_frame) ==
+          LS_ECORRUPT);
+    stream_bytes[stream_length - 1u] ^= 1u;
     ls_stream_transport_t retry_stream = {.write = write_retry_stream,
                                           .wait_ack = wait_ack_after_retry,
                                           .maximum_envelope = LS_MAX_EVENT_SIZE,
@@ -130,5 +141,15 @@ int main(void) {
     CHECK(ls_incident_beacon_encode(envelope, envelope_length, 0x1234, 3700, 25, beacon,
                                     sizeof beacon, &beacon_length) == LS_OK &&
           beacon_length == 32);
+    uint8_t ack[LS_LSAK_SIZE] = {'L', 'S', 'A', 'K', LS_LSAK_VERSION, LS_LSAK_ACK_STORED, 0, 0,
+                                 9,   0,   0,   0};
+    ls_lsak_t parsed_ack;
+    CHECK(ls_lsak_parse(ack, sizeof ack, &parsed_ack) == LS_OK && parsed_ack.event_id == 9u);
+    CHECK(ls_lsak_parse(ack, sizeof ack - 1u, &parsed_ack) == LS_EINVAL);
+    ack[6] = 1u;
+    CHECK(ls_lsak_parse(ack, sizeof ack, &parsed_ack) == LS_ECORRUPT);
+    ack[6] = 0u;
+    ack[4] = 0xffu;
+    CHECK(ls_lsak_parse(ack, sizeof ack, &parsed_ack) == LS_ENOTSUP);
     return 0;
 }

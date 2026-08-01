@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include "event.h"
 
-#define LS_MINIMAL_SNAPSHOT_VERSION 2u
+#define LS_MINIMAL_SNAPSHOT_VERSION 3u
 
 enum {
     LS_MINIMAL_SNAPSHOT_FRAME_VALID = 1u << 0,
@@ -43,9 +43,22 @@ typedef struct {
     uint32_t emergency_stack_used;
     uint32_t fault_sequence;
     uint32_t extension_crc;
+    /* v3 appends architecture context without moving the v1/v2 prefix. */
+    uint32_t architecture;
+    uint32_t registers[16];
+    uint32_t ps;
+    uint32_t sar;
+    uint32_t exccause;
+    uint32_t excvaddr;
+    uint32_t context_crc;
 } ls_minimal_snapshot_t;
 
 ls_result_t ls_capture_minimal(const ls_arch_context_t *context);
+
+/* Fault-safe full-context writer. Like ls_capture_minimal_fault(), it only
+   touches retained
+ * memory and performs bounded arithmetic/loops. */
+void ls_capture_minimal_context_fault(const ls_arch_context_t *context);
 
 /* Precompute normal-runtime metadata used by the fault-safe writer. */
 void ls_capture_minimal_prepare(void);

@@ -1,0 +1,14 @@
+menuconfig LATCH
+	bool "LastState Latch crash evidence runtime"
+	default y
+	help
+	  Build the portable, heap-free Latch runtime into this Zephyr image.
+
+if LATCH
+
+config LATCH_MAX_EVENT_SIZE
+	int "Maximum LEP event size"
+	default 4096
+	range 512 16384
+
+endif

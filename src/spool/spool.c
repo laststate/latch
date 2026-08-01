@@ -284,7 +284,7 @@ ls_result_t ls_spool_append(const uint8_t *data, size_t length, ls_priority_t pr
         return LS_ECORRUPT;
     }
 
-    size_t slot;
+    size_t slot = 0u;
     ls_result_t result = find_empty_slot(&slot);
     if (result != LS_OK) {
         return result;

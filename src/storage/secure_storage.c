@@ -219,3 +219,38 @@ void ls_secure_storage_destroy(ls_secure_storage_t *secure) {
     secure->backend.erase = 0;
     secure->backend.sync = 0;
 }
+
+ls_result_t ls_secure_storage_rotate_key(ls_secure_storage_t *secure,
+                                         const uint8_t new_key[LS_SECURITY_KEY_SIZE],
+                                         uint32_t new_key_id) {
+    if (!secure || !new_key || new_key_id == 0u || new_key_id == secure->key_id ||
+        !secure->storage || !secure->workspace) {
+        return LS_EINVAL;
+    }
+    ls_result_t result = load_image(secure);
+    if (result != LS_OK) {
+        ls_secure_zero(secure->workspace, secure->workspace_size);
+        return result;
+    }
+
+    uint8_t old_key[LS_SECURITY_KEY_SIZE];
+    uint8_t old_nonce[LS_XCHACHA20_NONCE_SIZE];
+    uint32_t old_key_id = secure->key_id;
+    uint32_t old_generation = secure->generation;
+    bool old_has_last_nonce = secure->has_last_nonce;
+    ls_memcpy(old_key, secure->key, sizeof old_key);
+    ls_memcpy(old_nonce, secure->last_nonce, sizeof old_nonce);
+    ls_memcpy(secure->key, new_key, sizeof secure->key);
+    secure->key_id = new_key_id;
+    result = seal_image(secure);
+    if (result != LS_OK) {
+        ls_memcpy(secure->key, old_key, sizeof secure->key);
+        secure->key_id = old_key_id;
+        secure->generation = old_generation;
+        secure->has_last_nonce = old_has_last_nonce;
+        ls_memcpy(secure->last_nonce, old_nonce, sizeof secure->last_nonce);
+    }
+    ls_secure_zero(old_key, sizeof old_key);
+    ls_secure_zero(old_nonce, sizeof old_nonce);
+    return result;
+}

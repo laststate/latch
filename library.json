@@ -1,0 +1,58 @@
+{
+  "$schema": "https://raw.githubusercontent.com/platformio/platformio-core/develop/platformio/assets/schema/library.json",
+  "name": "LastState Latch",
+  "version": "0.2.0",
+  "description": "Heap-free embedded crash evidence capture that survives reboot and queues durable LEP events for delivery.",
+  "keywords": [
+    "crash-reporting",
+    "fault-handler",
+    "embedded",
+    "observability",
+    "esp32"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/laststate/latch.git"
+  },
+  "authors": [
+    {
+      "name": "Last State",
+      "url": "https://github.com/laststate",
+      "maintainer": true
+    }
+  ],
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/laststate/latch",
+  "frameworks": "*",
+  "platforms": "*",
+  "headers": "laststate/latch.h",
+  "build": {
+    "srcDir": ".",
+    "includeDir": "include",
+    "srcFilter": [
+      "+<src/**/*.c>",
+      "-<tests/>",
+      "-<examples/>",
+      "-<fuzz/>",
+      "-<benchmarks/>",
+      "-<hil/>"
+    ]
+  },
+  "export": {
+    "exclude": [
+      "**/.pio/**",
+      "examples/esp32-first-crash/sdkconfig.esp32dev"
+    ],
+    "include": [
+      "include",
+      "src",
+      "arch",
+      "ports",
+      "examples",
+      "CMakeLists.txt",
+      "LICENSE",
+      "README.md",
+      "library.json"
+    ]
+  }
+}

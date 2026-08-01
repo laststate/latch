@@ -21,8 +21,8 @@ Latch itself remains independent: the stream and ACK formats are public, so a
 compatible collector can reproduce the transport side of the test.
 
 The complete setup, destructive-test warning, commands, expected output,
-problems found, corrections, decoded events, and remaining Xtensa panic-hook
-gap are recorded in the fixture
+problems found, corrections, decoded events, and the ESP-IDF panic-hook
+qualification boundary are recorded in the fixture
 [`README`](../hil/esp32_relay/README.md) and
 [`EVIDENCE`](../hil/esp32_relay/EVIDENCE.md).
 

@@ -23,4 +23,12 @@ ls_result_t ls_secure_storage_init(ls_secure_storage_t *secure, ls_storage_backe
                                    uint32_t key_id, ls_crypto_random_fn random,
                                    void *random_context);
 void ls_secure_storage_destroy(ls_secure_storage_t *secure);
+/* Re-encrypt the complete logical image with a new master key and key ID.
+   Use an atomic
+ * mirror/wear-level backend so interrupted rotation can fall
+   back to the previously committed
+ * image. */
+ls_result_t ls_secure_storage_rotate_key(ls_secure_storage_t *secure,
+                                         const uint8_t new_key[LS_SECURITY_KEY_SIZE],
+                                         uint32_t new_key_id);
 #endif

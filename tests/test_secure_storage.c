@@ -67,11 +67,29 @@ int main(void) {
                                  sizeof secure_recovery, 512, key, 7, random_bytes, &rng) == LS_OK);
     CHECK(reopened.backend.read(reopened.backend.context, 100, readback, sizeof readback) == LS_OK);
     CHECK(!memcmp(secret, readback, sizeof secret));
+    uint8_t rotated_key[32];
+    memset(rotated_key, 0x5c, sizeof rotated_key);
+    CHECK(ls_secure_storage_rotate_key(&reopened, rotated_key, 8) == LS_OK);
+    CHECK(reopened.key_id == 8u);
+    CHECK(reopened.backend.read(reopened.backend.context, 100, readback, sizeof readback) == LS_OK);
+    CHECK(!memcmp(secret, readback, sizeof secret));
+    ls_secure_storage_destroy(&reopened);
+
+    CHECK(ls_flash_wear_init(&reopened_wear, &backend, wear_recovery, sealed, 8) == LS_OK);
+    CHECK(ls_secure_storage_init(&reopened, &reopened_wear.backend, secure_recovery,
+                                 sizeof secure_recovery, 512, key, 7, random_bytes,
+                                 &rng) == LS_ECORRUPT);
+    CHECK(ls_secure_storage_init(&reopened, &reopened_wear.backend, secure_recovery,
+                                 sizeof secure_recovery, 512, rotated_key, 8, random_bytes,
+                                 &rng) == LS_OK);
+    CHECK(reopened.backend.read(reopened.backend.context, 100, readback, sizeof readback) == LS_OK);
+    CHECK(!memcmp(secret, readback, sizeof secret));
     uint8_t wrong[32];
     memset(wrong, 0xaa, sizeof wrong);
     ls_secure_storage_t rejected;
+    ls_secure_storage_destroy(&reopened);
     CHECK(ls_secure_storage_init(&rejected, &reopened_wear.backend, secure_recovery,
-                                 sizeof secure_recovery, 512, wrong, 7, random_bytes,
+                                 sizeof secure_recovery, 512, wrong, 8, random_bytes,
                                  &rng) == LS_EAUTH);
     return 0;
 }

@@ -9,7 +9,7 @@ This roadmap is directional rather than a promise of dates. Issues and release n
 ### 1. Make the first result obvious
 
 - Keep the host capture-and-decode demo working on Linux, macOS, and Windows.
-- Add machine-readable decoder output and copy-paste CMake consumer examples.
+- Keep the machine-readable decoder and copy-paste CMake consumers stable in CI.
 - Document the smallest useful retained-RAM and Flash integrations.
 
 ### 2. Publish hardware qualification evidence
@@ -20,7 +20,7 @@ This roadmap is directional rather than a promise of dates. Issues and release n
 
 ### 3. Harden protocol and storage tooling
 
-- Seed long-running fuzzers from the public LEP vectors.
+- Keep LEP, stream/ACK, compression and AEAD fuzzers seeded from public vectors.
 - Expand cross-language and negative compatibility vectors.
 - Make spool inspection and recovery behavior easier to test outside firmware.
 

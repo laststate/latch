@@ -4,6 +4,14 @@ version = "0.2.0"
 edition = "2024"
 license = "Apache-2.0"
 description = "no_std Rust bindings and safe helpers for the Last State Latch runtime"
+repository = "https://github.com/laststate/latch"
+homepage = "https://github.com/laststate/latch"
+documentation = "https://docs.rs/laststate-latch"
+readme = "README.md"
+keywords = ["embedded", "no-std", "crash-reporting", "firmware", "observability"]
+categories = ["embedded", "no-std"]
+rust-version = "1.85"
+include = ["src/**", "Cargo.toml", "README.md"]
 
 [lib]
 crate-type = ["rlib"]

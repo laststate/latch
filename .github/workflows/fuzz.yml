@@ -4,7 +4,7 @@ on:
     - cron: '17 3 * * *'
   workflow_dispatch:
   pull_request:
-    paths: ['src/envelope/**', 'src/security/**', 'include/laststate/envelope.h', 'include/laststate/security.h', 'include/laststate/compression.h', 'fuzz/**', 'tests/vectors/**', 'tools/seed_fuzz_corpora.py', 'CMakeLists.txt']
+    paths: ['src/envelope/**', 'src/security/**', 'src/transport/stream.c', 'include/laststate/envelope.h', 'include/laststate/security.h', 'include/laststate/compression.h', 'include/laststate/stream_transport.h', 'fuzz/**', 'tests/vectors/**', 'tools/seed_fuzz_corpora.py', 'CMakeLists.txt']
 permissions:
   contents: read
 jobs:
@@ -24,6 +24,7 @@ jobs:
       - run: build/fuzz-lep corpus/lep -artifact_prefix=artifacts/ -max_total_time=120 -timeout=5
       - run: build/fuzz-compression corpus/compression -artifact_prefix=artifacts/ -max_total_time=120 -timeout=5
       - run: build/fuzz-aead corpus/aead -artifact_prefix=artifacts/ -max_total_time=180 -timeout=5
+      - run: build/fuzz-stream corpus/stream -artifact_prefix=artifacts/ -max_total_time=120 -timeout=5
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: always()
         with:

@@ -9,6 +9,11 @@ static void write_u32(uint8_t *data, uint32_t value) {
     data[3] = (uint8_t)(value >> 24);
 }
 
+static uint32_t read_u32(const uint8_t *data) {
+    return (uint32_t)data[0] | ((uint32_t)data[1] << 8) | ((uint32_t)data[2] << 16) |
+           ((uint32_t)data[3] << 24);
+}
+
 static void clear_pending(ls_stream_transport_t *stream) {
     stream->pending_event_id = 0;
     stream->pending_crc = 0;
@@ -174,7 +179,7 @@ size_t ls_stream_transport_max_payload(void *context) {
 }
 
 ls_result_t ls_lsak_parse(const uint8_t *data, size_t length, ls_lsak_t *out) {
-    if (!data || !out || length < LS_LSAK_SIZE) {
+    if (!data || !out || length != LS_LSAK_SIZE) {
         return LS_EINVAL;
     }
     if (data[0] != (uint8_t)'L' || data[1] != (uint8_t)'S' || data[2] != (uint8_t)'A' ||
@@ -183,6 +188,10 @@ ls_result_t ls_lsak_parse(const uint8_t *data, size_t length, ls_lsak_t *out) {
     }
     if (data[4] != LS_LSAK_VERSION) {
         return LS_ENOTSUP;
+    }
+    if (data[5] < LS_LSAK_ACK_STORED || data[5] > LS_LSAK_NACK_INTERNAL || data[6] != 0u ||
+        data[7] != 0u) {
+        return LS_ECORRUPT;
     }
     out->version = data[4];
     out->status = data[5];
@@ -193,4 +202,40 @@ ls_result_t ls_lsak_parse(const uint8_t *data, size_t length, ls_lsak_t *out) {
 
 bool ls_lsak_is_success(uint8_t status) {
     return status == LS_LSAK_ACK_STORED || status == LS_LSAK_ACK_DUPLICATE;
+}
+
+ls_result_t ls_stream_frame_parse(const uint8_t *data, size_t length, size_t maximum_envelope,
+                                  ls_stream_frame_t *out) {
+    if (!data || !out ||
+        length < LS_STREAM_TRANSPORT_HEADER_SIZE + LS_STREAM_TRANSPORT_TRAILER_SIZE) {
+        return LS_EINVAL;
+    }
+    if (data[0] != (uint8_t)'L' || data[1] != (uint8_t)'S') {
+        return LS_ECORRUPT;
+    }
+    if (data[2] != LS_STREAM_TRANSPORT_VERSION || data[3] != 0u) {
+        return LS_ENOTSUP;
+    }
+    uint32_t encoded_length = read_u32(data + 4u);
+    size_t maximum = maximum_envelope ? maximum_envelope : LS_MAX_EVENT_SIZE;
+    if ((size_t)encoded_length > maximum) {
+        return LS_ENOSPACE;
+    }
+    size_t overhead = LS_STREAM_TRANSPORT_HEADER_SIZE + LS_STREAM_TRANSPORT_TRAILER_SIZE;
+    if ((size_t)encoded_length > SIZE_MAX - overhead || length != overhead + encoded_length) {
+        return LS_ECORRUPT;
+    }
+    const uint8_t *envelope = data + LS_STREAM_TRANSPORT_HEADER_SIZE;
+    uint32_t crc = read_u32(envelope + encoded_length);
+    if (crc != ls_crc32(envelope, encoded_length)) {
+        return LS_ECORRUPT;
+    }
+    ls_result_t result = ls_envelope_validate(envelope, encoded_length, 0);
+    if (result != LS_OK) {
+        return result;
+    }
+    out->envelope = envelope;
+    out->envelope_length = encoded_length;
+    out->envelope_crc = crc;
+    return LS_OK;
 }

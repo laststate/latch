@@ -17,7 +17,8 @@ jobs:
       - run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DLS_BUILD_TESTS=ON -DCMAKE_C_FLAGS=--coverage -DCMAKE_CXX_FLAGS=--coverage -DCMAKE_EXE_LINKER_FLAGS=--coverage
       - run: cmake --build build --parallel
       - run: ctest --test-dir build --output-on-failure
-      - run: lcov --capture --directory build --output-file coverage.info --ignore-errors mismatch && lcov --remove coverage.info '*/tests/*' '*/build/*' --output-file coverage.info --ignore-errors unused
+      - run: lcov --capture --directory build --rc lcov_branch_coverage=1 --output-file coverage.info --ignore-errors mismatch && lcov --remove coverage.info '*/tests/*' '*/build/*' --rc lcov_branch_coverage=1 --output-file coverage.info --ignore-errors unused
+      - run: lcov --summary coverage.info --rc lcov_branch_coverage=1
       - uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7
         if: env.CODECOV_TOKEN != ''
         with:

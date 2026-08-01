@@ -27,6 +27,12 @@ typedef struct {
     uint32_t event_id;
 } ls_lsak_t;
 
+typedef struct {
+    const uint8_t *envelope;
+    size_t envelope_length;
+    uint32_t envelope_crc;
+} ls_stream_frame_t;
+
 typedef ls_result_t (*ls_stream_write_fn)(void *context, const uint8_t *data, size_t length);
 typedef ls_result_t (*ls_stream_ack_fn)(void *context, uint32_t event_id, uint32_t timeout_ms);
 typedef struct {
@@ -58,4 +64,10 @@ ls_result_t ls_stream_transport_reset(ls_stream_transport_t *stream);
 
 ls_result_t ls_lsak_parse(const uint8_t *data, size_t length, ls_lsak_t *out);
 bool ls_lsak_is_success(uint8_t status);
+
+/* Validate one complete LS frame, including its bounded length, outer CRC and
+   embedded LEP
+ * envelope. maximum_envelope=0 selects LS_MAX_EVENT_SIZE. */
+ls_result_t ls_stream_frame_parse(const uint8_t *data, size_t length, size_t maximum_envelope,
+                                  ls_stream_frame_t *out);
 #endif
