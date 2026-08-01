@@ -164,8 +164,10 @@ static LS_LINUX_SIGNAL_SAFE void signal_handler(int number, siginfo_t *info, voi
     record.crc32 = signal_record_crc32((const volatile uint8_t *)(const void *)&record,
                                        offsetof(ls_linux_signal_record_t, crc32));
     record.commit = LS_LINUX_SIGNAL_RECORD_COMMIT;
-    if (descriptor >= 0)
-        (void)write(descriptor, (const void *)&record, sizeof(record));
+    if (descriptor >= 0) {
+        ssize_t written = write(descriptor, (const void *)&record, sizeof(record));
+        (void)written;
+    }
     _exit(128 + number);
 }
 
