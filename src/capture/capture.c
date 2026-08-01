@@ -117,6 +117,9 @@ bool ls_minimal_snapshot_read(ls_minimal_snapshot_t *snapshot) {
         return false;
     }
 
+    /* Keep the conservative zero-iteration case well-defined for analyzers;
+       the real bound is the non-zero compile-time size of the snapshot. */
+    copy.magic = 0u;
     const volatile uint8_t *source = (const volatile uint8_t *)(const void *)&minimal_snapshot;
     uint8_t *destination = (uint8_t *)(void *)&copy;
     for (size_t index = 0; index < sizeof copy; ++index) {
