@@ -36,7 +36,31 @@ With AEAD, metadata length is 28 bytes: a 24-byte XChaCha20 nonce followed by a 
 
 An unencrypted payload is a sequence of TLVs. Each TLV is a two-byte nonzero type, a two-byte value length and that many value bytes. TLVs are contiguous with no padding. Unknown types are skipped by length. A receiver must reject a zero type, an incomplete TLV header or a value extending past the payload boundary.
 
-Types 1 through 15 are currently assigned to identity, reset, event, CPU, fault, breadcrumb, metric, power, health, assert, peripheral, log, memory, stack and heap data respectively. New types may be added in future minor protocol revisions; existing type semantics are immutable in v1.
+Types 1 through 15 are currently assigned to identity, reset, event, CPU, fault, breadcrumb, metric, power, health, assert, peripheral, log, memory, stack and heap data respectively. Type 16 (`CPU64`) is an additive full-width CPU extension. New types may be added in future minor protocol revisions; existing type semantics are immutable in v1.
+
+### CPU64 extension (type 16)
+
+`CPU64` preserves 64-bit RV64 machine context without changing the fixed
+header or silently presenting low words as a complete CPU record. Its value
+starts with four bytes:
+
+| Offset | Size | Field |
+| --- | --- | --- |
+| 0 | 1 | Encoding (`1`) |
+| 1 | 1 | Flags: bit 0 `COMPLETE`, bit 1 `UNAVAILABLE` |
+| 2 | 1 | Architecture (`LS_ARCH_RISCV64`) |
+| 3 | 1 | Word size in bytes (`8`) |
+
+When `COMPLETE` is set, the descriptor is followed by `x0` through `x31`,
+`mstatus`, `mcause`, `mtval` and `mepc`, each as unsigned little-endian
+64-bit words, for 292 value bytes total. When it is clear, no register words
+follow. `UNAVAILABLE` means the configured retained wide-context feature was
+not available at capture time; consumers must not reconstruct upper words
+from the legacy CPU TLV.
+
+Existing LEP v1 readers skip type 16 by its length. A receiver that recognizes
+it must reject an unknown encoding, a wrong word size, unsupported
+architecture/flags or a length inconsistent with the `COMPLETE` bit.
 
 ## Versioning and replay
 

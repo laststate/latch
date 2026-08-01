@@ -13,7 +13,7 @@ static void store32_le(uint8_t *p, uint32_t value) {
 }
 
 static void blocks(ls_poly1305_context_t *context, const uint8_t *message, size_t bytes) {
-    const uint32_t hibit = context->final ? 0u : (1u << 24);
+    const uint32_t hibit = context->final ? 0u : (UINT32_C(1) << 24);
     const uint32_t r0 = context->r[0], r1 = context->r[1], r2 = context->r[2], r3 = context->r[3],
                    r4 = context->r[4];
     const uint32_t s1 = r1 * 5u, s2 = r2 * 5u, s3 = r3 * 5u, s4 = r4 * 5u;
@@ -150,7 +150,7 @@ void ls_poly1305_finish(ls_poly1305_context_t *context, uint8_t tag[16]) {
     g3 = h3 + carry;
     carry = g3 >> 26;
     g3 &= 0x3ffffffu;
-    g4 = h4 + carry - (1u << 26);
+    g4 = h4 + carry - (UINT32_C(1) << 26);
     mask = (g4 >> 31) - 1u;
     g0 &= mask;
     g1 &= mask;

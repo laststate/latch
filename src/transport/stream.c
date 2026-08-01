@@ -107,9 +107,14 @@ ls_result_t ls_stream_transport_reset(ls_stream_transport_t *stream) {
 
 ls_result_t ls_stream_transport_send(void *context, const uint8_t *data, size_t length) {
     ls_stream_transport_t *stream = (ls_stream_transport_t *)context;
-    if (!stream || !stream->write || !data || length > UINT32_MAX) {
+    if (!stream || !stream->write || !data) {
         return LS_EINVAL;
     }
+#if SIZE_MAX > UINT32_MAX
+    if (length > UINT32_MAX) {
+        return LS_EINVAL;
+    }
+#endif
     size_t maximum = stream->maximum_envelope ? stream->maximum_envelope : LS_MAX_EVENT_SIZE;
     if (length > maximum) {
         return LS_ENOSPACE;
@@ -126,15 +131,16 @@ ls_result_t ls_stream_transport_send(void *context, const uint8_t *data, size_t 
         return result;
     }
 
+    uint32_t encoded_length = (uint32_t)length;
     uint8_t header[LS_STREAM_TRANSPORT_HEADER_SIZE] = {
         'L',
         'S',
         LS_STREAM_TRANSPORT_VERSION,
         0,
-        (uint8_t)length,
-        (uint8_t)(length >> 8),
-        (uint8_t)(length >> 16),
-        (uint8_t)(length >> 24),
+        (uint8_t)encoded_length,
+        (uint8_t)(encoded_length >> 8),
+        (uint8_t)(encoded_length >> 16),
+        (uint8_t)(encoded_length >> 24),
     };
     uint8_t trailer[LS_STREAM_TRANSPORT_TRAILER_SIZE];
     write_u32(trailer, crc);

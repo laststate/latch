@@ -1,10 +1,10 @@
 name: Registry packages
 on:
   pull_request:
-    paths: ["library.json", "rust/latch/**", "src/**", "include/**", "ports/**", ".github/workflows/registry-packages.yml"]
+    paths: ["library.json", "library.properties", "idf_component.yml", "rust/latch/**", "src/**", "include/**", "ports/**", "examples/arduino-esp32-cooperative/**", "examples/arduino-avr-cooperative/**", "examples/esp-idf-component/**", "tests/test_embedded_packaging.py", "tools/check_release_metadata.py", ".github/workflows/registry-packages.yml"]
   push:
     branches: [prod]
-    paths: ["library.json", "rust/latch/**", "src/**", "include/**", "ports/**", ".github/workflows/registry-packages.yml"]
+    paths: ["library.json", "library.properties", "idf_component.yml", "rust/latch/**", "src/**", "include/**", "ports/**", "examples/arduino-esp32-cooperative/**", "examples/arduino-avr-cooperative/**", "examples/esp-idf-component/**", "tests/test_embedded_packaging.py", "tools/check_release_metadata.py", ".github/workflows/registry-packages.yml"]
   workflow_dispatch:
 permissions:
   contents: read
@@ -17,9 +17,12 @@ jobs:
         with:
           python-version: "3.12"
       - uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4 # stable
+      - run: python tests/test_embedded_packaging.py
+      - run: python tools/check_release_metadata.py
       - run: python -m pip install platformio==6.1.18
       - run: mkdir -p build && pio pkg pack . --output build/laststate-latch-platformio.tar.gz
-      - run: pio run -d examples/platformio-link-check
+      - run: pio run -d examples/platformio-link-check --project-option="lib_deps=file://../../build/laststate-latch-platformio.tar.gz"
+      - run: pio run -d examples/arduino-avr-cooperative --project-option="lib_deps=file://../../build/laststate-latch-platformio.tar.gz"
       - run: cargo publish --manifest-path rust/latch/Cargo.toml --dry-run --allow-dirty
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:

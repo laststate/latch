@@ -55,8 +55,8 @@ On Windows, use `latch-host-example.exe` and `latch-dump.exe`. The demo writes a
 
 ```text
 Captured 291-byte LEP envelope in latch-demo.lst
-LEP v1 type=2 arch=0 flags=0x00 sequence=1 event=b63f7832 payload=263
-  tlv type=1 length=71
+LEP v1 type=2 (error) arch=0 (unknown) flags=0x00 sequence=1 event=b63f7832 payload=263
+  tlv type=1 (identity) length=71 value_hex=...
   ...
 ```
 
@@ -84,6 +84,14 @@ build/host-debug/latch-dump --json --hex tests/vectors/lep-v1-basic.hex
 The documented top-level keys and TLV order are stable for the 0.x line;
 consumers must ignore additional JSON keys. `value_hex` is always lowercase,
 two characters per byte, and malformed input emits no partial JSON document.
+For pipes and scripted collection, use `-` as the input path:
+
+```sh
+cat report.lep | build/host-debug/latch-dump --json -
+```
+
+An encrypted envelope is represented as validated structural metadata only;
+`latch-dump` never guesses a key or exposes unauthenticated plaintext.
 
 ## What survives the reboot
 
@@ -163,13 +171,13 @@ Latch is not a hosted observability backend and does not own the product's netwo
 
 The portable runtime is split into `core`, `capture`, `envelope`, `spool`, `storage`, `transport`, `metrics`, and `security` libraries. The complete target is `laststate::latch`.
 
-Architecture and platform support includes Cortex-M, RV32, Xtensa/ESP-IDF, Linux signal capture, STM32/RP reset ports, FreeRTOS, Zephyr, generic acknowledged streams, mbedTLS, BLE GATT, CAN/CAN-FD, LoRaWAN, cellular socket offload, and a CryptoAuthLib secure-element adapter.
+Architecture and platform support includes Cortex-M, RV32/RV64, Xtensa/ESP-IDF, Linux signal capture (including AArch64 Linux), STM32/RP plus Nordic/NXP/Microchip/TI/Silicon Labs reset-port boundaries, FreeRTOS, Zephyr, generic acknowledged streams, mbedTLS, BLE GATT, CAN/CAN-FD, LoRaWAN, cellular socket offload, and a CryptoAuthLib secure-element adapter. Each architecture and vendor entry has an explicit evidence tier in [platform support](docs/platform-support.md); source-level integration is not a claim of board qualification.
 
 Feature switches and buffer capacities live in [`include/laststate/config.h`](include/laststate/config.h). Production profiles can remove stored strings, disable features, and shrink buffers that the firmware does not need.
 
 ## Security and production status
 
-Latch supports XChaCha20-Poly1305 envelopes, HKDF-SHA-256 domain separation, replay windows, authenticated at-rest storage, and hardware-backed key contracts. These mechanisms still require a hardware CSPRNG, per-device provisioning, verified TLS, and an independent review for the product threat model. Read the [security policy](SECURITY.md) before enabling encryption or dumps.
+Latch supports XChaCha20-Poly1305 envelopes, HKDF-SHA-256 domain separation, replay windows, authenticated at-rest storage, and hardware-backed key contracts. These mechanisms still require a hardware CSPRNG, per-device provisioning, verified TLS, and an independent review for the product threat model. Latch has not claimed an independent cryptographic audit or MISRA compliance; read [security, audit and compliance status](docs/assurance.md) and the [security policy](SECURITY.md) before enabling encryption or dumps.
 
 The portable runtime and wire format are extensively host-tested. Hardware fault entry, linker placement, flash geometry, reset registers, vendor networking, TrustZone boundaries, and secure elements **must be qualified on each selected board and toolchain**. Host tests are not hardware certification. The exact release gates are in [production readiness](docs/production-readiness.md) and [implementation status](docs/implementation-status.md).
 
@@ -191,10 +199,12 @@ version-pinned Xtensa panic-hook boundary.
 - [Security and storage](docs/security-and-storage.md)
 - [Threat model and key rotation](docs/threat-model.md)
 - [Registry packages](docs/registries.md)
-- [Ports](docs/ports.md) and [native integrations](docs/native-integrations.md)
+- [Ports](docs/ports.md), [platform support](docs/platform-support.md), and [native integrations](docs/native-integrations.md)
+- [Footprint measurement](docs/footprint.md), [Linux signal capture](docs/linux-signal-capture.md), and [security/audit/compliance status](docs/assurance.md)
 - [Hardware-in-the-loop qualification](docs/hil.md)
 - [Production readiness](docs/production-readiness.md)
 - [AI-assisted development](docs/ai/README.md)
+- [Release procedure](docs/releasing.md)
 - [Roadmap](ROADMAP.md) and [changelog](CHANGELOG.md)
 
 ## Contributing
@@ -220,7 +230,7 @@ For a separate compact source distribution, while keeping the reviewable checkou
 python tools/minify_sources.py --output ../latch-production --verify
 ```
 
-Release automation validates that compact distribution and publishes packages, checksums, an SPDX SBOM, and build provenance. Repository automation is documented in [docs/automation.md](docs/automation.md).
+Release automation validates the compact distribution and generates release archives, checksums, an SPDX SBOM and build provenance. Registry publication remains an explicit, separate maintainer action described in [the release procedure](docs/releasing.md). Repository automation is documented in [docs/automation.md](docs/automation.md).
 
 ## License
 

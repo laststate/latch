@@ -15,6 +15,32 @@ jobs:
       - run: cmake --preset arm-cortex-m4
       - run: cmake --build --preset arm-cortex-m4 --parallel
       - run: python tools/check_size.py build/arm-cortex-m4/liblatch.a
+      - name: Measure default and constrained Cortex-M4 source profiles
+        run: |
+          mkdir -p build/footprints
+          python tools/measure_footprint.py build/arm-cortex-m4/liblatch.a \
+            --tool arm-none-eabi-size --label cortex-m4-default-static-archive \
+            --format json --output build/footprints/cortex-m4-default.json
+          cmake -S . -B build/arm-cortex-m4-small -G Ninja \
+            -DCMAKE_BUILD_TYPE=MinSizeRel \
+            -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/arm-none-eabi.cmake \
+            -DLS_BUILD_TESTS=OFF -DLS_STORE_STRINGS=0 \
+            -DLS_ENABLE_BREADCRUMBS=0 -DLS_ENABLE_METRICS=0 -DLS_ENABLE_LOGS=0 \
+            -DLS_ENABLE_POWER_SAMPLES=0 -DLS_ENABLE_PERFORMANCE=0 \
+            -DLS_ENABLE_DUMPS=0 -DLS_ENABLE_ASSERTS=0 -DLS_ENABLE_STACK_SNAPSHOT=0 \
+            -DLS_MAX_EVENT_SIZE=768 -DLS_BREADCRUMB_CAPACITY=1 -DLS_METRIC_CAPACITY=1 \
+            -DLS_POWER_SAMPLE_CAPACITY=1 -DLS_HEALTH_CAPACITY=1 -DLS_SPAN_CAPACITY=1 \
+            -DLS_MAX_TRANSPORTS=1 -DLS_MAX_DUMP_REGIONS=1 -DLS_MAX_REDACTIONS=1 \
+            -DLS_SPOOL_MAX_RECORDS=1 -DLS_POLICY_CAPACITY=1 -DLS_DEDUP_CAPACITY=1
+          cmake --build build/arm-cortex-m4-small --target latch --parallel
+          python tools/measure_footprint.py build/arm-cortex-m4-small/liblatch.a \
+            --tool arm-none-eabi-size --label cortex-m4-small-static-archive \
+            --format json --output build/footprints/cortex-m4-small.json
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: cortex-m4-footprints
+          path: build/footprints/*.json
+          if-no-files-found: error
   riscv32:
     runs-on: ubuntu-latest
     steps:
@@ -22,6 +48,13 @@ jobs:
       - run: sudo apt-get update && sudo apt-get install -y gcc-riscv64-unknown-elf ninja-build
       - run: cmake --preset riscv32
       - run: cmake --build --preset riscv32 --parallel
+  riscv64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - run: sudo apt-get update && sudo apt-get install -y gcc-riscv64-unknown-elf ninja-build
+      - run: cmake --preset riscv64
+      - run: cmake --build --preset riscv64 --parallel
   compile-profiles:
     runs-on: ubuntu-latest
     strategy:

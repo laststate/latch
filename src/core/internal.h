@@ -72,6 +72,10 @@ typedef struct {
     ls_severity_t severity;
     const char *message;
     const ls_arch_context_t *cpu;
+    /* Optional full-width state for LEP's additive CPU64 TLV. It is used
+       only while a
+     * normal-runtime event is being encoded. */
+    const ls_riscv64_context_t *riscv64;
     const ls_assert_info_t *assertion;
     const ls_peripheral_fault_t *peripheral;
     const ls_log_info_t *log;

@@ -11,7 +11,11 @@ convenient interpretation.
 | --- | --- | --- |
 | Normal runtime | Configuration, normal capture, persistent spool, transport, callbacks. | Re-enter a callback while it is executing on behalf of Latch. |
 | ISR | Only port-documented ISR-safe recording and deferred work. | Storage, transport, crypto provisioning, or normal event capture. |
-| Fault/trap handler | Bounded retained-snapshot write on the emergency/fault-safe path. | Heap, libc dependency, logging, storage, spool, transport, reset callback, blocking I/O, scheduler, or normal locks. |
+| Fault/trap handler | Bounded retained-snapshot write on the emergency/fault-safe path. The Linux user-space signal adapter is the sole documented exception: it attempts one fixed-size async-signal-safe nonblocking pipe/FIFO `write`, then calls `_exit`. | Heap, general libc work, logging, storage, spool, transport callbacks, retries, reset callback, blocking I/O, scheduler, or normal locks. |
+
+The Linux exception is a raw supervisor handoff, not LEP capture or durable
+storage. Do not extend it with runtime, encoding, filesystem, callback or retry
+work; see [linux-signal-capture.md](../linux-signal-capture.md).
 
 The full contract is in [architecture.md](../architecture.md),
 [concurrency.md](../concurrency.md), and

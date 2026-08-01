@@ -46,7 +46,9 @@ jobs:
           cmake --build build/fetch-content-consumer --parallel
           ctest --test-dir build/fetch-content-consumer --output-on-failure
           cpack -B build/packages --config build/host-debug/CPackConfig.cmake -C Debug
-          python tools/test_cpack_archive.py build/packages/laststate-latch-0.2.0-Linux.zip --consumer tests/package --config Debug
+          archive="$(find build/packages -maxdepth 1 -name 'laststate-latch-*-Linux.zip' -print -quit)"
+          test -n "${archive}"
+          python tools/test_cpack_archive.py "${archive}" --consumer tests/package --config Debug
       - name: Validate documentation, vectors, and source distribution
         run: |
           python tools/check_docs.py

@@ -46,7 +46,9 @@ typedef enum {
     LS_ARCH_CORTEX_M,
     LS_ARCH_RISCV,
     LS_ARCH_XTENSA,
-    LS_ARCH_LINUX
+    LS_ARCH_LINUX,
+    /* Additive: preserve existing LEP v1 architecture identifier values. */
+    LS_ARCH_RISCV64
 } ls_architecture_t;
 typedef enum {
     LS_FAULT_UNKNOWN,

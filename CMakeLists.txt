@@ -1,3 +1,30 @@
+if(ESP_PLATFORM)
+  # ESP-IDF Component Manager evaluates the component root CMake file inside
+  # an ESP-IDF project. Keep this path explicit: the public component ships
+  # the portable runtime and reset normalization only. The private/versioned
+  # ESP-IDF panic wrapper and Xtensa fault adapter stay opt-in in the physical
+  # crash example because their ABI must be qualified per ESP-IDF release.
+  set(LS_IDF_PORTABLE_SOURCES
+    src/core/runtime.c src/core/util.c src/core/memory.c src/core/health.c
+    src/core/peripheral.c src/core/assert.c src/core/log.c src/core/performance.c
+    src/core/boot.c src/core/build_id.c src/core/policy.c
+    src/capture/capture.c src/envelope/lep.c src/envelope/compression.c
+    src/spool/spool.c src/storage/memory_storage.c src/storage/storage_sim.c
+    src/storage/flash_mirror.c src/storage/wear_level.c src/storage/secure_storage.c
+    src/transport/transport.c src/transport/stream.c src/transport/network.c
+    src/metrics/breadcrumbs.c src/metrics/metrics.c src/security/sha256.c
+    src/security/chacha20.c src/security/poly1305.c src/security/aead.c
+    src/security/secure_element.c)
+  idf_component_register(
+    SRCS ${LS_IDF_PORTABLE_SOURCES} ports/esp-idf/esp_idf.c
+    INCLUDE_DIRS include ports/esp-idf
+    REQUIRES esp_system)
+  target_compile_features(${COMPONENT_LIB} PUBLIC c_std_11)
+  target_compile_options(${COMPONENT_LIB} PRIVATE
+    -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Wno-misleading-indentation)
+  return()
+endif()
+
 cmake_minimum_required(VERSION 3.20)
 if(POLICY CMP0184)
   cmake_policy(SET CMP0184 NEW)
@@ -12,6 +39,7 @@ option(LS_BUILD_TESTS "Build host tests" ${LS_TOP_LEVEL_DEFAULT})
 option(LS_FREESTANDING_CHECK "Compile the portable runtime without hosted assumptions" ${LS_TOP_LEVEL_DEFAULT})
 option(LS_BUILD_CORTEX_M "Build Cortex-M port with an ARM toolchain" OFF)
 option(LS_BUILD_RISCV "Build RV32 trap port with a RISC-V toolchain" OFF)
+option(LS_BUILD_RISCV64 "Build RV64 trap port with a RISC-V toolchain" OFF)
 option(LS_BUILD_XTENSA "Build Xtensa frame adapter" OFF)
 option(LS_BUILD_LINUX "Build Linux signal and file ports" OFF)
 option(LS_BUILD_FUZZERS "Build libFuzzer targets (Clang only)" OFF)
@@ -28,16 +56,30 @@ include(cmake/GenerateBuildId.cmake)
 # Allow feature-profile values supplied with -DLS_*=... to reach every target.
 # Defaults remain in config.h when a value is not provided by the integrator.
 set(LS_CONFIGURABLE_DEFINITIONS
-  LS_STORE_STRINGS LS_ENABLE_BREADCRUMBS LS_ENABLE_METRICS LS_ENABLE_LOGS
-  LS_ENABLE_POWER_SAMPLES LS_ENABLE_PERFORMANCE LS_ENABLE_DUMPS
+  LS_CONSTRAINED_PROFILE LS_STORE_STRINGS LS_ENABLE_BREADCRUMBS LS_ENABLE_METRICS LS_ENABLE_LOGS
+  LS_ENABLE_POWER_SAMPLES LS_ENABLE_PERFORMANCE LS_ENABLE_DUMPS LS_ENABLE_ASSERTS
+  LS_ENABLE_WIDE_CONTEXT
   LS_ENABLE_STACK_SNAPSHOT LS_COMPILED_MIN_LEVEL LS_MAX_EVENT_SIZE
-  LS_BREADCRUMB_CAPACITY LS_METRIC_CAPACITY LS_POLICY_CAPACITY
+  LS_BREADCRUMB_CAPACITY LS_BREADCRUMB_MESSAGE_MAX LS_BREADCRUMB_CATEGORY_MAX
+  LS_BREADCRUMB_KV_MAX LS_METRIC_CAPACITY LS_METRIC_NAME_MAX LS_METRIC_WINDOW_SIZE
+  LS_POWER_SAMPLE_CAPACITY LS_HEALTH_CAPACITY LS_SPAN_CAPACITY LS_LOG_ARG_MAX
+  LS_MAX_TRANSPORTS LS_MAX_DUMP_REGIONS LS_MAX_REDACTIONS LS_DUMP_REGION_MAX_BYTES
+  LS_STACK_SNAPSHOT_MAX LS_SPOOL_MAX_RECORDS LS_EMERGENCY_STACK_SIZE
+  LS_BOOT_LOOP_THRESHOLD LS_BOOT_LOOP_WINDOW_MS LS_BUILD_ID_MAX LS_POLICY_CAPACITY
   LS_DEDUP_CAPACITY LS_DEDUP_WINDOW_MS)
 foreach(definition IN LISTS LS_CONFIGURABLE_DEFINITIONS)
   if(DEFINED ${definition})
-    add_compile_definitions(${definition}=${${definition}})
+    if("${${definition}}" STREQUAL "ON")
+      set(ls_definition_value 1)
+    elseif("${${definition}}" STREQUAL "OFF")
+      set(ls_definition_value 0)
+    else()
+      set(ls_definition_value "${${definition}}")
+    endif()
+    add_compile_definitions(${definition}=${ls_definition_value})
   endif()
 endforeach()
+unset(ls_definition_value)
 
 set(LS_CORE_SOURCES src/core/runtime.c src/core/util.c src/core/memory.c src/core/health.c src/core/peripheral.c src/core/assert.c src/core/log.c src/core/performance.c src/core/boot.c src/core/build_id.c src/core/policy.c)
 set(LS_CAPTURE_SOURCES src/capture/capture.c)
@@ -71,6 +113,13 @@ function(ls_add_module name output)
   ls_configure_target(${name})
 endfunction()
 
+function(ls_configure_port_target target port_directory)
+  target_include_directories(${target} PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${port_directory}>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/laststate/${port_directory}>)
+  ls_configure_target(${target})
+endfunction()
+
 ls_add_module(latch-core latch-core ${LS_CORE_SOURCES})
 ls_add_module(latch-capture latch-capture ${LS_CAPTURE_SOURCES})
 ls_add_module(latch-envelope latch-envelope ${LS_ENVELOPE_SOURCES})
@@ -96,20 +145,31 @@ target_link_libraries(latch-cpp INTERFACE latch)
 add_library(laststate::latch-cpp ALIAS latch-cpp)
 
 add_library(latch-port-stm32 STATIC ports/stm32/stm32_reset.c)
-target_include_directories(latch-port-stm32 PUBLIC ports/stm32)
-ls_configure_target(latch-port-stm32)
+ls_configure_port_target(latch-port-stm32 ports/stm32)
 add_library(latch-port-rp STATIC ports/rp2040/rp_reset.c)
-target_include_directories(latch-port-rp PUBLIC ports/rp2040)
-ls_configure_target(latch-port-rp)
+ls_configure_port_target(latch-port-rp ports/rp2040)
 add_library(latch-port-esp-idf STATIC ports/esp-idf/esp_idf.c)
-target_include_directories(latch-port-esp-idf PUBLIC ports/esp-idf)
-ls_configure_target(latch-port-esp-idf)
+ls_configure_port_target(latch-port-esp-idf ports/esp-idf)
 add_library(latch-port-freertos STATIC ports/freertos/freertos_latch.c)
-target_include_directories(latch-port-freertos PUBLIC ports/freertos)
-ls_configure_target(latch-port-freertos)
+ls_configure_port_target(latch-port-freertos ports/freertos)
 add_library(latch-port-zephyr STATIC ports/zephyr/zephyr_latch.c ports/zephyr/zephyr_ble_gatt.c ports/zephyr/zephyr_can.c ports/zephyr/zephyr_lorawan.c ports/zephyr/zephyr_tls_socket.c)
-target_include_directories(latch-port-zephyr PUBLIC ports/zephyr)
-ls_configure_target(latch-port-zephyr)
+ls_configure_port_target(latch-port-zephyr ports/zephyr)
+add_library(latch-port-reset-common STATIC ports/common/reset_reason.c)
+ls_configure_port_target(latch-port-reset-common ports/common)
+add_library(latch-port-nordic STATIC ports/nordic/nrf_reset.c)
+ls_configure_port_target(latch-port-nordic ports/nordic)
+target_link_libraries(latch-port-nordic PUBLIC latch-port-reset-common)
+add_library(latch-port-nxp STATIC ports/nxp/nxp_reset.c)
+ls_configure_port_target(latch-port-nxp ports/nxp)
+target_link_libraries(latch-port-nxp PUBLIC latch-port-reset-common)
+add_library(latch-port-microchip STATIC ports/microchip/microchip_reset.c)
+ls_configure_port_target(latch-port-microchip ports/microchip)
+add_library(latch-port-ti STATIC ports/ti/ti_reset.c)
+ls_configure_port_target(latch-port-ti ports/ti)
+target_link_libraries(latch-port-ti PUBLIC latch-port-reset-common)
+add_library(latch-port-silabs STATIC ports/silabs/silabs_reset.c)
+ls_configure_port_target(latch-port-silabs ports/silabs)
+target_link_libraries(latch-port-silabs PUBLIC latch-port-reset-common)
 if(LS_BUILD_MBEDTLS_PORT)
   find_package(MbedTLS QUIET)
   if(NOT TARGET MbedTLS::mbedtls)
@@ -149,6 +209,15 @@ if(LS_BUILD_RISCV)
   target_include_directories(latch-riscv PUBLIC arch/riscv)
   ls_configure_target(latch-riscv)
 endif()
+if(LS_BUILD_RISCV64)
+  if(NOT LS_ENABLE_WIDE_CONTEXT)
+    message(FATAL_ERROR "LS_BUILD_RISCV64 requires -DLS_ENABLE_WIDE_CONTEXT=1")
+  endif()
+  enable_language(ASM)
+  add_library(latch-riscv64 STATIC arch/riscv64/riscv64.c arch/riscv64/riscv64_trap.S)
+  target_include_directories(latch-riscv64 PUBLIC arch/riscv64)
+  ls_configure_target(latch-riscv64)
+endif()
 if(LS_BUILD_XTENSA)
   add_library(latch-xtensa STATIC arch/xtensa/xtensa.c)
   target_include_directories(latch-xtensa PUBLIC arch/xtensa)
@@ -156,7 +225,11 @@ if(LS_BUILD_XTENSA)
 endif()
 if(LS_BUILD_LINUX)
   add_library(latch-linux STATIC arch/linux/linux.c ports/embedded-linux/file_backend.c)
-  target_include_directories(latch-linux PUBLIC arch/linux ports/embedded-linux)
+  target_include_directories(latch-linux PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/arch/linux>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/ports/embedded-linux>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/laststate/arch/linux>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/laststate/ports/embedded-linux>)
   ls_configure_target(latch-linux)
 endif()
 
@@ -190,6 +263,17 @@ endif()
 
 if(LS_BUILD_TESTS)
   enable_testing()
+  find_package(Python3 COMPONENTS Interpreter REQUIRED)
+  foreach(python_test footprint release-metadata embedded-packaging)
+    string(REPLACE "-" "_" python_source ${python_test})
+    add_test(NAME latch-${python_test}-tests
+      COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_${python_source}.py)
+  endforeach()
+  add_test(NAME latch-release-metadata-current
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/check_release_metadata.py)
+  add_test(NAME latch-esp-idf-component-layout
+    COMMAND ${CMAKE_COMMAND} -S ${CMAKE_CURRENT_SOURCE_DIR}/tests/idf-component
+      -B ${CMAKE_CURRENT_BINARY_DIR}/idf-component-layout)
   add_executable(latch-tests tests/test_latch.c)
   target_link_libraries(latch-tests PRIVATE latch)
   add_test(NAME latch-c-tests COMMAND latch-tests)
@@ -217,6 +301,10 @@ if(LS_BUILD_TESTS)
   ls_configure_target(latch-profile-production)
   target_compile_definitions(latch-profile-production PRIVATE LS_STORE_STRINGS=0 LS_COMPILED_MIN_LEVEL=2 LS_MAX_EVENT_SIZE=2048 LS_BREADCRUMB_CAPACITY=8 LS_METRIC_CAPACITY=8)
   add_test(NAME latch-profile-production COMMAND latch-profile-production)
+  add_executable(latch-profile-constrained tests/test_constrained_profile.c ${LS_ALL_PORTABLE_SOURCES})
+  ls_configure_target(latch-profile-constrained)
+  target_compile_definitions(latch-profile-constrained PRIVATE LS_CONSTRAINED_PROFILE=1)
+  add_test(NAME latch-profile-constrained COMMAND latch-profile-constrained)
   if(LS_TEST_LIBSODIUM)
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(SODIUM REQUIRED IMPORTED_TARGET libsodium)
@@ -227,11 +315,30 @@ if(LS_BUILD_TESTS)
   add_executable(latch-stm32-reset-tests tests/test_stm32_reset.c)
   target_link_libraries(latch-stm32-reset-tests PRIVATE latch-port-stm32)
   add_test(NAME latch-stm32-reset-tests COMMAND latch-stm32-reset-tests)
+  add_executable(latch-vendor-reset-tests tests/test_vendor_reset.c)
+  target_link_libraries(latch-vendor-reset-tests PRIVATE latch-port-nordic latch-port-nxp
+    latch-port-microchip latch-port-ti latch-port-silabs)
+  add_test(NAME latch-vendor-reset-tests COMMAND latch-vendor-reset-tests)
   add_executable(latch-cortex-m-fault-tests tests/test_cortex_m_fault.c arch/cortex-m/cortex_m.c)
   target_include_directories(latch-cortex-m-fault-tests PRIVATE arch/cortex-m)
   target_link_libraries(latch-cortex-m-fault-tests PRIVATE latch)
   ls_configure_target(latch-cortex-m-fault-tests)
   add_test(NAME latch-cortex-m-fault-tests COMMAND latch-cortex-m-fault-tests)
+  add_executable(latch-riscv64-fault-tests tests/test_riscv64_fault.c arch/riscv64/riscv64.c
+    ${LS_ALL_PORTABLE_SOURCES})
+  target_include_directories(latch-riscv64-fault-tests PRIVATE arch/riscv64)
+  target_compile_definitions(latch-riscv64-fault-tests PRIVATE LS_ENABLE_WIDE_CONTEXT=1)
+  ls_configure_target(latch-riscv64-fault-tests)
+  add_test(NAME latch-riscv64-fault-tests COMMAND latch-riscv64-fault-tests)
+  add_executable(latch-linux-signal-tests tests/test_linux_signal.c arch/linux/linux.c)
+  target_include_directories(latch-linux-signal-tests PRIVATE arch/linux)
+  ls_configure_target(latch-linux-signal-tests)
+  add_test(NAME latch-linux-signal-tests COMMAND latch-linux-signal-tests)
+  if(LS_BUILD_LINUX AND CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    add_executable(latch-file-backend-tests tests/test_file_backend.c)
+    target_link_libraries(latch-file-backend-tests PRIVATE latch-linux latch)
+    add_test(NAME latch-file-backend-tests COMMAND latch-file-backend-tests)
+  endif()
   add_executable(latch-xtensa-fault-tests tests/test_xtensa_fault.c arch/xtensa/xtensa.c)
   target_include_directories(latch-xtensa-fault-tests PRIVATE arch/xtensa)
   target_link_libraries(latch-xtensa-fault-tests PRIVATE latch)
@@ -267,8 +374,8 @@ endif()
 if(LS_BUILD_TOOLS)
   add_executable(latch-dump tools/latch_dump.c)
   target_link_libraries(latch-dump PRIVATE latch)
+  install(TARGETS latch-dump RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
   if(LS_BUILD_TESTS)
-    find_package(Python3 COMPONENTS Interpreter REQUIRED)
     add_test(NAME latch-dump-hex-tests
       COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_latch_dump.py
         $<TARGET_FILE:latch-dump> ${CMAKE_CURRENT_SOURCE_DIR}/tests/vectors/lep-v1-basic.hex)
@@ -302,9 +409,26 @@ if(LS_BUILD_BENCHMARKS)
 endif()
 
 install(TARGETS latch latch-core latch-capture latch-envelope latch-spool latch-storage-memory latch-transport latch-metrics latch-security latch-cpp
+  latch-port-stm32 latch-port-rp latch-port-esp-idf latch-port-freertos latch-port-zephyr
+  latch-port-reset-common latch-port-nordic latch-port-nxp latch-port-microchip latch-port-ti
+  latch-port-silabs
   EXPORT LatchTargets
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(DIRECTORY include/laststate DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+foreach(port_directory stm32 rp2040 esp-idf freertos zephyr common nordic nxp microchip ti silabs)
+  install(DIRECTORY ports/${port_directory}/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/laststate/ports/${port_directory}
+    FILES_MATCHING PATTERN "*.h")
+endforeach()
+if(TARGET latch-linux)
+  install(TARGETS latch-linux EXPORT LatchTargets ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+  install(DIRECTORY arch/linux/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/laststate/arch/linux
+    FILES_MATCHING PATTERN "*.h")
+  install(DIRECTORY ports/embedded-linux/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/laststate/ports/embedded-linux
+    FILES_MATCHING PATTERN "*.h")
+endif()
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/generated/laststate/build_id_generated.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/laststate)
 include(CMakePackageConfigHelpers)
 configure_package_config_file(cmake/laststate-latch-config.cmake.in

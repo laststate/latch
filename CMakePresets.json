@@ -44,13 +44,22 @@
       "name": "arm-cortex-m4",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build/arm-cortex-m4",
-      "toolchainFile": "${sourceDir}/cmake/toolchains/arm-none-eabi.cmake"
+      "toolchainFile": "${sourceDir}/cmake/toolchains/arm-none-eabi.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "MinSizeRel"
+      }
     },
     {
       "name": "riscv32",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build/riscv32",
       "toolchainFile": "${sourceDir}/cmake/toolchains/riscv32-none-elf.cmake"
+    },
+    {
+      "name": "riscv64",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/riscv64",
+      "toolchainFile": "${sourceDir}/cmake/toolchains/riscv64-none-elf.cmake"
     }
   ],
   "buildPresets": [
@@ -74,6 +83,10 @@
     {
       "name": "riscv32",
       "configurePreset": "riscv32"
+    },
+    {
+      "name": "riscv64",
+      "configurePreset": "riscv64"
     }
   ],
   "testPresets": [

@@ -11,18 +11,18 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
-      - name: Require a version-matched tag reachable from prod
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.13'
+      - name: Require a release-metadata-matched tag reachable from prod
         run: |
           git fetch --no-tags origin prod
           git merge-base --is-ancestor "${GITHUB_SHA}" origin/prod || {
             echo "Release tags must point to a commit reachable from prod" >&2
             exit 1
           }
-          project_version="$(sed -n 's/project(latch VERSION \([^ ]*\).*/\1/p' CMakeLists.txt)"
-          test "v${project_version}" = "${GITHUB_REF_NAME}" || {
-            echo "Tag ${GITHUB_REF_NAME} does not match project version v${project_version}" >&2
-            exit 1
-          }
+          python tools/check_release_metadata.py \
+            --version "${GITHUB_REF_NAME#v}" --require-tag
   validate:
     needs: verify-tag
     uses: ./.github/workflows/required.yml

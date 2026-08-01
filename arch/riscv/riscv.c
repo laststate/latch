@@ -6,6 +6,7 @@ uintptr_t ls_riscv_emergency_stack_top =
     (uintptr_t)(riscv_emergency_stack + sizeof riscv_emergency_stack);
 void ls_riscv_init(void) {
     uintptr_t top = ls_riscv_emergency_stack_top;
+    ls_capture_minimal_prepare();
     __asm__ volatile("csrw mscratch, %0" ::"r"(top));
 }
 void ls_riscv_trap_from_saved(const ls_riscv_saved_t *saved) {
@@ -21,7 +22,10 @@ void ls_riscv_trap_from_saved(const ls_riscv_saved_t *saved) {
     context.mcause = saved->mcause;
     context.mtval = saved->mtval;
     context.mepc = saved->mepc;
-    (void)ls_capture_cpu_context(&context);
+    /* Trap context is fault context: retain only the bounded snapshot here.
+       Normal boot
+     * promotes it into the event/spool path after reset. */
+    ls_capture_minimal_context_fault(&context);
     for (;;) {
     }
 }

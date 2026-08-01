@@ -1,8 +1,11 @@
 # Registry publication
 
 Registry discovery is prepared but publication is a release operation. Keep
-`CMakeLists.txt`, `library.json`, `rust/latch/Cargo.toml`, `CHANGELOG.md` and the
-Git tag on exactly the same version before publishing.
+`CMakeLists.txt`, `include/laststate/version.h`, `library.json`,
+`library.properties`, `idf_component.yml`, `rust/latch/Cargo.toml`,
+`CHANGELOG.md` and the Git tag on exactly the same version before publishing.
+`python tools/check_release_metadata.py --version X.Y.Z` verifies that parity
+without publishing anything.
 
 ## PlatformIO Registry
 
@@ -43,6 +46,46 @@ cargo publish --manifest-path rust/latch/Cargo.toml
 
 Crate versions are also immutable. A failed publication should be corrected in
 a new patch version rather than attempting to replace uploaded source.
+
+## Arduino Library Manager
+
+`library.properties` and the `src/laststate` public-header shims make the
+repository installable as an Arduino library. The package lists `esp32` and
+`avr`: both are cooperative normal-runtime integrations, not generic 8/16-bit
+automatic-crash ports. AVR automatically selects `LS_CONSTRAINED_PROFILE`.
+
+Before submitting a release to the Arduino Library Manager, run the repository
+metadata test and compile both the
+[`arduino-esp32-cooperative`](../examples/arduino-esp32-cooperative/README.md)
+and [`arduino-avr-cooperative`](../examples/arduino-avr-cooperative/README.md)
+sketches against current board packages. The submission
+itself is reviewed through the Arduino Library Manager registry process; use
+the [Arduino library specification](https://docs.arduino.cc/arduino-cli/library-specification)
+as the source of truth for metadata and layout changes.
+
+Do not represent the Arduino package as crash-persistent. The examples use
+volatile RAM and prove a bounded explicit capture path only.
+
+## ESP-IDF Component Registry
+
+The root `idf_component.yml` makes the repository consumable as an ESP-IDF
+component. Its component CMake path includes the portable runtime and
+`ports/esp-idf/esp_idf.c`; it deliberately excludes the version-sensitive
+private panic-wrapper and Xtensa adapter. The local consumer is under
+[`examples/esp-idf-component`](../examples/esp-idf-component/README.md).
+
+Validate it with an ESP-IDF 5.x installation before publishing:
+
+```sh
+cd examples/esp-idf-component
+idf.py set-target esp32
+idf.py build
+```
+
+Publish only after the release tag is public and the component archive has been
+checked against the [ESP-IDF Component Manager packaging guide](https://docs.espressif.com/projects/idf-component-manager/en/latest/guides/packaging_components.html).
+The manifest format and its version constraints are documented in the
+[Component Manager manifest reference](https://docs.espressif.com/projects/idf-component-manager/en/latest/reference/manifest_file.html).
 
 ## Zephyr module
 

@@ -23,19 +23,20 @@
   ],
   "license": "Apache-2.0",
   "homepage": "https://github.com/laststate/latch",
-  "frameworks": "*",
-  "platforms": "*",
+  "frameworks": [
+    "arduino",
+    "espidf"
+  ],
+  "platforms": [
+    "atmelavr",
+    "espressif32"
+  ],
   "headers": "laststate/latch.h",
   "build": {
-    "srcDir": ".",
+    "srcDir": "src",
     "includeDir": "include",
     "srcFilter": [
-      "+<src/**/*.c>",
-      "-<tests/>",
-      "-<examples/>",
-      "-<fuzz/>",
-      "-<benchmarks/>",
-      "-<hil/>"
+      "+<**/*.c>"
     ]
   },
   "export": {

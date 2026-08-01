@@ -11,12 +11,16 @@ This roadmap is directional rather than a promise of dates. Issues and release n
 - Keep the host capture-and-decode demo working on Linux, macOS, and Windows.
 - Keep the machine-readable decoder and copy-paste CMake consumers stable in CI.
 - Document the smallest useful retained-RAM and Flash integrations.
+- Keep Arduino, ESP-IDF Component Manager, PlatformIO, Zephyr and Rust package
+  metadata version-locked and validate their source layouts before publication.
 
 ### 2. Publish hardware qualification evidence
 
 - Record board, revision, SDK, compiler, linker script, and test procedure for each result.
 - Exercise real HardFault/trap, watchdog, brownout, corrupt-stack, nested-fault, and interrupted-Flash scenarios.
 - Promote a platform from “integration boundary” to “qualified example” only when its evidence is reproducible.
+- Turn the new Nordic, NXP, Microchip, TI, Silicon Labs and RV64 integration
+  boundaries into board-specific HIL reports instead of broad compatibility claims.
 
 ### 3. Harden protocol and storage tooling
 
@@ -32,8 +36,10 @@ This roadmap is directional rather than a promise of dates. Issues and release n
 
 ### 5. Establish a predictable release rhythm
 
-- Tag the first `v0.2.0` public-preview baseline after CI is green.
+- `v0.2.0` is the first public-preview baseline.
 - Publish small, reviewable releases with changelog entries and generated provenance.
+- Use the version-parity gate and [release procedure](docs/releasing.md) before
+  the next tag; registry publication remains separately approved and manual.
 - Keep `good first issue` work curated and close the loop with contributors quickly.
 
 ## Community-owned opportunities

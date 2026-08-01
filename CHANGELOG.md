@@ -17,6 +17,19 @@ All notable changes to Latch are recorded here. The project follows [Semantic Ve
   threat model and registry publication runbook.
 - Version 3 retained snapshots with Xtensa A0-A15/special registers and a
   host-tested fault-safe normalized-frame adapter.
+- RV64 retained context with an additive, explicitly complete-or-unavailable
+  CPU64 LEP extension; vendor reset-reason adapters for Nordic, NXP,
+  Microchip, TI and Silicon Labs.
+- Native Arduino and ESP-IDF Component Manager layouts, a cooperative Arduino
+  example, deterministic embedded-package checks, static footprint reports,
+  and a release-metadata consistency gate.
+- A constrained 8/16-bit cooperative profile with an Arduino Mega 2560
+  compile/link example; it is explicitly not an automatic fault or persistent
+  crash-recovery port.
+- A bounded `latch-dump` host decoder that accepts files or stdin, names LEP
+  fields and keeps encrypted payloads metadata-only without a decryption key.
+- Linux alternate-stack fatal-signal handoff using a single nonblocking write
+  of a CRC-protected raw record, with full-width x86_64/AArch64 state.
 - Transactional secure-storage key rotation with failure rollback of in-memory
   key state.
 
@@ -32,6 +45,9 @@ All notable changes to Latch are recorded here. The project follows [Semantic Ve
 - Initialized the spool append slot before the checked lookup, avoiding a GCC
   release-build false-positive that became fatal under `-Werror`.
 - Applied the repository formatter drift reported by maintenance automation.
+- Kept RV32 trap capture on the retained fault-safe path instead of entering
+  normal runtime/storage logic, and removed normal Latch runtime work from the
+  Linux fatal-signal handler.
 
 ## [0.2.0] - 2026-07-29
 

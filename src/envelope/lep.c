@@ -189,9 +189,84 @@ static ls_result_t put_event(ls_writer_t *writer, const ls_event_t *event) {
     return ls_writer_tlv(writer, LS_TLV_EVENT, value, (uint16_t)nested.length);
 }
 
-static ls_result_t put_cpu(ls_writer_t *writer, const ls_arch_context_t *cpu) {
+enum {
+    LS_CPU64_ENCODING_VERSION = 1u,
+    LS_CPU64_CONTEXT_COMPLETE = 1u << 0,
+    LS_CPU64_CONTEXT_UNAVAILABLE = 1u << 1,
+    LS_CPU64_WORD_SIZE_BYTES = 8u,
+    LS_CPU64_REGISTER_COUNT = 32u,
+    LS_CPU64_CSR_COUNT = 4u
+};
+
+static ls_result_t put_cpu64(ls_writer_t *writer, const ls_riscv64_context_t *context,
+                             bool complete) {
+    uint8_t value[4u + (LS_CPU64_REGISTER_COUNT + LS_CPU64_CSR_COUNT) * sizeof(uint64_t)];
+    ls_writer_t nested = {value, sizeof(value), 0u};
+    ls_result_t result = ls_writer_u8(&nested, LS_CPU64_ENCODING_VERSION);
+
+    if (result == LS_OK) {
+        result = ls_writer_u8(&nested,
+                              complete ? LS_CPU64_CONTEXT_COMPLETE : LS_CPU64_CONTEXT_UNAVAILABLE);
+    }
+    if (result == LS_OK) {
+        result = ls_writer_u8(&nested, (uint8_t)LS_ARCH_RISCV64);
+    }
+    if (result == LS_OK) {
+        result = ls_writer_u8(&nested, LS_CPU64_WORD_SIZE_BYTES);
+    }
+    if (complete) {
+        for (unsigned index = 0u; index < LS_CPU64_REGISTER_COUNT && result == LS_OK; ++index) {
+            result = ls_writer_u64(&nested, context->x[index]);
+        }
+        if (result == LS_OK) {
+            result = ls_writer_u64(&nested, context->mstatus);
+        }
+        if (result == LS_OK) {
+            result = ls_writer_u64(&nested, context->mcause);
+        }
+        if (result == LS_OK) {
+            result = ls_writer_u64(&nested, context->mtval);
+        }
+        if (result == LS_OK) {
+            result = ls_writer_u64(&nested, context->mepc);
+        }
+    }
+    if (result != LS_OK) {
+        return result;
+    }
+    return ls_writer_tlv(writer, LS_TLV_CPU64, value, (uint16_t)nested.length);
+}
+
+static ls_result_t put_cpu(ls_writer_t *writer, const ls_arch_context_t *cpu,
+                           const ls_riscv64_context_t *riscv64, bool *truncated) {
     if (!cpu) {
         return LS_OK;
+    }
+
+    /* The base CPU and fault TLVs remain mandatory for backwards-compatible
+       receivers.
+     * Reserve their exact encoded size before deciding whether a
+       full CPU64 bank fits. If it
+     * does not, emit an explicit CPU64 descriptor
+       instead of silently presenting low 32-bit
+     * words as complete RV64 state. */
+    const size_t cpu_value_length = 2u + 32u * sizeof(uint32_t) + 18u * sizeof(uint32_t) + 2u +
+                                    (cpu->has_fpu ? 17u * sizeof(uint32_t) : 0u);
+    const size_t legacy_required = 4u + cpu_value_length + 4u + 13u * sizeof(uint32_t);
+    const size_t full_cpu64_required =
+        4u + 4u + (LS_CPU64_REGISTER_COUNT + LS_CPU64_CSR_COUNT) * sizeof(uint64_t);
+    bool is_riscv64 = cpu->architecture == LS_ARCH_RISCV64;
+    bool full_cpu64 =
+        is_riscv64 && riscv64 && writer_remaining(writer) >= legacy_required + full_cpu64_required;
+
+    if (is_riscv64) {
+        ls_result_t result = put_cpu64(writer, riscv64, full_cpu64);
+        if (result != LS_OK) {
+            return result;
+        }
+        if (!full_cpu64) {
+            mark_truncated(truncated);
+        }
     }
 
     uint8_t value[512];
@@ -672,7 +747,7 @@ static ls_result_t put_payload(ls_writer_t *writer, const ls_event_t *event, boo
         result = put_event(writer, event);
     }
     if (result == LS_OK) {
-        result = put_cpu(writer, event->cpu);
+        result = put_cpu(writer, event->cpu, event->riscv64, truncated);
     }
     if (result == LS_OK) {
         result = put_breadcrumbs(writer, truncated);

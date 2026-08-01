@@ -1,0 +1,16 @@
+version: "0.2.0"
+description: "Heap-free embedded error evidence capture with durable LEP envelopes."
+url: "https://github.com/laststate/latch"
+repository: "https://github.com/laststate/latch.git"
+documentation: "https://github.com/laststate/latch/tree/v0.2.0/examples/esp-idf-component"
+issues: "https://github.com/laststate/latch/issues"
+license: "Apache-2.0"
+tags:
+  - crash-reporting
+  - embedded
+  - observability
+  - esp32
+dependencies:
+  idf: ">=5.0"
+files:
+  use_gitignore: true
