@@ -1,9 +1,19 @@
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
+#if defined(CONFIG_ARCH_POSIX)
+#include <nsi_main.h>
+#endif
 #include "laststate/latch.h"
 
 static uint8_t storage_bytes[50000];
 static unsigned delivered;
+
+static int finish(int status) {
+#if defined(CONFIG_ARCH_POSIX)
+    nsi_exit(status);
+#endif
+    return status;
+}
 
 static uint32_t timestamp_ms(void *context) {
     (void)context;
@@ -58,16 +68,16 @@ int main(void) {
     };
     ls_config_t config = {.identity = &identity, .rtos = "zephyr", .timestamp_ms = timestamp_ms};
     if (ls_init(&config) != LS_OK)
-        return 1;
+        return finish(1);
     ls_storage_register(&storage);
     ls_transport_register(&console);
     if (ls_boot() != LS_OK)
-        return 2;
+        return finish(2);
     ls_breadcrumb("zephyr_boot_complete");
     ls_metric_u32("sample_counter", 1);
     ls_capture_message("first Zephyr event", LS_SEVERITY_INFO);
     if (ls_flush() != LS_OK || delivered != 1u)
-        return 3;
+        return finish(3);
     printk("Latch: PASS first capture\n");
-    return 0;
+    return finish(0);
 }
