@@ -21,8 +21,13 @@ jobs:
       - run: python tools/check_release_metadata.py
       - run: python -m pip install platformio==6.1.18
       - run: mkdir -p build && pio pkg pack . --output build/laststate-latch-platformio.tar.gz
-      - run: pio run -d examples/platformio-link-check --project-option="lib_deps=file://../../build/laststate-latch-platformio.tar.gz"
-      - run: pio run -d examples/arduino-avr-cooperative --project-option="lib_deps=file://../../build/laststate-latch-platformio.tar.gz"
+      - name: Point examples at the packed artifact
+        run: |
+          sed -i 's#file://../..#file://../../build/laststate-latch-platformio.tar.gz#' \
+            examples/platformio-link-check/platformio.ini \
+            examples/arduino-avr-cooperative/platformio.ini
+      - run: pio run -d examples/platformio-link-check
+      - run: pio run -d examples/arduino-avr-cooperative
       - run: cargo publish --manifest-path rust/latch/Cargo.toml --dry-run --allow-dirty
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:

@@ -68,8 +68,8 @@ def main() -> int:
     registry_workflow = (ROOT / ".github" / "workflows" / "registry-packages.yml").read_text(
         encoding="utf-8"
     )
-    assert registry_workflow.count("laststate-latch-platformio.tar.gz") >= 3
-    assert "--project-option=\"lib_deps=file://../../build/laststate-latch-platformio.tar.gz\"" in registry_workflow
+    assert registry_workflow.count("laststate-latch-platformio.tar.gz") >= 2
+    assert "sed -i 's#file://../..#file://../../build/laststate-latch-platformio.tar.gz#'" in registry_workflow
 
     idf_example = ROOT / "examples" / "esp-idf-component"
     dependency = (idf_example / "main" / "idf_component.yml").read_text(encoding="utf-8")
