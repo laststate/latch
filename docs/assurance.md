@@ -9,6 +9,11 @@ Latch contains implementations of XChaCha20-Poly1305, HKDF-SHA-256 and supportin
 - **MISRA C:2012 compliance/certification:** not completed or claimed.
 - **External adoption:** a community signal, not a property that source code can manufacture. Public issues, board reports and reproducible qualification evidence are the useful way to grow it.
 
+The public [audit invitation](security-audit.md) defines a review scope and
+publication policy. Completed reports will be retained under
+[`docs/audits`](audits/README.md); that directory currently records that no
+external audit has been completed.
+
 Do not use an unreviewed release as the sole basis for a safety-, security- or mission-critical approval. The product integrator remains responsible for key provisioning, entropy, hardware isolation, transport authentication, retained-data policy and the selected board/toolchain.
 
 ## Audit-ready review packet

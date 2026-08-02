@@ -1,6 +1,6 @@
 # Repository automation
 
-Latch ships with 27 GitHub Actions workflows. Read-only validation covers Windows, Linux, macOS, GCC, Clang, MSVC, ARM, RISC-V, Rust `no_std`, sanitizers, coverage, CodeQL, fuzzing, reproducibility, documentation, compact source distributions, packages and releases.
+Latch ships with 28 GitHub Actions workflows. Read-only validation covers Windows, Linux, macOS, GCC, Clang, MSVC, ARM, RISC-V, Rust `no_std`, sanitizers, coverage, CodeQL, fuzzing, QEMU exception/canary models, Renode trap injection, reproducibility, documentation, compact source distributions, packages and releases.
 
 The repository bots perform these write operations:
 

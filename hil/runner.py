@@ -44,7 +44,21 @@ def run(config, scenario, timeout):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--board", required=True, type=Path)
-    parser.add_argument("--scenario", required=True, choices=["brownout", "watchdog", "mpu", "trustzone", "fpu-lazy", "flash", "reset-registers"])
+    parser.add_argument(
+        "--scenario",
+        required=True,
+        choices=[
+            "brownout",
+            "hardfault",
+            "watchdog",
+            "stack-canary",
+            "mpu",
+            "trustzone",
+            "fpu-lazy",
+            "flash",
+            "reset-registers",
+        ],
+    )
     parser.add_argument("--timeout", type=float, default=45)
     args = parser.parse_args()
     run(json.loads(args.board.read_text(encoding="utf-8")), args.scenario, args.timeout)

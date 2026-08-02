@@ -2,6 +2,11 @@
 
 Latch separates a portable evidence runtime from architecture fault entry and vendor storage/reset integration. That distinction is intentional: compiling the portable runtime for a family is useful, but it is not evidence that a fault handler, linker placement, Flash geometry, or reset register is correct on a particular board.
 
+For a concise evidence-by-board view, use the generated
+[hardware compatibility matrix](hardware-compatibility.md). Its JSON source and
+dated evidence requirement prevent a compile-only row from being presented as
+physical qualification.
+
 ## Support tiers
 
 | Tier | Meaning | Evidence required before a product relies on it |

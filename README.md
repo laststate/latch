@@ -173,6 +173,12 @@ The portable runtime is split into `core`, `capture`, `envelope`, `spool`, `stor
 
 Architecture and platform support includes Cortex-M, RV32/RV64, Xtensa/ESP-IDF, Linux signal capture (including AArch64 Linux), STM32/RP plus Nordic/NXP/Microchip/TI/Silicon Labs reset-port boundaries, FreeRTOS, Zephyr, generic acknowledged streams, mbedTLS, BLE GATT, CAN/CAN-FD, LoRaWAN, cellular socket offload, and a CryptoAuthLib secure-element adapter. Each architecture and vendor entry has an explicit evidence tier in [platform support](docs/platform-support.md); source-level integration is not a claim of board qualification.
 
+Before selecting hardware, consult the public
+[hardware compatibility matrix](docs/hardware-compatibility.md). It records the
+exact MCU, board, toolchain, fault-handler evidence, flash evidence, status and
+last accepted physical HIL date without treating emulator or compile results as
+qualification.
+
 Feature switches and buffer capacities live in [`include/laststate/config.h`](include/laststate/config.h). Production profiles can remove stored strings, disable features, and shrink buffers that the firmware does not need.
 
 ## Security and production status
@@ -202,7 +208,10 @@ version-pinned Xtensa panic-hook boundary.
 - [Ports](docs/ports.md), [platform support](docs/platform-support.md), and [native integrations](docs/native-integrations.md)
 - [Footprint measurement](docs/footprint.md), [Linux signal capture](docs/linux-signal-capture.md), and [security/audit/compliance status](docs/assurance.md)
 - [Hardware-in-the-loop qualification](docs/hil.md)
+- [Hardware compatibility matrix](docs/hardware-compatibility.md)
+- [Production reference designs](examples/reference-designs/README.md)
 - [Production readiness](docs/production-readiness.md)
+- [LTS policy](docs/lts-policy.md) and [independent audit invitation](docs/security-audit.md)
 - [AI-assisted development](docs/ai/README.md)
 - [Release procedure](docs/releasing.md)
 - [Roadmap](ROADMAP.md) and [changelog](CHANGELOG.md)

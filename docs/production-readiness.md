@@ -14,6 +14,13 @@
 - The Linux fatal-signal handoff is exercised on the native x86_64 host with a fork/pipe/SIGABRT test: a configured alternate-stack handler writes a CRC-protected fixed-size native raw record in one nonblocking write. Its AArch64 field extraction remains an integration boundary that needs validation against the selected Linux kernel/libc ABI. It intentionally does not emit LEP, call Latch runtime code or establish on-disk durability from signal context.
 - Native Arduino and ESP-IDF Component Manager package layouts, PlatformIO packaging, Zephyr module discovery and Rust crate packaging have deterministic metadata/layout validation. Publication to external registries remains manual and unperformed until a release is approved.
 - The footprint reporter distinguishes static archives from linked images and records compiler frame reports without treating either as a complete physical-board or call-stack measurement.
+- The public hardware matrix is generated from validated, versioned evidence
+  metadata. QEMU executes Cortex-M exception paths and Renode executes an RV32
+  illegal-instruction trap; both remain explicitly below physical HIL.
+- Deterministic spool stress sweeps every byte of a committed envelope, 160
+  interrupted-write/partial-write combinations, and recovery past a corrupt
+  record. The hosted OTA, critical-redaction, and low-power reference designs
+  are compiled and executed in CI.
 
 ## Required before a product release
 
@@ -25,3 +32,7 @@
 - Protect `prod`, require the stable validation check, build and test the separate compact source artifact, publish the release artifacts, and retain the HIL evidence with the release record.
 
 No release gate is considered complete merely because host tests pass.
+
+The criteria for a future `1.0` LTS line, including three physically qualified
+configurations, a 90-day critical-regression-free window, and an independent
+security review, are defined in [the LTS policy](lts-policy.md).

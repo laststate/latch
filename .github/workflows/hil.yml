@@ -8,7 +8,7 @@ on:
         default: C:\latch-hil\stm32u5.json
       scenario:
         type: choice
-        options: [brownout, watchdog, mpu, trustzone, fpu-lazy, flash, reset-registers]
+        options: [brownout, hardfault, watchdog, stack-canary, mpu, trustzone, fpu-lazy, flash, reset-registers]
         required: true
 permissions:
   contents: read

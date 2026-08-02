@@ -21,3 +21,9 @@ Describe power-loss, compatibility, security, memory-footprint or hardware risks
 ## Hardware evidence
 
 Name the exact board, revision, SDK/toolchain, and scenario tested, or write `not hardware-tested`.
+
+## Backport
+
+Write `not a backport`, or name the source commit, target `stable/<major>.x`
+branch, affected released versions, and stable-branch tests rerun. New features
+must not be backported.

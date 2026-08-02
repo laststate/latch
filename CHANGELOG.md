@@ -32,6 +32,13 @@ All notable changes to Latch are recorded here. The project follows [Semantic Ve
   of a CRC-protected raw record, with full-width x86_64/AArch64 state.
 - Transactional secure-storage key rotation with failure rollback of in-memory
   key state.
+- A validated public hardware compatibility matrix with dated HIL evidence,
+  QEMU Cortex-M and Renode RV32 fault-injection jobs, and expanded physical HIL
+  entry points for HardFault and stack-canary scenarios.
+- Deterministic spool corruption/interrupted-write stress coverage and hosted,
+  CI-executed OTA, critical-redaction and low-power reference designs.
+- Explicit 1.0/LTS qualification, observation-window and backport policy plus
+  an independent security-review invitation and public report template.
 
 ### Changed
 

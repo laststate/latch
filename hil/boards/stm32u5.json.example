@@ -8,5 +8,5 @@
     "brownout_voltage": 1.7,
     "hold_seconds": 0.25
   },
-  "features": ["watchdog", "mpu", "trustzone", "fpu-lazy", "flash", "reset-registers"]
+  "features": ["hardfault", "watchdog", "stack-canary", "mpu", "trustzone", "fpu-lazy", "flash", "reset-registers"]
 }

@@ -7,6 +7,15 @@ static void emit(const ls_hil_platform_t *platform, const char *line) {
 void ls_hil_arm_brownout(const ls_hil_platform_t *platform) {
     emit(platform, "HIL:ARMED:BROWNOUT");
 }
+ls_result_t ls_hil_trigger_hardfault(const ls_hil_platform_t *platform) {
+    emit(platform, "HIL:ARMED:HARDFAULT");
+#if defined(__arm__) || defined(__thumb__)
+    __asm volatile("udf #0");
+    return LS_EIO;
+#else
+    return LS_ENOTSUP;
+#endif
+}
 void ls_hil_trigger_watchdog(const ls_hil_platform_t *platform, uint32_t timeout_ms) {
     if (!platform || !platform->start_watchdog)
         return;
@@ -14,6 +23,19 @@ void ls_hil_trigger_watchdog(const ls_hil_platform_t *platform, uint32_t timeout
     platform->start_watchdog(platform->context, timeout_ms);
     for (;;) {
     }
+}
+ls_result_t ls_hil_trigger_stack_canary(const ls_hil_platform_t *platform,
+                                        volatile uint32_t *canary) {
+    if (!canary)
+        return LS_EINVAL;
+    emit(platform, "HIL:ARMED:STACK-CANARY");
+    *canary ^= 1u;
+#if defined(__arm__) || defined(__thumb__)
+    __asm volatile("udf #0");
+    return LS_EIO;
+#else
+    return LS_ENOTSUP;
+#endif
 }
 ls_result_t ls_hil_trigger_mpu(uintptr_t protected_address, uint8_t region) {
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
