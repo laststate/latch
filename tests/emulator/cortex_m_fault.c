@@ -49,8 +49,10 @@ void ls_cortex_m_fault_from_saved(const uint32_t *raw_frame, const volatile uint
                           stack_canary != UINT32_C(0x51acce55)
                       ? 0u
                       : 12u);
-#if defined(LS_EMULATOR_WATCHDOG_MODEL)
+#elif defined(LS_EMULATOR_WATCHDOG_MODEL)
     semihost_exit(saved[15] == 5u && scenario_marker == UINT32_C(0x57415443) ? 0u : 20u);
+#else
+    semihost_exit(21u);
 #endif
 }
 
