@@ -40,6 +40,9 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
       - run: sudo apt-get update && sudo apt-get install -y gcc-riscv64-unknown-elf
       - name: Build RV32 trap fixture
         shell: bash
@@ -61,5 +64,7 @@ jobs:
           echo '1a532d4b5b82de0dd154970c401e0c7b0e498d17304b2cecc007e306c8f9617c  build/renode.tar.gz' | sha256sum --check
           mkdir -p build/renode
           tar -xzf "$archive" -C build/renode --strip-components=1
+          python -m pip install --disable-pip-version-check \
+            --requirement build/renode/tests/requirements.txt
       - name: Inject RV32 illegal-instruction trap
         run: build/renode/renode-test tests/emulator/rv32_fault.robot
