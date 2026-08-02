@@ -41,7 +41,8 @@ static void thread_report(void) {
     semihost_exit(fault_result);
 }
 
-void ls_cortex_m_fault_from_saved(uint32_t *raw_frame, const volatile uint32_t *saved) {
+void __attribute__((noreturn)) ls_cortex_m_fault_from_saved(uint32_t *raw_frame,
+                                                            const volatile uint32_t *saved) {
     if (!raw_frame || saved != ls_cortex_m_saved_context) {
         fault_result = 9u;
     } else {
@@ -63,7 +64,19 @@ void ls_cortex_m_fault_from_saved(uint32_t *raw_frame, const volatile uint32_t *
 #endif
     }
     if (raw_frame)
-        raw_frame[6] = (uintptr_t)thread_report & ~(uintptr_t)1u;
+        raw_frame[6] = (uintptr_t)thread_report;
+    /* arch/cortex-m/cortex_m_fault.S swapped MSP to the emergency stack
+     * before tail-calling us, so the exception return triggered by bx lr
+     * (LR still holds EXC_RETURN from the handler entry) would otherwise
+     * pop the hardware frame from the emergency stack and resume at the
+     * canary/fill garbage. Restore the MSP/PSP captured by the entry so
+     * the modified PC above is the one the exception return observes. */
+    __asm volatile(
+        "msr msp, %0\n"
+        "msr psp, %1\n"
+        "bx lr"
+        :: "r"(saved[8]), "r"(saved[9]) : "memory");
+    __builtin_unreachable();
 }
 
 void ls_cortex_m_fault_recursive(uint32_t fault_kind, uint32_t exc_return, uint32_t msp,
