@@ -9,6 +9,7 @@ extern uint32_t _stack_top;
 
 static volatile uint32_t scenario_marker;
 static volatile uint32_t stack_canary;
+static volatile uint32_t fault_result;
 static uint32_t emergency_stack[64];
 
 /* Symbols consumed by the production arch/cortex-m/cortex_m_fault.S entry. */
@@ -17,6 +18,7 @@ volatile uint32_t ls_cortex_m_fault_active;
 uintptr_t ls_cortex_m_emergency_stack_top = (uintptr_t)&emergency_stack[64];
 
 static void semihost_exit(uint32_t status) __attribute__((noreturn));
+static void thread_report(void) __attribute__((noreturn));
 static void default_handler(void) __attribute__((noreturn));
 void Reset_Handler(void) __attribute__((noreturn));
 void ls_cortex_m_hardfault_handler(void);
@@ -35,25 +37,33 @@ static void default_handler(void) {
     semihost_exit(90u);
 }
 
-void ls_cortex_m_fault_from_saved(const uint32_t *raw_frame, const volatile uint32_t *saved) {
-    if (!raw_frame || saved != ls_cortex_m_saved_context)
-        semihost_exit(9u);
+static void thread_report(void) {
+    semihost_exit(fault_result);
+}
+
+void ls_cortex_m_fault_from_saved(uint32_t *raw_frame, const volatile uint32_t *saved) {
+    if (!raw_frame || saved != ls_cortex_m_saved_context) {
+        fault_result = 9u;
+    } else {
 #if defined(LS_EMULATOR_HARDFAULT)
-    semihost_exit((SCB_HFSR & SCB_HFSR_FORCED) && saved[15] == 1u &&
-                          scenario_marker == UINT32_C(0x48415244)
-                      ? 0u
-                      : 11u);
+        fault_result = (SCB_HFSR & SCB_HFSR_FORCED) && saved[15] == 1u &&
+                               scenario_marker == UINT32_C(0x48415244)
+                           ? 0u
+                           : 11u;
 #elif defined(LS_EMULATOR_STACK_CANARY)
-    semihost_exit((SCB_HFSR & SCB_HFSR_FORCED) && saved[15] == 1u &&
-                          scenario_marker == UINT32_C(0x53544143) &&
-                          stack_canary != UINT32_C(0x51acce55)
-                      ? 0u
-                      : 12u);
+        fault_result = (SCB_HFSR & SCB_HFSR_FORCED) && saved[15] == 1u &&
+                               scenario_marker == UINT32_C(0x53544143) &&
+                               stack_canary != UINT32_C(0x51acce55)
+                           ? 0u
+                           : 12u;
 #elif defined(LS_EMULATOR_WATCHDOG_MODEL)
-    semihost_exit(saved[15] == 5u && scenario_marker == UINT32_C(0x57415443) ? 0u : 20u);
+        fault_result = saved[15] == 5u && scenario_marker == UINT32_C(0x57415443) ? 0u : 20u;
 #else
-    semihost_exit(21u);
+        fault_result = 21u;
 #endif
+    }
+    if (raw_frame)
+        raw_frame[6] = (uintptr_t)thread_report & ~(uintptr_t)1u;
 }
 
 void ls_cortex_m_fault_recursive(uint32_t fault_kind, uint32_t exc_return, uint32_t msp,
