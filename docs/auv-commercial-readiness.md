@@ -4,6 +4,9 @@ Latch can be integrated as a crash/evidence subsystem in a commercial AUV, but t
 repository alone cannot qualify an AUV. Production approval belongs to the complete
 vehicle configuration and its applicable safety/regulatory process.
 
+This document uses commercial AUV integration readiness as an illustrative example of
+the level of maturity and assurance toward which the repository is being updated.
+
 ## Software gates provided by this repository
 
 - deterministic host tests plus sanitizer and warnings-as-errors jobs;
