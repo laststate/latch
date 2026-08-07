@@ -7,14 +7,16 @@ if(ESP_PLATFORM)
   set(LS_IDF_PORTABLE_SOURCES
     src/core/runtime.c src/core/util.c src/core/memory.c src/core/health.c
     src/core/peripheral.c src/core/assert.c src/core/log.c src/core/performance.c
-    src/core/boot.c src/core/build_id.c src/core/policy.c
+    src/core/boot.c src/core/build_id.c src/core/policy.c src/core/blackbox.c
+    src/core/mission.c src/core/time_sync.c src/core/fingerprint.c src/core/supervisor.c
+    src/core/trace.c src/core/provisioning.c src/core/selftest.c src/core/fault_injection.c src/core/ota.c src/core/environment.c
     src/capture/capture.c src/envelope/lep.c src/envelope/compression.c
     src/spool/spool.c src/storage/memory_storage.c src/storage/storage_sim.c
     src/storage/flash_mirror.c src/storage/wear_level.c src/storage/secure_storage.c
     src/transport/transport.c src/transport/stream.c src/transport/network.c
     src/metrics/breadcrumbs.c src/metrics/metrics.c src/security/sha256.c
     src/security/chacha20.c src/security/poly1305.c src/security/aead.c
-    src/security/secure_element.c)
+    src/security/provider.c src/security/secure_element.c)
   idf_component_register(
     SRCS ${LS_IDF_PORTABLE_SOURCES} ports/esp-idf/esp_idf.c
     INCLUDE_DIRS include ports/esp-idf
@@ -22,6 +24,9 @@ if(ESP_PLATFORM)
   target_compile_features(${COMPONENT_LIB} PUBLIC c_std_11)
   target_compile_options(${COMPONENT_LIB} PRIVATE
     -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Wno-misleading-indentation)
+  if(LS_COMMERCIAL_PROFILE)
+    target_compile_definitions(${COMPONENT_LIB} PUBLIC LS_REQUIRE_EXTERNAL_CRYPTO_PROVIDER=1 LS_MIN_CRYPTO_ASSURANCE=3)
+  endif()
   return()
 endif()
 
@@ -30,7 +35,7 @@ if(POLICY CMP0184)
   cmake_policy(SET CMP0184 NEW)
 endif()
 set(CMAKE_MSVC_RUNTIME_CHECKS "$<$<BOOL:0>:StackFrameErrorCheck>")
-project(latch VERSION 0.2.0 LANGUAGES C CXX)
+project(latch VERSION 0.5.0 LANGUAGES C CXX)
 set(LS_TOP_LEVEL_DEFAULT OFF)
 if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   set(LS_TOP_LEVEL_DEFAULT ON)
@@ -49,6 +54,8 @@ option(LS_BUILD_EXAMPLES "Build host examples" OFF)
 option(LS_BUILD_MBEDTLS_PORT "Build the mbedTLS session transport adapter" OFF)
 option(LS_BUILD_CRYPTOAUTHLIB_PORT "Build the Microchip CryptoAuthLib secure-element adapter" OFF)
 option(LS_TEST_LIBSODIUM "Cross-check XChaCha20-Poly1305 against libsodium" OFF)
+option(LS_COMMERCIAL_PROFILE "Fail closed unless an externally-audited crypto provider is installed" OFF)
+option(LS_BUILD_LIBSODIUM_PROVIDER "Build the optional libsodium crypto-provider adapter" OFF)
 unset(LS_TOP_LEVEL_DEFAULT)
 include(GNUInstallDirs)
 include(cmake/GenerateBuildId.cmake)
@@ -56,7 +63,7 @@ include(cmake/GenerateBuildId.cmake)
 # Allow feature-profile values supplied with -DLS_*=... to reach every target.
 # Defaults remain in config.h when a value is not provided by the integrator.
 set(LS_CONFIGURABLE_DEFINITIONS
-  LS_CONSTRAINED_PROFILE LS_STORE_STRINGS LS_ENABLE_BREADCRUMBS LS_ENABLE_METRICS LS_ENABLE_LOGS
+  LS_CONSTRAINED_PROFILE LS_REQUIRE_EXTERNAL_CRYPTO_PROVIDER LS_MIN_CRYPTO_ASSURANCE LS_STORE_STRINGS LS_ENABLE_BREADCRUMBS LS_ENABLE_METRICS LS_ENABLE_LOGS
   LS_ENABLE_POWER_SAMPLES LS_ENABLE_PERFORMANCE LS_ENABLE_DUMPS LS_ENABLE_ASSERTS
   LS_ENABLE_WIDE_CONTEXT
   LS_ENABLE_STACK_SNAPSHOT LS_COMPILED_MIN_LEVEL LS_MAX_EVENT_SIZE
@@ -64,9 +71,9 @@ set(LS_CONFIGURABLE_DEFINITIONS
   LS_BREADCRUMB_KV_MAX LS_METRIC_CAPACITY LS_METRIC_NAME_MAX LS_METRIC_WINDOW_SIZE
   LS_POWER_SAMPLE_CAPACITY LS_HEALTH_CAPACITY LS_SPAN_CAPACITY LS_LOG_ARG_MAX
   LS_MAX_TRANSPORTS LS_MAX_DUMP_REGIONS LS_MAX_REDACTIONS LS_DUMP_REGION_MAX_BYTES
-  LS_STACK_SNAPSHOT_MAX LS_SPOOL_MAX_RECORDS LS_EMERGENCY_STACK_SIZE
+  LS_STACK_SNAPSHOT_MAX LS_SPOOL_MAX_RECORDS LS_SPOOL_RESERVED_CRITICAL LS_SPOOL_RESERVED_EMERGENCY LS_EMERGENCY_STACK_SIZE
   LS_BOOT_LOOP_THRESHOLD LS_BOOT_LOOP_WINDOW_MS LS_BUILD_ID_MAX LS_POLICY_CAPACITY
-  LS_DEDUP_CAPACITY LS_DEDUP_WINDOW_MS)
+  LS_DEDUP_CAPACITY LS_DEDUP_WINDOW_MS LS_BLACKBOX_CAPACITY LS_BLACKBOX_ENVELOPE_MAX LS_SELFTEST_CAPACITY LS_FAULT_INJECTION_CAPACITY LS_MISSION_ID_MAX LS_DIVE_ID_MAX LS_NODE_ID_MAX LS_VEHICLE_MODE_MAX)
 foreach(definition IN LISTS LS_CONFIGURABLE_DEFINITIONS)
   if(DEFINED ${definition})
     if("${${definition}}" STREQUAL "ON")
@@ -81,14 +88,18 @@ foreach(definition IN LISTS LS_CONFIGURABLE_DEFINITIONS)
 endforeach()
 unset(ls_definition_value)
 
-set(LS_CORE_SOURCES src/core/runtime.c src/core/util.c src/core/memory.c src/core/health.c src/core/peripheral.c src/core/assert.c src/core/log.c src/core/performance.c src/core/boot.c src/core/build_id.c src/core/policy.c)
+if(LS_COMMERCIAL_PROFILE)
+  add_compile_definitions(LS_REQUIRE_EXTERNAL_CRYPTO_PROVIDER=1 LS_MIN_CRYPTO_ASSURANCE=3)
+endif()
+
+set(LS_CORE_SOURCES src/core/runtime.c src/core/util.c src/core/memory.c src/core/health.c src/core/peripheral.c src/core/assert.c src/core/log.c src/core/performance.c src/core/boot.c src/core/build_id.c src/core/policy.c src/core/blackbox.c src/core/mission.c src/core/time_sync.c src/core/fingerprint.c src/core/supervisor.c src/core/trace.c src/core/provisioning.c src/core/selftest.c src/core/fault_injection.c src/core/ota.c src/core/environment.c)
 set(LS_CAPTURE_SOURCES src/capture/capture.c)
 set(LS_ENVELOPE_SOURCES src/envelope/lep.c src/envelope/compression.c)
 set(LS_SPOOL_SOURCES src/spool/spool.c)
 set(LS_STORAGE_SOURCES src/storage/memory_storage.c src/storage/storage_sim.c src/storage/flash_mirror.c src/storage/wear_level.c src/storage/secure_storage.c)
 set(LS_TRANSPORT_SOURCES src/transport/transport.c src/transport/stream.c src/transport/network.c)
 set(LS_METRICS_SOURCES src/metrics/breadcrumbs.c src/metrics/metrics.c)
-set(LS_SECURITY_SOURCES src/security/sha256.c src/security/chacha20.c src/security/poly1305.c src/security/aead.c src/security/secure_element.c)
+set(LS_SECURITY_SOURCES src/security/sha256.c src/security/chacha20.c src/security/poly1305.c src/security/aead.c src/security/provider.c src/security/secure_element.c)
 set(LS_ALL_PORTABLE_SOURCES ${LS_CORE_SOURCES} ${LS_CAPTURE_SOURCES} ${LS_ENVELOPE_SOURCES} ${LS_SPOOL_SOURCES} ${LS_STORAGE_SOURCES} ${LS_TRANSPORT_SOURCES} ${LS_METRICS_SOURCES} ${LS_SECURITY_SOURCES})
 
 function(ls_configure_target target)
@@ -143,6 +154,15 @@ target_include_directories(latch-cpp INTERFACE
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 target_link_libraries(latch-cpp INTERFACE latch)
 add_library(laststate::latch-cpp ALIAS latch-cpp)
+
+if(LS_BUILD_LIBSODIUM_PROVIDER)
+  find_path(SODIUM_INCLUDE_DIR sodium.h REQUIRED)
+  find_library(SODIUM_LIBRARY NAMES sodium libsodium REQUIRED)
+  add_library(latch-crypto-libsodium STATIC ports/libsodium/libsodium_provider.c)
+  ls_configure_target(latch-crypto-libsodium)
+  target_include_directories(latch-crypto-libsodium PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/ports/libsodium> PRIVATE ${SODIUM_INCLUDE_DIR})
+  target_link_libraries(latch-crypto-libsodium PUBLIC latch-security PRIVATE ${SODIUM_LIBRARY})
+endif()
 
 add_library(latch-port-stm32 STATIC ports/stm32/stm32_reset.c)
 ls_configure_port_target(latch-port-stm32 ports/stm32)
@@ -264,7 +284,7 @@ endif()
 if(LS_BUILD_TESTS)
   enable_testing()
   find_package(Python3 COMPONENTS Interpreter REQUIRED)
-  foreach(python_test footprint release-metadata embedded-packaging)
+  foreach(python_test footprint release-metadata release-qualification embedded-packaging fleet-tools safety-c)
     string(REPLACE "-" "_" python_source ${python_test})
     add_test(NAME latch-${python_test}-tests
       COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_${python_source}.py)
@@ -279,6 +299,12 @@ if(LS_BUILD_TESTS)
   add_executable(latch-tests tests/test_latch.c)
   target_link_libraries(latch-tests PRIVATE latch)
   add_test(NAME latch-c-tests COMMAND latch-tests)
+  if(NOT CMAKE_CROSSCOMPILING)
+    find_package(Threads REQUIRED)
+    add_executable(latch-concurrency-tests tests/test_concurrency.c)
+    target_link_libraries(latch-concurrency-tests PRIVATE latch Threads::Threads)
+    add_test(NAME latch-concurrency-tests COMMAND latch-concurrency-tests)
+  endif()
   add_executable(latch-cpp-tests tests/test_cpp.cpp)
   target_link_libraries(latch-cpp-tests PRIVATE latch-cpp)
   target_compile_features(latch-cpp-tests PRIVATE cxx_std_17)
@@ -289,7 +315,7 @@ if(LS_BUILD_TESTS)
   add_executable(latch-core-observability-tests tests/test_core_observability.c)
   target_link_libraries(latch-core-observability-tests PRIVATE latch)
   add_test(NAME latch-core-observability-tests COMMAND latch-core-observability-tests)
-  foreach(test_name security crypto-vectors crypto-negative secure-element secure-storage secure-power-loss wear-level compression flash policy transport envelope-fuzz power-loss spool-stress property storage-bounds transport-policy build-id envelope-errors)
+  foreach(test_name security crypto-vectors crypto-negative secure-element secure-storage secure-power-loss wear-level compression flash policy transport envelope-fuzz power-loss spool-stress property storage-bounds transport-policy build-id envelope-errors spool-priority crypto-provider update defensive-paths stream-edges memory-capture spool-edges envelope-capacity runtime-edges auv-runtime auv-edges ota fault-injection-pipeline replay-property)
     string(REPLACE "-" "_" test_source ${test_name})
     add_executable(latch-${test_name}-tests tests/test_${test_source}.c)
     target_link_libraries(latch-${test_name}-tests PRIVATE latch)
@@ -307,12 +333,21 @@ if(LS_BUILD_TESTS)
   ls_configure_target(latch-profile-constrained)
   target_compile_definitions(latch-profile-constrained PRIVATE LS_CONSTRAINED_PROFILE=1)
   add_test(NAME latch-profile-constrained COMMAND latch-profile-constrained)
+  add_executable(latch-crypto-commercial-tests tests/test_crypto_commercial.c ${LS_ALL_PORTABLE_SOURCES})
+  ls_configure_target(latch-crypto-commercial-tests)
+  target_compile_definitions(latch-crypto-commercial-tests PRIVATE LS_REQUIRE_EXTERNAL_CRYPTO_PROVIDER=1 LS_MIN_CRYPTO_ASSURANCE=3)
+  add_test(NAME latch-crypto-commercial-tests COMMAND latch-crypto-commercial-tests)
   if(LS_TEST_LIBSODIUM)
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(SODIUM REQUIRED IMPORTED_TARGET libsodium)
     add_executable(latch-sodium-interop-tests tests/test_sodium_interop.c)
     target_link_libraries(latch-sodium-interop-tests PRIVATE latch PkgConfig::SODIUM)
     add_test(NAME latch-sodium-interop-tests COMMAND latch-sodium-interop-tests)
+  endif()
+  if(LS_BUILD_LIBSODIUM_PROVIDER)
+    add_executable(latch-libsodium-provider-tests tests/test_libsodium_provider.c)
+    target_link_libraries(latch-libsodium-provider-tests PRIVATE latch latch-crypto-libsodium)
+    add_test(NAME latch-libsodium-provider-tests COMMAND latch-libsodium-provider-tests)
   endif()
   add_executable(latch-stm32-reset-tests tests/test_stm32_reset.c)
   target_link_libraries(latch-stm32-reset-tests PRIVATE latch-port-stm32)
@@ -321,6 +356,12 @@ if(LS_BUILD_TESTS)
   target_link_libraries(latch-vendor-reset-tests PRIVATE latch-port-nordic latch-port-nxp
     latch-port-microchip latch-port-ti latch-port-silabs)
   add_test(NAME latch-vendor-reset-tests COMMAND latch-vendor-reset-tests)
+  add_executable(latch-port-adapter-tests tests/test_port_adapters.c)
+  target_include_directories(latch-port-adapter-tests PRIVATE
+    ports/esp-idf ports/freertos ports/rp2040 ports/zephyr)
+  target_link_libraries(latch-port-adapter-tests PRIVATE latch latch-port-esp-idf
+    latch-port-freertos latch-port-rp latch-port-zephyr)
+  add_test(NAME latch-port-adapter-tests COMMAND latch-port-adapter-tests)
   add_executable(latch-cortex-m-fault-tests tests/test_cortex_m_fault.c arch/cortex-m/cortex_m.c)
   target_include_directories(latch-cortex-m-fault-tests PRIVATE arch/cortex-m)
   target_link_libraries(latch-cortex-m-fault-tests PRIVATE latch)
@@ -425,6 +466,14 @@ install(TARGETS latch latch-core latch-capture latch-envelope latch-spool latch-
   EXPORT LatchTargets
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(DIRECTORY include/laststate DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+if(TARGET latch-crypto-libsodium)
+  install(TARGETS latch-crypto-libsodium ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+  install(DIRECTORY ports/libsodium/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/laststate/ports/libsodium FILES_MATCHING PATTERN "*.h")
+endif()
+install(PROGRAMS
+  tools/latch_collector.py tools/latch_fleet_report.py tools/latch_symbols.py
+  tools/latch_support_bundle.py
+  DESTINATION ${CMAKE_INSTALL_BINDIR})
 foreach(port_directory stm32 rp2040 esp-idf freertos zephyr common nordic nxp microchip ti silabs)
   install(DIRECTORY ports/${port_directory}/
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/laststate/ports/${port_directory}

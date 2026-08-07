@@ -5,6 +5,11 @@ void ls_peripheral_fault(const ls_peripheral_fault_t *fault) {
     static const char *domains[] = {"i2c", "spi", "uart", "can", "usb", "storage", "network"};
     const char *domain =
         fault->domain <= LS_PERIPHERAL_NETWORK ? domains[fault->domain] : "peripheral";
+    (void)ls_blackbox_record_values(LS_BLACKBOX_BUS, (uint16_t)fault->domain,
+                                    LS_BLACKBOX_IMPORTANT | LS_BLACKBOX_ERROR,
+                                    (int32_t)fault->fault, (int32_t)fault->status,
+                                    (int32_t)fault->address, (int32_t)fault->auxiliary[0]);
+    ls_blackbox_anomaly_begin(30000u);
     ls_event_t event = {.type = LS_EVENT_PERIPHERAL,
                         .priority = LS_PRIORITY_ERROR,
                         .timestamp_ms = ls_uptime_ms(),

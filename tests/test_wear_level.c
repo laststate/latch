@@ -67,6 +67,18 @@ static ls_storage_backend_t raw_backend(strict_flash_t *flash_context) {
 }
 
 int main(void) {
+    CHECK(ls_flash_wear_physical_size(0u, ERASE_SIZE, 8u) == 0u);
+    CHECK(ls_flash_wear_physical_size(64u, 0u, 8u) == 0u);
+    CHECK(ls_flash_wear_physical_size(64u, ERASE_SIZE, 1u) == 0u);
+    CHECK(ls_flash_wear_physical_size(64u, ERASE_SIZE, LS_FLASH_WEAR_MAX_SLOTS + 1u) == 0u);
+    CHECK(ls_flash_wear_physical_size_for_write(64u, ERASE_SIZE, ERASE_SIZE + 1u, 8u) == 0u);
+    CHECK(ls_flash_wear_physical_size_for_write(64u, ERASE_SIZE, 0u, 8u) > 0u);
+    ls_flash_wear_level_t invalid;
+    uint8_t invalid_workspace[64];
+    ls_storage_backend_t invalid_backend = {0};
+    CHECK(ls_flash_wear_init(NULL, &invalid_backend, invalid_workspace, 64u, 2u) == LS_EINVAL);
+    CHECK(ls_flash_wear_init(&invalid, NULL, invalid_workspace, 64u, 2u) == LS_EINVAL);
+    CHECK(ls_flash_wear_init(&invalid, &invalid_backend, invalid_workspace, 64u, 2u) == LS_EINVAL);
     CHECK(ls_flash_wear_physical_size_for_write(sizeof(workspace), ERASE_SIZE, WRITE_SIZE, 8u) <=
           sizeof(flash));
 
@@ -81,16 +93,35 @@ int main(void) {
     ls_flash_wear_level_t wear;
     CHECK(ls_flash_wear_init(&wear, &backend, workspace, sizeof(workspace), 8u) == LS_OK);
 
-    for (uint32_t value = 0u; value < 80u; value++) {
-        CHECK(wear.backend.write(wear.backend.context, 0u, &value, sizeof(value)) == LS_OK);
+    for (uint32_t sample = 0u; sample < 80u; sample++) {
+        CHECK(wear.backend.write(wear.backend.context, 0u, &sample, sizeof(sample)) == LS_OK);
     }
+    uint32_t value = 0u;
+
+    CHECK(wear.backend.read(NULL, 0u, &value, 1u) == LS_EINVAL);
+    CHECK(wear.backend.read(wear.backend.context, 0u, NULL, 1u) == LS_EINVAL);
+    CHECK(wear.backend.read(wear.backend.context, sizeof(workspace) + 1u, &value, 0u) == LS_EINVAL);
+    CHECK(wear.backend.write(NULL, 0u, &value, 1u) == LS_EINVAL);
+    CHECK(wear.backend.write(wear.backend.context, 0u, NULL, 1u) == LS_EINVAL);
+    CHECK(wear.backend.erase(NULL, 0u, 1u) == LS_EINVAL);
+    CHECK(wear.backend.sync(NULL) == LS_EINVAL);
+    CHECK(wear.backend.erase(wear.backend.context, 8u, sizeof(value)) == LS_OK);
 
     ls_flash_wear_stats_t stats = ls_flash_wear_stats(&wear);
+    ls_flash_wear_stats_t empty_stats = ls_flash_wear_stats(NULL);
+    CHECK(empty_stats.slots == 0u && empty_stats.minimum_erases == 0u);
     CHECK(stats.slots == 8u);
     CHECK(stats.maximum_erases - stats.minimum_erases <= 1u);
-    CHECK(stats.generation == 81u);
+    CHECK(stats.generation == 82u);
+    ls_flash_wear_lifetime_t lifetime;
+    CHECK(ls_flash_wear_lifetime(&wear, 100000u, &lifetime) == LS_OK);
+    CHECK(lifetime.rated_erase_cycles == 100000u);
+    CHECK(lifetime.maximum_erases == stats.maximum_erases);
+    CHECK(!lifetime.exhausted && lifetime.estimated_commits_remaining > 0u);
+    CHECK(ls_flash_wear_lifetime(NULL, 100000u, &lifetime) == LS_EINVAL);
+    CHECK(ls_flash_wear_lifetime(&wear, 0u, &lifetime) == LS_EINVAL);
+    CHECK(ls_flash_wear_lifetime(&wear, 100000u, NULL) == LS_EINVAL);
 
-    uint32_t value = 0u;
     CHECK(wear.backend.read(wear.backend.context, 0u, &value, sizeof(value)) == LS_OK);
     CHECK(value == 79u);
 

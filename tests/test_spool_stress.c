@@ -146,6 +146,9 @@ static int corrupt_record_does_not_hide_next(void) {
     CHECK(boot(&simulator) == 0);
     CHECK(ls_flush() == LS_OK);
     CHECK(delivered == 1u);
+    ls_spool_stats_t stats;
+    CHECK(ls_spool_get_stats(&stats) == LS_OK);
+    CHECK(stats.corrupt_records == 1u);
     return 0;
 }
 

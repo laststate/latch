@@ -1,0 +1,419 @@
+{
+  "schema": 1,
+  "headers": [
+    {
+      "path": "include/laststate/assert.h",
+      "sha256": "2dad1b9eed38b588fe9356fc85e7576a211329e3dc829dc711abe1a6f7ca4fbe"
+    },
+    {
+      "path": "include/laststate/blackbox.h",
+      "sha256": "5130182cd60b16212a5c022544ba36894f2f17dd305da5a2f3ccdbfcc1d697e5"
+    },
+    {
+      "path": "include/laststate/boot.h",
+      "sha256": "329ff3a2e4fe088639f202c9a1c6488710f4f7c15180e8453eb4ddb7de927073"
+    },
+    {
+      "path": "include/laststate/breadcrumb.h",
+      "sha256": "6afb695ec9f38331c52a802c7eec3a64b67a1df938d508547f29e538237ab52b"
+    },
+    {
+      "path": "include/laststate/build_id.h",
+      "sha256": "002b840cb69206c2e6e8b9c22c79bee950786ee15e0fb8c3baba8fda2bc77613"
+    },
+    {
+      "path": "include/laststate/capture.h",
+      "sha256": "3c276823247aec999c4e43a23f7f1a422e80c51073320b87af1386be4d1a8b8d"
+    },
+    {
+      "path": "include/laststate/compression.h",
+      "sha256": "034e16430479450c3a0992b82a9511bc52933acfd7835b55d57c08345fa5e2bb"
+    },
+    {
+      "path": "include/laststate/config.h",
+      "sha256": "7ed4209b6baa72083a74d1aa559c9577b2caef316c567daaadddaaf0017e3b74"
+    },
+    {
+      "path": "include/laststate/envelope.h",
+      "sha256": "ea22f17e33657ad7bb4bfb264d0f4e7066107c8978caee70037818885f2b6399"
+    },
+    {
+      "path": "include/laststate/environment.h",
+      "sha256": "06cb270b17ce7d50dc363ae72be25533fed44611eecd1c6f5be628aaaeb615f4"
+    },
+    {
+      "path": "include/laststate/event.h",
+      "sha256": "e1dc37ffa62b91191804bd054dbb00ff9dea159a9cb8249a7ce0c2ed80285a80"
+    },
+    {
+      "path": "include/laststate/fault_injection.h",
+      "sha256": "5921145aba4df50914dd461a9a23cf450fbcb7613842a8ed6ba1b1d446a6c958"
+    },
+    {
+      "path": "include/laststate/fingerprint.h",
+      "sha256": "624876c492ecba96b08989357243ec69b9caa9727caf001fc0fee91f8c33e78f"
+    },
+    {
+      "path": "include/laststate/flash_storage.h",
+      "sha256": "dfeb1a2cfe6f13c89036f918f5f368fa67b06279983d4e10ae2776a03f226953"
+    },
+    {
+      "path": "include/laststate/health.h",
+      "sha256": "e7129979956a680756f4b6d3750e52fac08e330023f22d4b01030b1fd276bdfa"
+    },
+    {
+      "path": "include/laststate/identity.h",
+      "sha256": "64e3aa6d759d5a7bc50e8dd86d2a423d7d6540ec1066aee9c80fa6a226205d26"
+    },
+    {
+      "path": "include/laststate/latch.h",
+      "sha256": "b20a48560135a1099d6193a4d7a152af1a2a66bbae72c8c51622901179391429"
+    },
+    {
+      "path": "include/laststate/log.h",
+      "sha256": "47a21159323b23f429811c8f8c0f6b7e8e7c62187d2656b46042aeb043762718"
+    },
+    {
+      "path": "include/laststate/memory.h",
+      "sha256": "9c648bf0dc9a9437630cce9f3c3674ec52cebb896ace0ef81b885348b54e2369"
+    },
+    {
+      "path": "include/laststate/metrics.h",
+      "sha256": "453e40f0c6d5bf36d6cd40823fa39f7d60ecac01fd0d752d2fc3fa9cac3e8cac"
+    },
+    {
+      "path": "include/laststate/mission.h",
+      "sha256": "e6ebc636ac64c7140936ed829d2cac152580ef9f16619d4697585971ed7bc028"
+    },
+    {
+      "path": "include/laststate/network_transport.h",
+      "sha256": "f003fd4c96c5884217880d487da2c654b1f232bec97d4147c58b5c164c0fcb5a"
+    },
+    {
+      "path": "include/laststate/noinit.h",
+      "sha256": "f4d2d02a85d742273bed58d5ccc913b1b1eb816e8ef92069bb9e8f2cd27f960b"
+    },
+    {
+      "path": "include/laststate/ota.h",
+      "sha256": "f3aa05172f48d48ca8e351e6b31b7661a0e8bcc280ec492b159fdb4581a742e2"
+    },
+    {
+      "path": "include/laststate/performance.h",
+      "sha256": "9990f5997244a423e519c82840f777767aa1b3e8e8e647390bc26d6ecb392515"
+    },
+    {
+      "path": "include/laststate/peripheral.h",
+      "sha256": "33ac3d314b7d9b230769b34704ea313561f947f437f37afda3864c6ac8a51493"
+    },
+    {
+      "path": "include/laststate/policy.h",
+      "sha256": "f8ac052eb5a395a4c95ed85c363765aa6c34f15d2d77c9cc935b6d0c61cae26a"
+    },
+    {
+      "path": "include/laststate/provisioning.h",
+      "sha256": "86bbfd55fe2d3618ca1677ed41634c0a4b048fe93cb72b2c89d5210c7535b8c2"
+    },
+    {
+      "path": "include/laststate/secure_element.h",
+      "sha256": "c0c5fc48caea7085436c0c860f806ad5d5b99be152dae7b61702e913f384805b"
+    },
+    {
+      "path": "include/laststate/secure_storage.h",
+      "sha256": "55fbc8c685af6efd50cfa7e64c75c7cc7e97bd7350f3a96f37e6d8741d29c698"
+    },
+    {
+      "path": "include/laststate/security.h",
+      "sha256": "740f0caf97c34176cce8dc4a5d4be86fdfd0d61ab23a0ff4cb213fbc41edb772"
+    },
+    {
+      "path": "include/laststate/selftest.h",
+      "sha256": "5d09145e846df74c57d7f586b44ee4d6c96a7b56026572bba9e29aeea791fadb"
+    },
+    {
+      "path": "include/laststate/spool.h",
+      "sha256": "73cbaea3658ab43589b72ab08c28bd4140bb9d7e79ee447a8de4a1081afd65bc"
+    },
+    {
+      "path": "include/laststate/storage.h",
+      "sha256": "e0a3a3d5712c4eae7d14669ce76bc4d9b6a11b2c3b27389af5ba47fcbc8c00dd"
+    },
+    {
+      "path": "include/laststate/storage_sim.h",
+      "sha256": "20d5327731481a17134a86b14a151158f84eab61c21a8794098482ccda4bfa5c"
+    },
+    {
+      "path": "include/laststate/stream_transport.h",
+      "sha256": "2cd6a00955fb4f903676e90e5bc37cf6e2bc18e1e577a4a3ffdfde919698db27"
+    },
+    {
+      "path": "include/laststate/supervisor.h",
+      "sha256": "4759c785b4dd7bbef78dba143184d2a2deb8770ab2ca9049a8dfa7631852b23c"
+    },
+    {
+      "path": "include/laststate/time_sync.h",
+      "sha256": "6b684373d6f67f378241f187003179dd01f6516be636ebc09ff654ccce198a0c"
+    },
+    {
+      "path": "include/laststate/trace.h",
+      "sha256": "0e6cb0e49529b5e7e6189adf824f6ba265db6191e2d9f9bc44e3835a0cfb3c2a"
+    },
+    {
+      "path": "include/laststate/transport.h",
+      "sha256": "2a45e7d6e7cd06f61da86426863fa4360f5962837d7281ed0735b8874f4730ac"
+    },
+    {
+      "path": "include/laststate/update.h",
+      "sha256": "43d1df02951acbac55d07891b3daa74e6640f5fde672bb12364e7a2742c19059"
+    },
+    {
+      "path": "include/laststate/version.h",
+      "sha256": "bbc0ab9f3b0166124cf415f880a70bca345a28a67e6506a9add79118a583bf02"
+    }
+  ],
+  "symbols": [
+    "ls_assert_failed",
+    "ls_assert_set_policy",
+    "ls_blackbox_anomaly_begin",
+    "ls_blackbox_clear",
+    "ls_blackbox_copy",
+    "ls_blackbox_freeze",
+    "ls_blackbox_get_recent",
+    "ls_blackbox_get_stats",
+    "ls_blackbox_init",
+    "ls_blackbox_poll",
+    "ls_blackbox_record",
+    "ls_blackbox_record_values",
+    "ls_blackbox_set_profile",
+    "ls_blackbox_thaw",
+    "ls_boot",
+    "ls_boot_count",
+    "ls_boot_loop_detected",
+    "ls_boot_mark_successful",
+    "ls_breadcrumb",
+    "ls_breadcrumb_event",
+    "ls_breadcrumb_set_min_level",
+    "ls_breadcrumb_set_policy",
+    "ls_build_id",
+    "ls_build_id_validate",
+    "ls_can_fault",
+    "ls_capture_coredump",
+    "ls_capture_cpu_context",
+    "ls_capture_error",
+    "ls_capture_message",
+    "ls_capture_minimal",
+    "ls_capture_minimal_context_fault",
+    "ls_capture_minimal_fault",
+    "ls_capture_minimal_prepare",
+    "ls_capture_minimal_recover",
+    "ls_capture_minimal_riscv64_fault",
+    "ls_capture_riscv64_context",
+    "ls_chacha20_poly1305_decrypt",
+    "ls_chacha20_poly1305_encrypt",
+    "ls_chacha20_xor",
+    "ls_constant_time_equal",
+    "ls_crash_fingerprint",
+    "ls_dedup_count",
+    "ls_dedup_get",
+    "ls_delta_u32_decode",
+    "ls_delta_u32_encode",
+    "ls_dump_region_register",
+    "ls_envelope_decrypt_payload",
+    "ls_envelope_is_truncated",
+    "ls_envelope_replay_accept",
+    "ls_envelope_replay_reset",
+    "ls_envelope_validate",
+    "ls_envelope_verify_auth",
+    "ls_envelope_visit",
+    "ls_envelope_visit_secure",
+    "ls_envelope_visit_secure_replay",
+    "ls_environment_get_summary",
+    "ls_environment_leak_detected",
+    "ls_environment_sample",
+    "ls_event_fingerprint",
+    "ls_fault_injection_arm",
+    "ls_fault_injection_clear",
+    "ls_fault_injection_disarm",
+    "ls_fault_injection_get",
+    "ls_fault_injection_hit",
+    "ls_flash_mirror_init",
+    "ls_flash_mirror_physical_size",
+    "ls_flash_mirror_physical_size_for_write",
+    "ls_flash_wear_init",
+    "ls_flash_wear_lifetime",
+    "ls_flash_wear_physical_size",
+    "ls_flash_wear_physical_size_for_write",
+    "ls_flash_wear_stats",
+    "ls_flush",
+    "ls_get_reset_info",
+    "ls_hchacha20",
+    "ls_health_get",
+    "ls_health_poll",
+    "ls_health_register",
+    "ls_health_set_active_task",
+    "ls_health_snapshot",
+    "ls_health_touch",
+    "ls_heap_stats_get",
+    "ls_heap_stats_update",
+    "ls_hkdf_sha256",
+    "ls_hmac_sha256",
+    "ls_http_transport_max_payload",
+    "ls_http_transport_send",
+    "ls_i2c_fault",
+    "ls_incident_beacon_encode",
+    "ls_incident_begin",
+    "ls_incident_end",
+    "ls_init",
+    "ls_log_binary",
+    "ls_log_set_min_level",
+    "ls_log_set_stream",
+    "ls_lsak_is_success",
+    "ls_lsak_parse",
+    "ls_memory_allocation_failed",
+    "ls_memory_exclude",
+    "ls_memory_redact",
+    "ls_memory_storage_erase",
+    "ls_memory_storage_read",
+    "ls_memory_storage_write",
+    "ls_metric_bool",
+    "ls_metric_get",
+    "ls_metric_i32",
+    "ls_metric_increment",
+    "ls_metric_u32",
+    "ls_metrics_reset_window",
+    "ls_minimal_snapshot_clear",
+    "ls_minimal_snapshot_read",
+    "ls_mission_begin",
+    "ls_mission_elapsed_ms",
+    "ls_mission_end",
+    "ls_mission_get",
+    "ls_mission_set_depth_cm",
+    "ls_mission_set_mode",
+    "ls_mqtt_transport_max_payload",
+    "ls_mqtt_transport_send",
+    "ls_network_fault",
+    "ls_ota_confirm_running",
+    "ls_ota_request_rollback",
+    "ls_ota_stage_candidate",
+    "ls_performance_report",
+    "ls_peripheral_fault",
+    "ls_policy_reset",
+    "ls_poly1305_auth",
+    "ls_pool_exhausted",
+    "ls_power_brownout_suspected",
+    "ls_power_get_summary",
+    "ls_power_sample",
+    "ls_power_sample_count",
+    "ls_previous_boot_crashed",
+    "ls_provisioning_activate",
+    "ls_provisioning_attest",
+    "ls_provisioning_begin_rotation",
+    "ls_provisioning_commit_rotation",
+    "ls_provisioning_decommission",
+    "ls_provisioning_decommission_secure",
+    "ls_provisioning_get_state",
+    "ls_provisioning_revoke",
+    "ls_rate_limit_set",
+    "ls_release_confirm",
+    "ls_release_mark_pending",
+    "ls_release_mark_rollback",
+    "ls_replay_accept",
+    "ls_reset_info_t",
+    "ls_reset_mark_expected",
+    "ls_result_t",
+    "ls_rle_compress",
+    "ls_rle_decompress",
+    "ls_safe_mode_requested",
+    "ls_sampling_set",
+    "ls_sampling_set_permyriad",
+    "ls_secure_element_certificate",
+    "ls_secure_element_derive",
+    "ls_secure_element_destroy_key",
+    "ls_secure_element_random",
+    "ls_secure_element_sign",
+    "ls_secure_element_validate",
+    "ls_secure_storage_destroy",
+    "ls_secure_storage_init",
+    "ls_secure_storage_rotate_key",
+    "ls_secure_storage_sealed_size",
+    "ls_secure_zero",
+    "ls_security_clear_crypto_provider",
+    "ls_security_clear_key",
+    "ls_security_crypto_provider_assurance",
+    "ls_security_crypto_provider_audit_reference",
+    "ls_security_crypto_provider_name",
+    "ls_security_crypto_provider_ready",
+    "ls_security_enabled",
+    "ls_security_get_policy",
+    "ls_security_random",
+    "ls_security_set_crypto_provider",
+    "ls_security_set_key",
+    "ls_security_set_policy",
+    "ls_security_set_random_provider",
+    "ls_selftest_clear",
+    "ls_selftest_register",
+    "ls_selftest_run",
+    "ls_sha256",
+    "ls_span_begin",
+    "ls_span_end",
+    "ls_spi_fault",
+    "ls_spool_get_stats",
+    "ls_stack_bounds_set",
+    "ls_storage_fault",
+    "ls_storage_is_erased",
+    "ls_storage_program",
+    "ls_storage_register",
+    "ls_storage_required_size",
+    "ls_storage_sim_erase",
+    "ls_storage_sim_fail_at",
+    "ls_storage_sim_read",
+    "ls_storage_sim_reset_faults",
+    "ls_storage_sim_sync",
+    "ls_storage_sim_write",
+    "ls_stream_frame_parse",
+    "ls_stream_transport_init",
+    "ls_stream_transport_max_payload",
+    "ls_stream_transport_reset",
+    "ls_stream_transport_send",
+    "ls_supervisor_configure",
+    "ls_supervisor_get_status",
+    "ls_supervisor_poll",
+    "ls_time_sync_clear",
+    "ls_time_sync_get",
+    "ls_time_sync_set",
+    "ls_time_utc_ms",
+    "ls_trace_dma",
+    "ls_trace_irq_enter",
+    "ls_trace_irq_exit",
+    "ls_trace_link",
+    "ls_trace_mutex_timeout",
+    "ls_trace_state",
+    "ls_trace_task_switch",
+    "ls_transport_can_send",
+    "ls_transport_clear",
+    "ls_transport_reassembly_init",
+    "ls_transport_reassembly_push",
+    "ls_transport_reassembly_reset",
+    "ls_transport_register",
+    "ls_transport_result_is_retryable",
+    "ls_transport_select",
+    "ls_transport_send",
+    "ls_uart_fault",
+    "ls_update_abort_stage",
+    "ls_update_confirm_version",
+    "ls_update_get_state",
+    "ls_update_mark_version_rollback",
+    "ls_update_stage",
+    "ls_update_version_allowed",
+    "ls_uptime_ms",
+    "ls_usb_fault",
+    "ls_varint_u32_decode",
+    "ls_varint_u32_encode",
+    "ls_watchdog_checkpoint",
+    "ls_watchdog_fed",
+    "ls_watchdog_last_checkpoint",
+    "ls_watchdog_last_feed_ms",
+    "ls_wide_context_snapshot_read",
+    "ls_xchacha20_poly1305_decrypt",
+    "ls_xchacha20_poly1305_encrypt"
+  ]
+}

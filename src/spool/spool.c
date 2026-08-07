@@ -250,12 +250,29 @@ ls_result_t ls_spool_init(void) {
     return write_header();
 }
 
-static ls_result_t find_empty_slot(size_t *slot_out) {
+static size_t normal_slot_limit(void) {
+    return LS_SPOOL_MAX_RECORDS - LS_SPOOL_RESERVED_CRITICAL;
+}
+
+static size_t critical_slot_limit(void) {
+    return LS_SPOOL_MAX_RECORDS - LS_SPOOL_RESERVED_EMERGENCY;
+}
+
+static size_t slot_limit_for_priority(ls_priority_t priority) {
+    if (priority == LS_PRIORITY_EMERGENCY)
+        return LS_SPOOL_MAX_RECORDS;
+    if (priority == LS_PRIORITY_CRITICAL)
+        return critical_slot_limit();
+    return normal_slot_limit();
+}
+
+static ls_result_t find_empty_slot(ls_priority_t priority, size_t *slot_out) {
     if (!slot_out) {
         return LS_EINVAL;
     }
 
-    for (size_t slot = 0; slot < LS_SPOOL_MAX_RECORDS; slot++) {
+    size_t limit = slot_limit_for_priority(priority);
+    for (size_t slot = 0; slot < limit; slot++) {
         int erased = 0;
         ls_result_t result = ls_storage_is_erased(ls_runtime.storage, slot_offset(slot),
                                                   sizeof(spool_record_t), &erased);
@@ -285,8 +302,11 @@ ls_result_t ls_spool_append(const uint8_t *data, size_t length, ls_priority_t pr
     }
 
     size_t slot = 0u;
-    ls_result_t result = find_empty_slot(&slot);
+    ls_result_t result = find_empty_slot(priority, &slot);
     if (result != LS_OK) {
+        if (result == LS_ENOSPACE) {
+            ls_runtime.spool_dropped_records++;
+        }
         return result;
     }
 
@@ -302,12 +322,21 @@ ls_result_t ls_spool_append(const uint8_t *data, size_t length, ls_priority_t pr
     record.header_crc = spool_record_crc(&record);
 
     size_t offset = slot_offset(slot);
-    result = ls_storage_program(ls_runtime.storage, offset, &record, sizeof(record));
+    result = ls_fault_injection_hit("spool.before_header");
+    if (result == LS_OK) {
+        result = ls_storage_program(ls_runtime.storage, offset, &record, sizeof(record));
+    }
+    if (result == LS_OK) {
+        result = ls_fault_injection_hit("spool.before_payload");
+    }
     if (result == LS_OK) {
         result = ls_storage_program(ls_runtime.storage, offset + sizeof(record), data, length);
     }
     if (result == LS_OK) {
         result = storage_sync();
+    }
+    if (result == LS_OK) {
+        result = ls_fault_injection_hit("spool.before_commit");
     }
     if (result == LS_OK) {
         const uint8_t committed = SPOOL_RECORD_COMMITTED;
@@ -316,6 +345,23 @@ ls_result_t ls_spool_append(const uint8_t *data, size_t length, ls_priority_t pr
     }
     if (result == LS_OK) {
         result = storage_sync();
+    }
+
+    if (result == LS_OK) {
+        size_t committed = 0u;
+        for (size_t scan = 0u; scan < LS_SPOOL_MAX_RECORDS; scan++) {
+            spool_record_t current;
+            if (ls_runtime.storage->read(ls_runtime.storage->context, slot_offset(scan), &current,
+                                         sizeof(current)) != LS_OK) {
+                break;
+            }
+            if (record_valid(&current) && current.state == SPOOL_RECORD_COMMITTED) {
+                committed++;
+            }
+        }
+        if (committed > ls_runtime.spool_high_watermark) {
+            ls_runtime.spool_high_watermark = committed;
+        }
     }
 
     return result;
@@ -347,6 +393,7 @@ static ls_result_t increment_retries(size_t slot, uint8_t retry_bits) {
     }
 
     if (updated == retry_bits) {
+        ls_runtime.spool_retry_saturated++;
         return LS_OK;
     }
 
@@ -394,22 +441,42 @@ ls_result_t ls_spool_flush(void) {
         return ls_runtime.storage ? LS_ENOSPACE : LS_OK;
     }
 
-    for (size_t slot = 0; slot < LS_SPOOL_MAX_RECORDS; slot++) {
-        spool_record_t record;
-        ls_result_t result = ls_runtime.storage->read(ls_runtime.storage->context,
-                                                      slot_offset(slot), &record, sizeof(record));
-        if (result != LS_OK) {
-            return result;
+    /* Always drain the most important durable record first. This matters for
+     * disconnected vehicles that surface with a large backlog: crash evidence
+     * should not wait behind routine diagnostics. */
+    for (size_t pass = 0u; pass < LS_SPOOL_MAX_RECORDS; ++pass) {
+        bool found = false;
+        size_t selected_slot = 0u;
+        spool_record_t selected = {0};
+        for (size_t slot = 0u; slot < LS_SPOOL_MAX_RECORDS; ++slot) {
+            spool_record_t record;
+            ls_result_t read_result = ls_runtime.storage->read(
+                ls_runtime.storage->context, slot_offset(slot), &record, sizeof(record));
+            if (read_result != LS_OK) {
+                return read_result;
+            }
+            if (!record_valid(&record) || record.state != SPOOL_RECORD_COMMITTED) {
+                continue;
+            }
+            if (!found || record.priority < selected.priority ||
+                (record.priority == selected.priority &&
+                 (int32_t)(record.sequence - selected.sequence) < 0)) {
+                selected = record;
+                selected_slot = slot;
+                found = true;
+            }
         }
-        if (!record_valid(&record) || record.state != SPOOL_RECORD_COMMITTED) {
-            continue;
+        if (!found) {
+            break;
         }
 
         uint8_t data[LS_MAX_EVENT_SIZE];
-        result = ls_runtime.storage->read(ls_runtime.storage->context,
-                                          slot_offset(slot) + sizeof(record), data, record.length);
-        if (result != LS_OK || record.data_crc != ls_crc32(data, record.length)) {
-            result = acknowledge_record(slot);
+        ls_result_t result = ls_runtime.storage->read(
+            ls_runtime.storage->context, slot_offset(selected_slot) + sizeof(selected), data,
+            selected.length);
+        if (result != LS_OK || selected.data_crc != ls_crc32(data, selected.length)) {
+            ls_runtime.spool_corrupt_records++;
+            result = acknowledge_record(selected_slot);
             if (result != LS_OK) {
                 return result;
             }
@@ -417,8 +484,9 @@ ls_result_t ls_spool_flush(void) {
         }
 
         ls_envelope_info_t info;
-        if (ls_envelope_validate(data, record.length, &info) != LS_OK) {
-            result = acknowledge_record(slot);
+        if (ls_envelope_validate(data, selected.length, &info) != LS_OK) {
+            ls_runtime.spool_corrupt_records++;
+            result = acknowledge_record(selected_slot);
             if (result != LS_OK) {
                 return result;
             }
@@ -426,18 +494,25 @@ ls_result_t ls_spool_flush(void) {
         }
 
         ls_transport_backend_t *transport =
-            ls_transport_select((ls_priority_t)record.priority, record.length);
+            ls_transport_select((ls_priority_t)selected.priority, selected.length);
         if (!transport) {
             return LS_EAGAIN;
         }
 
-        result = ls_transport_send(transport, info.event_id, data, record.length);
+        result = ls_fault_injection_hit("spool.before_send");
+        if (result == LS_OK) {
+            result = ls_transport_send(transport, info.event_id, data, selected.length);
+        }
         if (result != LS_OK) {
-            ls_result_t retry_result = increment_retries(slot, record.retry_bits);
+            ls_runtime.spool_transport_failures++;
+            ls_result_t retry_result = increment_retries(selected_slot, selected.retry_bits);
             return retry_result == LS_OK ? result : retry_result;
         }
 
-        result = acknowledge_record(slot);
+        result = ls_fault_injection_hit("spool.before_ack");
+        if (result == LS_OK) {
+            result = acknowledge_record(selected_slot);
+        }
         if (result != LS_OK) {
             return result;
         }
@@ -448,4 +523,42 @@ ls_result_t ls_spool_flush(void) {
 
 ls_result_t ls_flush(void) {
     return ls_spool_flush();
+}
+
+ls_result_t ls_spool_get_stats(ls_spool_stats_t *stats) {
+    if (!stats) {
+        return LS_EINVAL;
+    }
+
+    *stats = (ls_spool_stats_t){
+        .capacity = LS_SPOOL_MAX_RECORDS,
+        .reserved_critical = LS_SPOOL_RESERVED_CRITICAL,
+        .reserved_emergency = LS_SPOOL_RESERVED_EMERGENCY,
+        .high_watermark = ls_runtime.spool_high_watermark,
+        .dropped_records = ls_runtime.spool_dropped_records,
+        .corrupt_records = ls_runtime.spool_corrupt_records,
+        .transport_failures = ls_runtime.spool_transport_failures,
+        .retry_saturated = ls_runtime.spool_retry_saturated,
+    };
+
+    if (!usable()) {
+        return ls_runtime.storage ? LS_ENOSPACE : LS_OK;
+    }
+
+    for (size_t slot = 0u; slot < LS_SPOOL_MAX_RECORDS; slot++) {
+        spool_record_t record;
+        ls_result_t result = ls_runtime.storage->read(ls_runtime.storage->context,
+                                                      slot_offset(slot), &record, sizeof(record));
+        if (result != LS_OK) {
+            return result;
+        }
+        if (record_valid(&record) && record.state == SPOOL_RECORD_COMMITTED) {
+            stats->committed++;
+        }
+    }
+    if (stats->committed > stats->high_watermark) {
+        stats->high_watermark = stats->committed;
+        ls_runtime.spool_high_watermark = stats->committed;
+    }
+    return LS_OK;
 }

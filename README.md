@@ -143,7 +143,7 @@ include(FetchContent)
 FetchContent_Declare(
   latch
   GIT_REPOSITORY https://github.com/laststate/latch.git
-  GIT_TAG v0.2.0
+  GIT_TAG v0.5.0
 )
 FetchContent_MakeAvailable(latch)
 target_link_libraries(firmware PRIVATE laststate::latch)
@@ -198,6 +198,10 @@ version-pinned Xtensa panic-hook boundary.
 
 ## Documentation
 
+For safety- or mission-critical integrations, start with [Production readiness](docs/production-readiness.md), [Commercial AUV integration readiness](docs/auv-commercial-readiness.md), and the [AUV observability runtime guide](docs/auv-observability-runtime.md).
+
+- [v0.3.0 release notes](docs/releases/v0.3.0.md)
+- [AUV observability runtime](docs/auv-observability-runtime.md)
 - [v0.2.0 release notes](docs/releases/v0.2.0.md)
 - [Integration overview](docs/integration-overview.md)
 - [Architecture](docs/architecture.md)
@@ -244,3 +248,13 @@ Release automation validates the compact distribution and generates release arch
 ## License
 
 Apache-2.0. See [LICENSE](LICENSE).
+
+### Commercial cryptography assurance
+
+For production/AUV deployments, configure `LS_COMMERCIAL_PROFILE=ON`. The runtime then fails closed
+unless an externally-audited crypto provider is installed and passes provider KATs. The portable
+built-in backend is intentionally reported as `builtin-unqualified`. See
+[`docs/security/crypto-assurance.md`](docs/security/crypto-assurance.md).
+
+Mutation assurance now includes a broad critical-runtime campaign in addition to the fast smoke
+suite. See [`docs/security/mutation-assurance.md`](docs/security/mutation-assurance.md).

@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "stable_release_min_major": 1,
+  "max_evidence_age_days": 180,
+  "required_scenarios": [
+    "hardfault",
+    "watchdog",
+    "brownout",
+    "stack-canary",
+    "flash",
+    "reset-registers"
+  ],
+  "conditional_scenarios": {
+    "trustzone": "trustzone",
+    "fpu": "fpu-lazy"
+  }
+}

@@ -374,3 +374,32 @@ ls_flash_wear_stats_t ls_flash_wear_stats(const ls_flash_wear_level_t *wear) {
 
     return stats;
 }
+
+ls_result_t ls_flash_wear_lifetime(const ls_flash_wear_level_t *wear, uint32_t rated_erase_cycles,
+                                   ls_flash_wear_lifetime_t *lifetime) {
+    if (!wear || !lifetime || !rated_erase_cycles || !wear->slot_count ||
+        wear->slot_count > LS_FLASH_WEAR_MAX_SLOTS) {
+        return LS_EINVAL;
+    }
+
+    ls_flash_wear_lifetime_t result = {0};
+    result.rated_erase_cycles = rated_erase_cycles;
+    uint64_t remaining = 0u;
+    for (size_t slot = 0; slot < wear->slot_count; ++slot) {
+        uint32_t count = wear->erase_counts[slot];
+        if (count > result.maximum_erases) {
+            result.maximum_erases = count;
+        }
+        if (count < rated_erase_cycles) {
+            remaining += (uint64_t)(rated_erase_cycles - count);
+        }
+    }
+    result.exhausted = result.maximum_erases >= rated_erase_cycles;
+    uint64_t scaled = (uint64_t)result.maximum_erases * 10000u;
+    result.wear_permyriad = scaled >= (uint64_t)rated_erase_cycles * 10000u
+                                ? 10000u
+                                : (uint16_t)(scaled / rated_erase_cycles);
+    result.estimated_commits_remaining = remaining;
+    *lifetime = result;
+    return LS_OK;
+}

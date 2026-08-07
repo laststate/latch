@@ -5,7 +5,7 @@ include(FetchContent)
 FetchContent_Declare(
   latch
   GIT_REPOSITORY https://github.com/laststate/latch.git
-  GIT_TAG v0.2.0
+  GIT_TAG v0.5.0
   GIT_SHALLOW TRUE
 )
 FetchContent_MakeAvailable(latch)

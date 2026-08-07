@@ -19,6 +19,15 @@ static ls_result_t random_bytes(void *context, uint8_t *out, size_t length) {
     }
     return LS_OK;
 }
+static ls_result_t random_fail(void *context, uint8_t *out, size_t length) {
+    (void)context; (void)out; (void)length;
+    return LS_EIO;
+}
+static ls_result_t random_zero(void *context, uint8_t *out, size_t length) {
+    (void)context;
+    memset(out, 0, length);
+    return LS_OK;
+}
 static ls_storage_backend_t raw(ls_storage_sim_t *sim) {
     ls_storage_backend_t backend = {"nor",
                                     sim,
@@ -47,6 +56,15 @@ static int all_zero(const uint8_t *data, size_t length) {
     return 1;
 }
 int main(void) {
+    CHECK(ls_secure_storage_sealed_size(SIZE_MAX) == 0u);
+    ls_secure_storage_t invalid_secure;
+    uint8_t invalid_workspace[128] = {0};
+    uint8_t invalid_key[32] = {0};
+    ls_storage_backend_t invalid_storage = {0};
+    CHECK(ls_secure_storage_init(NULL, &invalid_storage, invalid_workspace, sizeof invalid_workspace, 16u, invalid_key, 1u, random_bytes, &rng) == LS_EINVAL);
+    CHECK(ls_secure_storage_init(&invalid_secure, NULL, invalid_workspace, sizeof invalid_workspace, 16u, invalid_key, 1u, random_bytes, &rng) == LS_EINVAL);
+    CHECK(ls_secure_storage_init(&invalid_secure, &invalid_storage, invalid_workspace, sizeof invalid_workspace, 16u, invalid_key, 1u, random_bytes, &rng) == LS_EINVAL);
+    ls_secure_storage_destroy(NULL);
     memset(physical, 0xff, sizeof physical);
     ls_storage_sim_t sim = {physical, sizeof physical, true, 0, 0, 0};
     ls_storage_backend_t backend = raw(&sim);
@@ -60,6 +78,14 @@ int main(void) {
     ls_secure_storage_t secure;
     CHECK(ls_secure_storage_init(&secure, &wear.backend, secure_workspace, sizeof secure_workspace,
                                  512, key, 7, random_bytes, &rng) == LS_OK);
+    uint8_t probe = 0u;
+    CHECK(secure.backend.read(NULL, 0u, &probe, 1u) == LS_EINVAL);
+    CHECK(secure.backend.read(secure.backend.context, 0u, NULL, 1u) == LS_EINVAL);
+    CHECK(secure.backend.read(secure.backend.context, 513u, &probe, 0u) == LS_EINVAL);
+    CHECK(secure.backend.write(NULL, 0u, &probe, 1u) == LS_EINVAL);
+    CHECK(secure.backend.write(secure.backend.context, 0u, NULL, 1u) == LS_EINVAL);
+    CHECK(secure.backend.erase(NULL, 0u, 1u) == LS_EINVAL);
+    CHECK(secure.backend.sync(NULL) == LS_EINVAL);
     uint8_t secret[64], readback[64];
     memset(secret, 0x37, sizeof secret);
     CHECK(secure.backend.write(secure.backend.context, 100, secret, sizeof secret) == LS_OK);
@@ -124,5 +150,25 @@ int main(void) {
     CHECK(ls_secure_storage_init(&rejected, &reopened_wear.backend, secure_recovery,
                                  sizeof secure_recovery, 512, wrong, 8, random_bytes,
                                  &rng) == LS_EAUTH);
+
+    /* Exercise storage without a sync callback and nonce-provider failures. */
+    uint8_t plain_storage_bytes[1024];
+    memset(plain_storage_bytes, 0xff, sizeof plain_storage_bytes);
+    ls_memory_storage_t plain_memory = {plain_storage_bytes, sizeof plain_storage_bytes};
+    ls_storage_backend_t plain_storage = {.name="plain", .context=&plain_memory,
+        .capacity=sizeof plain_storage_bytes, .read=ls_memory_storage_read,
+        .write=ls_memory_storage_write, .erase=ls_memory_storage_erase, .sync=NULL};
+    uint8_t small_workspace[256];
+    ls_secure_storage_t small;
+    CHECK(ls_secure_storage_init(&small, &plain_storage, small_workspace, sizeof small_workspace,
+                                 64u, key, 3u, random_fail, NULL) == LS_EIO);
+    memset(plain_storage_bytes, 0xff, sizeof plain_storage_bytes);
+    CHECK(ls_secure_storage_init(&small, &plain_storage, small_workspace, sizeof small_workspace,
+                                 64u, key, 3u, random_zero, NULL) == LS_OK);
+    CHECK(small.backend.sync(small.backend.context) == LS_OK);
+    probe = 0x11u;
+    /* The initializer consumed the all-zero nonce; repeating it on the next seal is rejected. */
+    CHECK(small.backend.write(small.backend.context, 0u, &probe, 1u) == LS_EAUTH);
+    ls_secure_storage_destroy(&small);
     return 0;
 }

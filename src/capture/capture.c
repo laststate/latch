@@ -118,6 +118,7 @@ static void minimal_snapshot_store(uint32_t pc, uint32_t lr, uint32_t msp, uint3
                                    uint32_t flags, uint32_t emergency_stack_used,
                                    uint32_t fault_sequence, const ls_arch_context_t *context) {
     volatile ls_minimal_snapshot_t *snapshot = &minimal_snapshot;
+    ls_blackbox_freeze();
 
     snapshot->magic = 0u;
     snapshot->version = LS_MINIMAL_SNAPSHOT_VERSION;
@@ -420,9 +421,9 @@ ls_result_t ls_capture_minimal_recover(void) {
     }
     event = (ls_event_t){
         .type = LS_EVENT_CRASH,
-        .priority = LS_PRIORITY_CRITICAL,
+        .priority = LS_PRIORITY_EMERGENCY,
         .timestamp_ms = ls_uptime_ms(),
-        .fingerprint = snapshot.pc ^ snapshot.lr ^ snapshot.cfsr ^ snapshot.hfsr,
+        .fingerprint = ls_crash_fingerprint(&context),
         .domain = "fault",
         .code = (int32_t)snapshot.fault,
         .severity = LS_SEVERITY_FATAL,
@@ -460,10 +461,10 @@ static ls_result_t capture_cpu_context(const ls_arch_context_t *context,
     breadcrumb = (ls_breadcrumb_t){"cpu", LS_SEVERITY_FATAL, 1u, "cpu_fault", 0, 0u};
     ls_breadcrumb_event(&breadcrumb);
 
-    fingerprint = context->pc ^ context->lr ^ context->cfsr ^ context->mcause;
+    fingerprint = ls_crash_fingerprint(context);
     event = (ls_event_t){
         .type = LS_EVENT_CRASH,
-        .priority = LS_PRIORITY_CRITICAL,
+        .priority = LS_PRIORITY_EMERGENCY,
         .timestamp_ms = ls_uptime_ms(),
         .fingerprint = fingerprint,
         .domain = "cpu",

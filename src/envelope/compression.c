@@ -32,7 +32,10 @@ ls_result_t ls_varint_u32_decode(const uint8_t *input, size_t length, uint32_t *
             return LS_OK;
         }
     }
-    return length >= 5 ? LS_ECORRUPT : LS_EAGAIN;
+    /* If five bytes were available, the loop either decoded byte five or
+       rejected its high nibble as overflow. Reaching here therefore means a
+       genuinely incomplete varint, not a second corruption state. */
+    return LS_EAGAIN;
 }
 ls_result_t ls_rle_compress(const uint8_t *input, size_t length, uint8_t *output, size_t capacity,
                             size_t *written) {

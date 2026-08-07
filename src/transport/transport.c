@@ -135,6 +135,10 @@ static ls_result_t send_complete(ls_transport_backend_t *transport, const uint8_
     uint8_t attempt = 0;
     ls_result_t result;
     do {
+        result = ls_fault_injection_hit("transport.send");
+        if (result != LS_OK) {
+            continue;
+        }
         result = transport->send(transport->context, data, length);
     } while (should_retry(transport, &attempt, result));
     return result;
@@ -145,6 +149,10 @@ static ls_result_t send_fragment(ls_transport_backend_t *transport,
     uint8_t attempt = 0;
     ls_result_t result;
     do {
+        result = ls_fault_injection_hit("transport.fragment");
+        if (result != LS_OK) {
+            continue;
+        }
         if (transport->send_fragment_v2) {
             result = transport->send_fragment_v2(transport->context, fragment);
         } else if (transport->send_fragment) {

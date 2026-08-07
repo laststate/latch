@@ -11,6 +11,8 @@ typedef struct ls_secure_element {
                                     size_t *length);
     ls_result_t (*derive_key)(void *context, uint32_t key_id, const uint8_t *context_data,
                               size_t context_length, uint8_t output[32]);
+    /* Optional irreversible product-specific destruction of a key slot/handle. */
+    ls_result_t (*destroy_key)(void *context, uint32_t key_id);
 } ls_secure_element_t;
 ls_result_t ls_secure_element_validate(const ls_secure_element_t *element);
 ls_result_t ls_secure_element_random(void *context, uint8_t *output, size_t length);
@@ -21,4 +23,5 @@ ls_result_t ls_secure_element_certificate(const ls_secure_element_t *element, ui
 ls_result_t ls_secure_element_derive(const ls_secure_element_t *element, uint32_t key_id,
                                      const uint8_t *context_data, size_t context_length,
                                      uint8_t output[32]);
+ls_result_t ls_secure_element_destroy_key(const ls_secure_element_t *element, uint32_t key_id);
 #endif

@@ -1,0 +1,28 @@
+name: Mutation assurance
+on:
+  pull_request:
+    paths: ['src/**','tests/**','tools/mutation_*.py','.github/workflows/mutation.yml']
+  push:
+    branches: [prod]
+  schedule:
+    - cron: '17 3 * * 0'
+  workflow_dispatch:
+  workflow_call:
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - run: sudo apt-get update && sudo apt-get install -y ninja-build
+      - run: python tools/mutation_smoke.py --build build/mutation-smoke
+  critical-campaign:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - run: sudo apt-get update && sudo apt-get install -y ninja-build
+      - run: python tools/mutation_campaign.py --build build/mutation-campaign --minimum-score 85 --report artifacts/mutation-report.json
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        if: always()
+        with:
+          name: mutation-report
+          path: artifacts/mutation-report.json

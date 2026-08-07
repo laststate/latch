@@ -1,0 +1,30 @@
+{
+  "date": "2026-08-07",
+  "version": "0.3.0",
+  "source_snapshot_has_git_metadata": false,
+  "host_ctest": {"passed": 58, "total": 58},
+  "asan_ubsan_ctest": {"passed": 58, "total": 58, "compiler": "clang"},
+  "gcc_release_werror_ctest": {"passed": 58, "total": 58},
+  "clang_release_werror_ctest": {"passed": 58, "total": 58},
+  "coverage": {
+    "scope": ["src", "arch", "ports"],
+    "lines": {"covered": 5427, "total": 5788, "percent": 93.76},
+    "branches": {"covered": 3292, "total": 4105, "percent": 80.19},
+    "minimum_lines_percent": 93.0,
+    "minimum_branches_percent": 80.0,
+    "production_exclusions_used": false
+  },
+  "mutation_smoke": {"killed": 3, "total": 3},
+  "safety_c_policy": "pass",
+  "release_metadata_v0_3_0": "pass",
+  "documentation_checks": "pass",
+  "hil_matrix_validation": "pass",
+  "lep_vectors": {"public_vector": "pass", "invalid_vectors_rejected": 7},
+  "compact_source_tests": {"passed": 7, "total": 7},
+  "workflow_yaml_files_parsed": 29,
+  "cpack_external_consumer_smoke": "pass",
+  "physical_hil_run_in_this_environment": false,
+  "independent_security_audit_completed": false,
+  "local_clang_tidy_available": false,
+  "local_cppcheck_available": false
+}

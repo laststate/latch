@@ -4,7 +4,44 @@ All notable changes to Latch are recorded here. The project follows [Semantic Ve
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-08-07
+
+### Changed
+- Commercial release artifacts now force `LS_COMMERCIAL_PROFILE=ON` and are explicitly named as commercial packages.
+- Critical mutation assurance now rejects invalid mutants as well as survivors.
+- Added project-readiness and public-API compatibility gates to release automation.
+- Updated implementation/readiness documentation to reflect the 40/40 mutation campaign and explicit physical-qualification boundary.
+
+## [0.4.0] - 2026-08-07
+
+### Security assurance
+- Added fail-closed commercial crypto profile requiring an externally-audited provider.
+- Added provider assurance/version/audit metadata and mandatory HKDF/XChaCha known-answer tests.
+- Added optional libsodium provider adapter; the built-in crypto backend is explicitly unqualified for commercial mode.
+- Added broad deterministic mutation campaign across crypto, storage, spool and transport with a CI score gate.
+- Added regression tests for all initially surviving critical mutants.
+
+## [0.3.0] - 2026-08-07
+
 ### Added
+
+- Retained black-box recorder with CRC-protected records, freeze/thaw semantics, anomaly capture profiles and bounded LEP export without copying the entire ring onto the task stack.
+- Mission/dive/node correlation, 128-bit incident identifiers, vehicle phase/depth context, synchronized UTC anchors and stronger crash fingerprints for cross-node fleet diagnostics.
+- AUV health supervisor with watchdog/deadline, power/brownout, battery, temperature, heap, spool, boot-loop, leak, vibration and environment-sensor alarms; peripheral/RTOS trace helpers feed the retained recorder.
+- AUV environment evidence for pressure, depth, temperature, humidity, vibration and water-ingress state, including maxima/event counters and LEP export.
+- Provisioning lifecycle with monotonic activation/rotation/revocation, secure-element attestation and fail-closed secure decommissioning that persists intent before destroying external key material.
+- Generic signed A/B OTA orchestration boundary with authentication/staging/boot/confirm/rollback callbacks, persistent anti-rollback state and abort recovery when staging or boot handoff fails.
+- Named fault-injection points wired into storage, spool commit/send/ACK and transport paths, plus interrupted-commit/retry regression tests and replay-window property tests.
+- Threaded black-box concurrency torture testing, expanded defensive/storage edge tests and AUV-runtime integration tests; the runtime remains heap-free.
+- Fleet-side crash clustering/build comparison, canary promotion guardrails, deterministic support bundles with sensitive-file exclusion and symbol-manifest/address lookup tooling.
+- Critical/Emergency spool reservation, spool health statistics and regression tests that prove a crash can still be persisted after normal traffic saturates its permitted capacity.
+- Pluggable cryptographic-provider boundary so products can route AEAD/HMAC/HKDF through an independently reviewed library or hardware-backed implementation without changing LEP semantics.
+- Persistent update lifecycle state with a monotonic confirmed-version floor, pending image fingerprint/signing-key metadata, rollback accounting and legacy boot-state migration.
+- Production-source coverage gate across `src/`, `arch/` and `ports/`, currently validated above 93% line and 80% branch coverage, plus deterministic mutation smoke tests for critical decisions.
+- Machine-readable stable-release HIL qualification policy/evidence checks tied to the exact release commit; stable releases also run Required, Coverage and Quality before packaging.
+- Conservative flash-wear lifetime estimation and expanded interrupted-write, malformed-input, stream, memory-capture, port-adapter and defensive-path tests.
+- Commercial-AUV integration/safety guidance, FMEA/fault-tree starters and a real-time/resource qualification worksheet.
+- Optional device namespace in the durable reference collector so 32-bit event IDs from different fleet members do not collide in the same storage root.
 
 - Copyable ESP32/ESP-IDF 5.5 crash tutorial with flash-backed capture,
   intentional panic, reboot recovery, retained Xtensa registers and an
