@@ -5,3 +5,9 @@
 `invalid/` holds negative golden vectors (bad magic/CRC/flags/version/TLV). `tools/check_test_vector.py` asserts they fail plain validation.
 
 Existing vectors are immutable compatibility fixtures. A breaking wire-format change requires a new protocol version and a new file rather than rewriting an old vector.
+
+`invalid/truncated-envelope.hex` is a canonical envelope truncated to 30 bytes:
+the header declares a payload longer than the file provides. Plain validation
+rejects it because the declared payload length does not match the available
+bytes. Decoders must report a truncated or invalid-length failure instead of
+returning a partial envelope.
