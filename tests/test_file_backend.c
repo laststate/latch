@@ -277,8 +277,10 @@ static int test_storage_primitives(void) {
     CHECK(close(descriptor) == 0);
     storage = (ls_file_storage_t)LS_FILE_STORAGE_INITIALIZER(path, TEST_STORAGE_SIZE);
     CHECK(ls_file_storage_init(&storage) == LS_EINVAL);
+    descriptor = open(path, O_RDONLY);
+    CHECK(descriptor >= 0);
     struct stat status;
-    CHECK(stat(path, &status) == 0);
+    CHECK(fstat(descriptor, &status) == 0);
     CHECK(status.st_size == (off_t)TEST_STORAGE_SIZE + 1);
     CHECK(ls_file_storage_close(&storage) == LS_OK);
 
@@ -289,7 +291,8 @@ static int test_storage_primitives(void) {
     CHECK(!storage.initialized && storage.fd == -1);
 #endif
 
-    CHECK(unlink(path) == 0);
+    CHECK(unlinkat(descriptor, "", AT_EMPTY_PATH) == 0);
+    CHECK(close(descriptor) == 0);
     return 0;
 }
 
