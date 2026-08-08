@@ -24,7 +24,7 @@ typedef struct {
 } ls_file_storage_t;
 
 #define LS_FILE_STORAGE_INITIALIZER(path_value, size_value)                                        \
-    {(path_value), (size_value), -1, false}
+    { (path_value), (size_value), -1, false }
 
 /* Create/open and preallocate an erased (0xff) backing file. Idempotent. */
 ls_result_t ls_file_storage_init(ls_file_storage_t *file);
