@@ -104,7 +104,7 @@ ls_result_t ls_rle_decompress(const uint8_t *input, size_t length, uint8_t *outp
 }
 static uint32_t zigzag_encode(int32_t value) {
     uint32_t bits = (uint32_t)value;
-    return (bits << 1) ^ (uint32_t)-(value < 0);
+    return (bits << 1) ^ (uint32_t)(-(value < 0));
 }
 static int32_t zigzag_decode(uint32_t value) {
     return (int32_t)((value >> 1) ^ (uint32_t)(-(int32_t)(value & 1u)));

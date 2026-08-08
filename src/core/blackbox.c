@@ -59,7 +59,7 @@ static void metadata_store_u8(volatile uint8_t *value, volatile uint8_t *inverse
 }
 
 static bool metadata_u8_valid(volatile const uint8_t *value, volatile const uint8_t *inverse) {
-    return *inverse == (uint8_t)~(*value);
+    return *inverse == (uint8_t)(~(*value));
 }
 
 static void blackbox_reset(void) {
