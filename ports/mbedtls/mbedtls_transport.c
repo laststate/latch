@@ -5,7 +5,7 @@ static uint32_t fingerprint(const uint8_t *data, size_t length) {
     for (size_t i = 0; i < length; i++) {
         crc ^= data[i];
         for (unsigned bit = 0; bit < 8; bit++)
-            crc = (crc >> 1) ^ ((uint32_t) -(int32_t)(crc & 1u) & 0xedb88320u);
+            crc = (crc >> 1) ^ ((uint32_t)(-(int32_t)(crc & 1u)) & 0xedb88320u);
     }
     return ~crc;
 }
