@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - run: sudo apt-get update && sudo apt-get install -y lcov ninja-build
-      - run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DLS_BUILD_TESTS=ON -DLS_BUILD_LINUX=ON -DCMAKE_C_FLAGS=--coverage -DCMAKE_CXX_FLAGS=--coverage -DCMAKE_EXE_LINKER_FLAGS=--coverage
+      - run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DLS_BUILD_TESTS=ON -DLS_BUILD_LINUX=ON -DCMAKE_C_FLAGS="--coverage -fprofile-update=atomic" -DCMAKE_CXX_FLAGS="--coverage -fprofile-update=atomic" -DCMAKE_EXE_LINKER_FLAGS=--coverage
       - run: cmake --build build --parallel
       - run: ctest --test-dir build --output-on-failure
       - name: Enforce production runtime coverage gate
