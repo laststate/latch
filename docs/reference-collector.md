@@ -17,12 +17,12 @@ Connect directly to a board after installing the optional serial dependency:
 
 ```sh
 python -m pip install pyserial
-python tools/latch_collector.py --serial COM3 --baud 115200 --output collected
+python tools/latch_collector.py --serial COM3 --baud 115200 --output collected --device-id auv-07
 ```
 
 On Linux, replace `COM3` with a device such as `/dev/ttyUSB0`. The collector
-writes one `<event-id>.lep` file per event and emits one JSON summary per ACK to
-stderr, leaving stdout available for binary ACKs in file/stdin mode.
+writes one `<event-id>.lep` file per event (or `<device-id>/<event-id>.lep` when a
+fleet namespace is supplied) and emits one JSON summary per ACK to stderr, leaving stdout available for binary ACKs in file/stdin mode.
 
 This is a reference implementation, not a hosted service. A production
 collector must additionally authenticate devices, apply tenant authorization,

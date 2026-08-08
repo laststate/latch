@@ -102,6 +102,18 @@ static void finish(sha256_context_t *context, uint8_t output[32]) {
     }
     ls_memset(context, 0, sizeof *context);
 }
+void ls_sha256(const uint8_t *data, size_t length, uint8_t output[32]) {
+    if (!output || (!data && length)) {
+        return;
+    }
+    sha256_context_t context;
+    init(&context);
+    if (length) {
+        update(&context, data, length);
+    }
+    finish(&context, output);
+}
+
 void ls_hmac_sha256(const uint8_t *key, size_t key_length, const uint8_t *data, size_t length,
                     uint8_t output[32]) {
     uint8_t normalized[64], inner_hash[32], inner_pad[64], outer_pad[64];
@@ -205,6 +217,10 @@ bool ls_security_enabled(void) {
     return ls_runtime.security_key_length != 0;
 }
 ls_result_t ls_security_set_policy(const ls_security_policy_t *policy) {
+#if LS_REQUIRE_EXTERNAL_CRYPTO_PROVIDER
+    if (policy && policy->algorithm == LS_SECURITY_HMAC_SHA256)
+        return LS_ENOTSUP;
+#endif
     if (!policy ||
         (policy->algorithm != LS_SECURITY_HMAC_SHA256 &&
          policy->algorithm != LS_SECURITY_XCHACHA20_POLY1305) ||

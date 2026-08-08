@@ -5,6 +5,14 @@ use core::ffi::{CStr, c_char, c_void};
 pub const LEP_HEADER_SIZE: usize = 24;
 pub const LEP_VERSION_1: u8 = 1;
 pub const LEP_CURRENT_VERSION: u8 = LEP_VERSION_1;
+pub const ARCH_UNKNOWN: u8 = 0;
+pub const ARCH_CORTEX_M: u8 = 1;
+pub const ARCH_RISCV32: u8 = 2;
+pub const ARCH_XTENSA: u8 = 3;
+pub const ARCH_LINUX: u8 = 4;
+pub const ARCH_RISCV64: u8 = 5;
+/* LEP v1 extensions remain safely skippable by generic TlvIterator users. */
+pub const TLV_CPU64: u16 = 16;
 pub const ENVELOPE_AUTHENTICATED: u8 = 1;
 pub const ENVELOPE_ENCRYPTED: u8 = 2;
 pub const ENVELOPE_AEAD: u8 = 4;
@@ -399,5 +407,29 @@ mod tests {
         let header_crc = crc32(&data[..20]);
         data[20..24].copy_from_slice(&header_crc.to_le_bytes());
         assert!(Envelope::parse(&data).unwrap().is_truncated());
+    }
+
+    #[test]
+    fn parses_riscv64_cpu64_unavailable_descriptor() {
+        let cpu64_descriptor = [1u8, 2, ARCH_RISCV64, 8];
+        let mut data = [0u8; 36];
+        data[..4].copy_from_slice(&0x5054_534cu32.to_le_bytes());
+        data[4] = LEP_VERSION_1;
+        data[5] = 1;
+        data[6] = ARCH_RISCV64;
+        data[16..20].copy_from_slice(&8u32.to_le_bytes());
+        let header_crc = crc32(&data[..20]);
+        data[20..24].copy_from_slice(&header_crc.to_le_bytes());
+        data[24..26].copy_from_slice(&TLV_CPU64.to_le_bytes());
+        data[26..28].copy_from_slice(&(cpu64_descriptor.len() as u16).to_le_bytes());
+        data[28..32].copy_from_slice(&cpu64_descriptor);
+        let payload_crc = crc32(&data[24..32]);
+        data[32..36].copy_from_slice(&payload_crc.to_le_bytes());
+
+        let envelope = Envelope::parse(&data).unwrap();
+        assert_eq!(envelope.architecture, ARCH_RISCV64);
+        let cpu64 = envelope.tlvs().next().unwrap().unwrap();
+        assert_eq!(cpu64.field_type, TLV_CPU64);
+        assert_eq!(cpu64.value, cpu64_descriptor);
     }
 }

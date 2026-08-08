@@ -13,8 +13,7 @@ Claude, Copilot, Gemini, Cursor, and similar tools.
    before it edits.
 3. Use the [task brief template](task-brief-template.md) for work that has
    compatibility, security, storage, protocol, or hardware implications.
-4. Consult the [invariants](invariants.md) and
-   [hardware/external-operation policy](hardware-and-external-operations.md)
+4. Consult the [hardware/external-operation policy](hardware-and-external-operations.md)
    before work on a high-risk surface.
 5. Ask for the evidence required by the
    [validation guide](validation.md), then review the result with the

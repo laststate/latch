@@ -41,7 +41,12 @@ static ls_result_t derive(void *context, uint32_t key_id, const uint8_t *data, s
 }
 int main(void) {
     mock_t mock = {0};
-    ls_secure_element_t element = {&mock, random_bytes, sign, certificate, derive};
+    ls_secure_element_t element = {.context = &mock,
+                                   .random = random_bytes,
+                                   .sign_sha256 = sign,
+                                   .read_certificate = certificate,
+                                   .derive_key = derive,
+                                   .destroy_key = NULL};
     CHECK(ls_secure_element_validate(&element) == LS_OK);
     uint8_t random[40], digest[32] = {0}, signature[64], cert[16], key[32];
     size_t cert_length = 0;

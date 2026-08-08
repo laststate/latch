@@ -20,6 +20,7 @@ ls_result_t ls_init(const ls_config_t *config) {
     ls_runtime.security_policy =
         (ls_security_policy_t){LS_SECURITY_XCHACHA20_POLY1305, 1u, true, false};
     ls_runtime.initialized = true;
+    ls_blackbox_init();
     return LS_OK;
 }
 
@@ -130,6 +131,8 @@ ls_result_t ls_capture_event(const ls_event_t *event) {
     ls_leave_critical();
     ls_event_t filtered = *event;
     ls_result_t result = LS_OK;
+    if (event->type == LS_EVENT_CRASH)
+        ls_blackbox_freeze();
     if (ls_policy_apply(&filtered)) {
         result = ls_envelope_encode(&filtered, encoded, sizeof encoded, &length);
         if (result == LS_OK)

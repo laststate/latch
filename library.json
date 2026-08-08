@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/platformio/platformio-core/develop/platformio/assets/schema/library.json",
   "name": "LastState Latch",
-  "version": "0.2.0",
+  "version": "0.5.0",
   "description": "Heap-free embedded crash evidence capture that survives reboot and queues durable LEP events for delivery.",
   "keywords": [
     "crash-reporting",
@@ -23,19 +23,20 @@
   ],
   "license": "Apache-2.0",
   "homepage": "https://github.com/laststate/latch",
-  "frameworks": "*",
-  "platforms": "*",
+  "frameworks": [
+    "arduino",
+    "espidf"
+  ],
+  "platforms": [
+    "atmelavr",
+    "espressif32"
+  ],
   "headers": "laststate/latch.h",
   "build": {
-    "srcDir": ".",
+    "srcDir": "src",
     "includeDir": "include",
     "srcFilter": [
-      "+<src/**/*.c>",
-      "-<tests/>",
-      "-<examples/>",
-      "-<fuzz/>",
-      "-<benchmarks/>",
-      "-<hil/>"
+      "+<**/*.c>"
     ]
   },
   "export": {

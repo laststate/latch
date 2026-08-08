@@ -33,7 +33,15 @@ typedef enum {
     LS_TLV_LOG,
     LS_TLV_MEMORY,
     LS_TLV_STACK,
-    LS_TLV_HEAP
+    LS_TLV_HEAP,
+    /* LEP v1 additive extensions. Legacy decoders skip unknown TLVs by length. */
+    LS_TLV_CPU64,
+    LS_TLV_BLACKBOX,
+    LS_TLV_MISSION,
+    LS_TLV_TIME_SYNC,
+    LS_TLV_PROVISIONING,
+    LS_TLV_SUPERVISOR,
+    LS_TLV_ENVIRONMENT
 } ls_tlv_type_t;
 typedef struct {
     uint8_t version, type, architecture, flags;

@@ -16,6 +16,7 @@ jobs:
       - run: ctest --test-dir build --output-on-failure --repeat until-pass:3 --timeout 120
       - run: valgrind --error-exitcode=1 --leak-check=full build/latch-tests
       - run: valgrind --error-exitcode=1 --leak-check=full build/latch-envelope-fuzz-tests
+      - run: valgrind --error-exitcode=1 --leak-check=full build/latch-spool-stress-tests
       - run: build/latch-benchmark > benchmark.json
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:

@@ -6,7 +6,8 @@ import sys
 root = pathlib.Path(__file__).resolve().parents[1]
 errors: list[str] = []
 for path in sorted(root.rglob("*.md")):
-    if "build" in path.parts or "target" in path.parts:
+    if any(part in {"build", "target", ".pio", ".git"} or part.startswith("build-")
+           for part in path.parts):
         continue
     text = path.read_text(encoding="utf-8")
     if not text.endswith("\n"):

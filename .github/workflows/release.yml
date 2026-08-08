@@ -11,35 +11,62 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
-      - name: Require a version-matched tag reachable from prod
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.13'
+      - name: Require a release-metadata-matched tag reachable from prod
         run: |
           git fetch --no-tags origin prod
           git merge-base --is-ancestor "${GITHUB_SHA}" origin/prod || {
             echo "Release tags must point to a commit reachable from prod" >&2
             exit 1
           }
-          project_version="$(sed -n 's/project(latch VERSION \([^ ]*\).*/\1/p' CMakeLists.txt)"
-          test "v${project_version}" = "${GITHUB_REF_NAME}" || {
-            echo "Tag ${GITHUB_REF_NAME} does not match project version v${project_version}" >&2
-            exit 1
-          }
+          version="${GITHUB_REF_NAME#v}"
+          python tools/check_release_metadata.py --version "${version}" --require-tag
+          python tools/check_release_qualification.py --version "${version}" --commit "${GITHUB_SHA}"
+          major="${version%%.*}"
+          if [ "${major}" -ge 1 ]; then
+            git verify-tag "${GITHUB_REF_NAME}" || {
+              echo "Stable releases require a cryptographically signed annotated tag" >&2
+              exit 1
+            }
+          fi
   validate:
     needs: verify-tag
     uses: ./.github/workflows/required.yml
+  coverage:
+    needs: verify-tag
+    uses: ./.github/workflows/coverage.yml
+    secrets: inherit
+  quality:
+    needs: verify-tag
+    uses: ./.github/workflows/quality.yml
+  mutation:
+    needs: verify-tag
+    uses: ./.github/workflows/mutation.yml
+  crypto-assurance:
+    needs: verify-tag
+    uses: ./.github/workflows/security-crypto.yml
+  readiness:
+    needs: verify-tag
+    uses: ./.github/workflows/project-readiness.yml
+  api-compat:
+    needs: verify-tag
+    uses: ./.github/workflows/api-compat.yml
   package:
-    needs: validate
+    needs: [validate, coverage, quality, mutation, crypto-assurance, readiness, api-compat]
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DLS_BUILD_TESTS=OFF
+      - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DLS_BUILD_TESTS=OFF -DLS_COMMERCIAL_PROFILE=ON
       - run: cmake --build build --config Release --parallel
       - run: cpack --config build/CPackConfig.cmake -C Release
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
-          name: release-${{ matrix.os }}
+          name: commercial-release-${{ matrix.os }}
           path: laststate-latch-*
           if-no-files-found: error
   publish:
@@ -53,7 +80,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
-          pattern: release-*
+          pattern: commercial-release-*
           path: dist
           merge-multiple: true
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
@@ -73,6 +100,8 @@ jobs:
           subject-path: |
             dist/*.zip
             dist/*.tar.gz
+            dist/latch.spdx.json
+            dist/SHA256SUMS
       - run: gh release create "${GITHUB_REF_NAME}" dist/* --generate-notes --verify-tag
         env:
           GH_TOKEN: ${{ github.token }}

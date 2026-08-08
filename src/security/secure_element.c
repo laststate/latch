@@ -29,3 +29,11 @@ ls_result_t ls_secure_element_derive(const ls_secure_element_t *element, uint32_
         return LS_EINVAL;
     return element->derive_key(element->context, key_id, context_data, context_length, output);
 }
+
+ls_result_t ls_secure_element_destroy_key(const ls_secure_element_t *element, uint32_t key_id) {
+    if (!element || !key_id)
+        return LS_EINVAL;
+    if (!element->destroy_key)
+        return LS_ENOTSUP;
+    return element->destroy_key(element->context, key_id);
+}

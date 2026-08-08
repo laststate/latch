@@ -11,6 +11,36 @@
 #define LS_XCHACHA20_NONCE_SIZE 24u
 #define LS_HKDF_MAX_INFO_SIZE 128u
 typedef ls_result_t (*ls_crypto_random_fn)(void *context, uint8_t *output, size_t length);
+typedef ls_result_t (*ls_crypto_hkdf_sha256_fn)(void *context, const uint8_t *salt,
+                                                size_t salt_length, const uint8_t *ikm,
+                                                size_t ikm_length, const uint8_t *info,
+                                                size_t info_length, uint8_t *output,
+                                                size_t output_length);
+typedef ls_result_t (*ls_crypto_xchacha20_poly1305_encrypt_fn)(
+    void *context, const uint8_t key[32], const uint8_t nonce[24], const uint8_t *aad,
+    size_t aad_length, const uint8_t *plaintext, uint8_t *ciphertext, size_t length,
+    uint8_t tag[16]);
+typedef ls_result_t (*ls_crypto_xchacha20_poly1305_decrypt_fn)(
+    void *context, const uint8_t key[32], const uint8_t nonce[24], const uint8_t *aad,
+    size_t aad_length, const uint8_t *ciphertext, uint8_t *plaintext, size_t length,
+    const uint8_t tag[16]);
+typedef enum {
+    LS_CRYPTO_ASSURANCE_UNSPECIFIED = 0,
+    LS_CRYPTO_ASSURANCE_TEST_ONLY = 1,
+    LS_CRYPTO_ASSURANCE_EXTERNAL_REVIEWED = 2,
+    LS_CRYPTO_ASSURANCE_EXTERNAL_AUDITED = 3
+} ls_crypto_assurance_t;
+
+typedef struct {
+    const char *name;
+    const char *version;
+    const char *audit_reference;
+    ls_crypto_assurance_t assurance;
+    void *context;
+    ls_crypto_hkdf_sha256_fn hkdf_sha256;
+    ls_crypto_xchacha20_poly1305_encrypt_fn xchacha20_poly1305_encrypt;
+    ls_crypto_xchacha20_poly1305_decrypt_fn xchacha20_poly1305_decrypt;
+} ls_crypto_provider_t;
 typedef enum {
     LS_SECURITY_HMAC_SHA256 = 1,
     LS_SECURITY_XCHACHA20_POLY1305 = 2
@@ -27,9 +57,19 @@ bool ls_security_enabled(void);
 ls_result_t ls_security_set_policy(const ls_security_policy_t *policy);
 ls_security_policy_t ls_security_get_policy(void);
 void ls_security_set_random_provider(ls_crypto_random_fn random, void *context);
+/* Installs an optional normal-runtime crypto backend (PSA, mbedTLS wrapper,
+ * secure coprocessor, etc.). All callbacks are mandatory; a callback error is
+ * propagated and never falls back silently to the built-in implementation. */
+ls_result_t ls_security_set_crypto_provider(const ls_crypto_provider_t *provider);
+void ls_security_clear_crypto_provider(void);
+const char *ls_security_crypto_provider_name(void);
+ls_crypto_assurance_t ls_security_crypto_provider_assurance(void);
+const char *ls_security_crypto_provider_audit_reference(void);
+bool ls_security_crypto_provider_ready(void);
 ls_result_t ls_security_random(uint8_t *output, size_t length);
 void ls_secure_zero(void *data, size_t length);
 bool ls_constant_time_equal(const uint8_t *left, const uint8_t *right, size_t length);
+void ls_sha256(const uint8_t *data, size_t length, uint8_t output[32]);
 void ls_hmac_sha256(const uint8_t *key, size_t key_length, const uint8_t *data, size_t length,
                     uint8_t output[LS_HMAC_SHA256_SIZE]);
 ls_result_t ls_hkdf_sha256(const uint8_t *salt, size_t salt_length, const uint8_t *ikm,

@@ -1,0 +1,4 @@
+using sysbus
+mach create "latch-rv32-fault"
+machine LoadPlatformDescription @platforms/cpus/sifive-fe310.repl
+cpu PerformanceInMips 100

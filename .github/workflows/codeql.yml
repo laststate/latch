@@ -28,7 +28,7 @@ jobs:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build_mode }}
       - if: matrix.language == 'c-cpp'
-        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DLS_BUILD_TESTS=ON && cmake --build build --parallel
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DLS_BUILD_TESTS=ON -DLS_BUILD_LINUX=ON && cmake --build build --parallel
       - uses: github/codeql-action/analyze@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81 # v4
         with:
           category: /language:${{ matrix.language }}

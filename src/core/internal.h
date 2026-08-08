@@ -32,7 +32,7 @@ typedef struct {
 
 typedef struct {
     char name[LS_BREADCRUMB_CATEGORY_MAX];
-    uint32_t deadline_ms, last_touch_ms;
+    uint32_t deadline_ms, last_touch_ms, misses, max_lateness_ms;
     bool expired;
 } ls_health_record_t;
 typedef struct {
@@ -72,6 +72,10 @@ typedef struct {
     ls_severity_t severity;
     const char *message;
     const ls_arch_context_t *cpu;
+    /* Optional full-width state for LEP's additive CPU64 TLV. It is used
+       only while a
+     * normal-runtime event is being encoded. */
+    const ls_riscv64_context_t *riscv64;
     const ls_assert_info_t *assertion;
     const ls_peripheral_fault_t *peripheral;
     const ls_log_info_t *log;
@@ -89,6 +93,14 @@ typedef struct {
     uint32_t consecutive_failures, first_failure_ms, last_sequence;
     uint32_t pending_crash_id, release_hash;
     uint8_t crash_pending, expected_reset, boot_successful, release_state;
+    uint32_t update_version_floor, update_pending_version, update_image_fingerprint;
+    uint32_t update_signing_key_id, update_rollback_count;
+    uint8_t update_state;
+    uint8_t update_reserved[3];
+    uint32_t provision_key_id, provision_pending_key_id, provision_generation;
+    uint32_t provision_monotonic_counter;
+    uint8_t provision_state;
+    uint8_t provision_reserved[3];
     uint32_t crc;
 } ls_persistent_boot_t;
 
@@ -136,10 +148,26 @@ typedef struct {
     ls_security_policy_t security_policy;
     ls_crypto_random_fn crypto_random;
     void *crypto_random_context;
+    ls_crypto_provider_t crypto_provider;
+    bool has_crypto_provider;
     uint8_t last_envelope_nonce[LS_XCHACHA20_NONCE_SIZE];
     bool has_last_envelope_nonce;
     uint32_t replay_highest;
     uint64_t replay_bitmap;
+    size_t spool_high_watermark;
+    uint32_t spool_dropped_records;
+    uint32_t spool_corrupt_records;
+    uint32_t spool_transport_failures;
+    uint32_t spool_retry_saturated;
+    ls_mission_context_t mission;
+    ls_time_sync_state_t time_sync;
+    ls_environment_summary_t environment;
+    ls_supervisor_config_t supervisor_config;
+    ls_supervisor_status_t supervisor_status;
+    ls_selftest_case_t selftests[LS_SELFTEST_CAPACITY];
+    size_t selftest_count;
+    ls_fault_injection_state_t fault_injections[LS_FAULT_INJECTION_CAPACITY];
+    bool fault_injection_active;
 } ls_runtime_t;
 extern ls_runtime_t ls_runtime;
 
@@ -171,4 +199,15 @@ bool ls_policy_apply(ls_event_t *event);
 ls_redaction_mode_t ls_redaction_for(const void *address, size_t length, bool *matched);
 void ls_enter_critical(void);
 void ls_leave_critical(void);
+ls_result_t ls_crypto_hkdf_sha256(const uint8_t *salt, size_t salt_length, const uint8_t *ikm,
+                                  size_t ikm_length, const uint8_t *info, size_t info_length,
+                                  uint8_t *output, size_t output_length);
+ls_result_t ls_crypto_xchacha20_poly1305_encrypt(const uint8_t key[32], const uint8_t nonce[24],
+                                                 const uint8_t *aad, size_t aad_length,
+                                                 const uint8_t *plaintext, uint8_t *ciphertext,
+                                                 size_t length, uint8_t tag[16]);
+ls_result_t ls_crypto_xchacha20_poly1305_decrypt(const uint8_t key[32], const uint8_t nonce[24],
+                                                 const uint8_t *aad, size_t aad_length,
+                                                 const uint8_t *ciphertext, uint8_t *plaintext,
+                                                 size_t length, const uint8_t tag[16]);
 #endif

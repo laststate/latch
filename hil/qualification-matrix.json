@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-08-02",
+  "platforms": [
+    {
+      "platform": "ESP32",
+      "mcu": "ESP32-D0WD-V3 rev 3.1",
+      "board": "ESP32 DevKit (4 MB flash)",
+      "toolchain": "ESP-IDF 5.5.0",
+      "fault_handler": "integration-boundary",
+      "flash_backend": "qualified",
+      "status": "qualified-limited",
+      "last_hil": "2026-07-29",
+      "evidence": "esp32_relay/EVIDENCE.md",
+      "notes": "Normal-runtime capture before an intentional panic, reboot recovery, UART stream and durable ACK are qualified. Automatic Xtensa panic-frame capture is not qualified."
+    },
+    {
+      "platform": "STM32",
+      "mcu": "STM32F4xx",
+      "board": "Product-selected board",
+      "toolchain": "Arm GNU Toolchain (CI cross-build)",
+      "fault_handler": "emulator-tested",
+      "flash_backend": "integration-required",
+      "status": "in-validation",
+      "last_hil": null,
+      "evidence": null,
+      "notes": "Cortex-M fault entry and STM32 reset mapping are tested independently. Board vectors, linker placement and flash geometry still require HIL."
+    },
+    {
+      "platform": "RP2040",
+      "mcu": "RP2040",
+      "board": "Raspberry Pi Pico family",
+      "toolchain": "Pico SDK (consumer-owned)",
+      "fault_handler": "host-tested",
+      "flash_backend": "not-supplied",
+      "status": "not-qualified",
+      "last_hil": null,
+      "evidence": null,
+      "notes": "The generic Cortex-M path and reset adapter exist; no physical flash/reboot qualification is recorded."
+    },
+    {
+      "platform": "Nordic",
+      "mcu": "nRF52840",
+      "board": "nRF52840 DK",
+      "toolchain": "Zephyr SDK (CI build)",
+      "fault_handler": "host-tested",
+      "flash_backend": "integration-required",
+      "status": "compile-tested",
+      "last_hil": null,
+      "evidence": null,
+      "notes": "Zephyr BLE integration is compiled in CI and RESETREAS mapping is host-tested; this is not a physical-board result."
+    },
+    {
+      "platform": "RISC-V",
+      "mcu": "RV32IMAC",
+      "board": "SiFive FE310 model",
+      "toolchain": "riscv64-unknown-elf GCC + Renode 1.16.1",
+      "fault_handler": "emulator-tested",
+      "flash_backend": "not-tested",
+      "status": "emulator-tested",
+      "last_hil": null,
+      "evidence": null,
+      "notes": "Nightly emulation injects an illegal-instruction trap. Renode evidence is not hardware qualification."
+    },
+    {
+      "platform": "Linux",
+      "mcu": "x86_64",
+      "board": "GitHub-hosted runner",
+      "toolchain": "GCC and Clang",
+      "fault_handler": "host-tested",
+      "flash_backend": "host-tested",
+      "status": "host-tested",
+      "last_hil": null,
+      "evidence": null,
+      "notes": "Fork/signal/pipe and file-backend tests run on Linux hosts. This does not establish filesystem power-loss guarantees for a product."
+    }
+  ]
+}

@@ -8,7 +8,8 @@ typedef struct {
     uint32_t header_crc;
 } secure_header_t;
 size_t ls_secure_storage_sealed_size(size_t logical_capacity) {
-    return sizeof(secure_header_t) + logical_capacity + 4u + LS_AEAD_TAG_SIZE;
+    const size_t overhead = sizeof(secure_header_t) + 4u + LS_AEAD_TAG_SIZE;
+    return logical_capacity > SIZE_MAX - overhead ? 0u : overhead + logical_capacity;
 }
 static uint32_t read32(const uint8_t *data) {
     return (uint32_t)data[0] | ((uint32_t)data[1] << 8) | ((uint32_t)data[2] << 16) |
@@ -34,8 +35,8 @@ static ls_result_t derive_key(const ls_secure_storage_t *secure, uint32_t genera
                        (uint8_t)(generation >> 8),
                        (uint8_t)(generation >> 16),
                        (uint8_t)(generation >> 24)};
-    return ls_hkdf_sha256(salt, sizeof salt, secure->key, sizeof secure->key, label,
-                          sizeof label - 1u, derived, 32u);
+    return ls_crypto_hkdf_sha256(salt, sizeof salt, secure->key, sizeof secure->key, label,
+                                 sizeof label - 1u, derived, 32u);
 }
 static ls_result_t load_image(ls_secure_storage_t *secure) {
     ls_result_t result =
@@ -55,7 +56,7 @@ static ls_result_t load_image(ls_secure_storage_t *secure) {
     uint8_t derived[32];
     result = derive_key(secure, header.generation, derived);
     if (result == LS_OK)
-        result = ls_xchacha20_poly1305_decrypt(
+        result = ls_crypto_xchacha20_poly1305_decrypt(
             derived, header.nonce, secure->workspace, sizeof header, ciphertext, ciphertext,
             secure->logical_capacity, ciphertext + secure->logical_capacity + 4u);
     ls_secure_zero(derived, sizeof derived);
@@ -96,9 +97,9 @@ static ls_result_t seal_image(ls_secure_storage_t *secure) {
     uint8_t derived[32];
     result = derive_key(secure, header.generation, derived);
     if (result == LS_OK)
-        result = ls_xchacha20_poly1305_encrypt(derived, header.nonce, (const uint8_t *)&header,
-                                               sizeof header, ciphertext, ciphertext,
-                                               secure->logical_capacity, tag);
+        result = ls_crypto_xchacha20_poly1305_encrypt(
+            derived, header.nonce, (const uint8_t *)&header, sizeof header, ciphertext, ciphertext,
+            secure->logical_capacity, tag);
     ls_secure_zero(derived, sizeof derived);
     if (result == LS_OK)
         write32(ciphertext + secure->logical_capacity,
@@ -153,6 +154,8 @@ static ls_result_t secure_erase(void *context, size_t offset, size_t length) {
 }
 static ls_result_t secure_sync(void *context) {
     ls_secure_storage_t *secure = (ls_secure_storage_t *)context;
+    if (!secure || !secure->storage)
+        return LS_EINVAL;
     return secure->storage->sync ? secure->storage->sync(secure->storage->context) : LS_OK;
 }
 ls_result_t ls_secure_storage_init(ls_secure_storage_t *secure, ls_storage_backend_t *storage,
@@ -163,6 +166,8 @@ ls_result_t ls_secure_storage_init(ls_secure_storage_t *secure, ls_storage_backe
         !logical_capacity || logical_capacity > UINT32_MAX || !key || !key_id || !random)
         return LS_EINVAL;
     size_t sealed_size = ls_secure_storage_sealed_size(logical_capacity);
+    if (!sealed_size)
+        return LS_EOVERFLOW;
     if (workspace_size < sealed_size || storage->capacity < sealed_size)
         return LS_ENOSPACE;
     ls_memset(secure, 0, sizeof *secure);

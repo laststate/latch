@@ -8,5 +8,25 @@
     "brownout_voltage": 1.7,
     "hold_seconds": 0.25
   },
-  "features": ["watchdog", "mpu", "trustzone", "fpu-lazy", "flash", "reset-registers"]
+  "features": [
+    "hardfault",
+    "watchdog",
+    "stack-canary",
+    "mpu",
+    "trustzone",
+    "fpu-lazy",
+    "flash",
+    "reset-registers"
+  ],
+  "identity": {
+    "platform": "STM32",
+    "mcu": "STM32U585",
+    "board": "PRODUCT-BOARD",
+    "board_revision": "REV-A",
+    "toolchain": "Arm GNU Toolchain 14.2",
+    "features": [
+      "trustzone",
+      "fpu"
+    ]
+  }
 }

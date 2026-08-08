@@ -32,7 +32,10 @@ ls_result_t ls_varint_u32_decode(const uint8_t *input, size_t length, uint32_t *
             return LS_OK;
         }
     }
-    return length >= 5 ? LS_ECORRUPT : LS_EAGAIN;
+    /* If five bytes were available, the loop either decoded byte five or
+       rejected its high nibble as overflow. Reaching here therefore means a
+       genuinely incomplete varint, not a second corruption state. */
+    return LS_EAGAIN;
 }
 ls_result_t ls_rle_compress(const uint8_t *input, size_t length, uint8_t *output, size_t capacity,
                             size_t *written) {
@@ -101,10 +104,10 @@ ls_result_t ls_rle_decompress(const uint8_t *input, size_t length, uint8_t *outp
 }
 static uint32_t zigzag_encode(int32_t value) {
     uint32_t bits = (uint32_t)value;
-    return (bits << 1) ^ (uint32_t) - (value < 0);
+    return (bits << 1) ^ (uint32_t)(-(value < 0));
 }
 static int32_t zigzag_decode(uint32_t value) {
-    return (int32_t)((value >> 1) ^ (uint32_t) - (int32_t)(value & 1u));
+    return (int32_t)((value >> 1) ^ (uint32_t)(-(int32_t)(value & 1u)));
 }
 ls_result_t ls_delta_u32_encode(const uint32_t *values, size_t count, uint8_t *output,
                                 size_t capacity, size_t *written) {

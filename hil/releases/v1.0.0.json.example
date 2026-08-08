@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "release": "v1.0.0",
+  "commit": "0123456789abcdef0123456789abcdef01234567",
+  "generated_at": "2026-08-07",
+  "targets": [
+    {
+      "platform": "STM32",
+      "mcu": "STM32U585",
+      "board": "PRODUCT-BOARD-REV-A",
+      "toolchain": "Arm GNU Toolchain 14.2",
+      "features": ["trustzone", "fpu"],
+      "scenarios": ["hardfault", "watchdog", "brownout", "stack-canary", "flash", "reset-registers", "trustzone", "fpu-lazy"],
+      "evidence": "releases/evidence/PRODUCT-BOARD-REV-A-v1.0.0.json"
+    }
+  ]
+}

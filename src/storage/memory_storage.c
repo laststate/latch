@@ -67,6 +67,11 @@ ls_result_t ls_storage_program(ls_storage_backend_t *storage, size_t offset, con
         return LS_OK;
     }
 
+    ls_result_t injected = ls_fault_injection_hit("storage.program.before");
+    if (injected != LS_OK) {
+        return injected;
+    }
+
     size_t write_size = storage->write_size ? storage->write_size : 1u;
     if (write_size > LS_STORAGE_MAX_WRITE_SIZE) {
         return LS_ENOTSUP;
@@ -77,7 +82,12 @@ ls_result_t ls_storage_program(ls_storage_backend_t *storage, size_t offset, con
     }
 
     if (write_size == 1u) {
-        return storage->write(storage->context, offset, src, length);
+        ls_result_t result = storage->write(storage->context, offset, src, length);
+        if (result != LS_OK) {
+            return result;
+        }
+        injected = ls_fault_injection_hit("storage.program.after");
+        return injected;
     }
 
     size_t first = offset - (offset % write_size);
@@ -118,6 +128,10 @@ ls_result_t ls_storage_program(ls_storage_backend_t *storage, size_t offset, con
         }
 
         if (changed) {
+            result = ls_fault_injection_hit("storage.program.unit");
+            if (result != LS_OK) {
+                return result;
+            }
             result = storage->write(storage->context, unit_offset, unit, write_size);
             if (result != LS_OK) {
                 return result;
@@ -125,7 +139,8 @@ ls_result_t ls_storage_program(ls_storage_backend_t *storage, size_t offset, con
         }
     }
 
-    return LS_OK;
+    injected = ls_fault_injection_hit("storage.program.after");
+    return injected;
 }
 
 ls_result_t ls_storage_is_erased(ls_storage_backend_t *storage, size_t offset, size_t length,

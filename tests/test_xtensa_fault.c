@@ -16,8 +16,7 @@ static uint8_t retained[50000];
 
 static void refresh_snapshot_crcs(ls_minimal_snapshot_t *snapshot) {
     snapshot->crc = ls_crc32(snapshot, offsetof(ls_minimal_snapshot_t, crc));
-    snapshot->extension_crc =
-        ls_crc32(snapshot, offsetof(ls_minimal_snapshot_t, extension_crc));
+    snapshot->extension_crc = ls_crc32(snapshot, offsetof(ls_minimal_snapshot_t, extension_crc));
     snapshot->context_crc = ls_crc32(snapshot, offsetof(ls_minimal_snapshot_t, context_crc));
 }
 
@@ -130,7 +129,7 @@ int main(void) {
     CHECK(test_snapshot_versions(&snapshot) == 0);
     CHECK(ls_capture_minimal_recover() == LS_OK);
     CHECK(!ls_minimal_snapshot_read(&snapshot));
-    direct.architecture = (ls_architecture_t)(LS_ARCH_LINUX + 1u);
+    direct.architecture = (ls_architecture_t)(LS_ARCH_RISCV64 + 1u);
     CHECK(ls_capture_minimal(&direct) == LS_OK);
     CHECK(ls_capture_minimal_recover() == LS_OK);
     ls_minimal_snapshot_clear();

@@ -4,6 +4,7 @@ on:
     branches: [prod]
   pull_request:
   workflow_dispatch:
+  workflow_call:
 permissions:
   contents: read
 jobs:
@@ -14,10 +15,13 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - run: sudo apt-get update && sudo apt-get install -y lcov ninja-build
-      - run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DLS_BUILD_TESTS=ON -DCMAKE_C_FLAGS=--coverage -DCMAKE_CXX_FLAGS=--coverage -DCMAKE_EXE_LINKER_FLAGS=--coverage
+      - run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DLS_BUILD_TESTS=ON -DLS_BUILD_LINUX=ON -DCMAKE_C_FLAGS="--coverage -fprofile-update=atomic" -DCMAKE_CXX_FLAGS="--coverage -fprofile-update=atomic" -DCMAKE_EXE_LINKER_FLAGS=--coverage
       - run: cmake --build build --parallel
       - run: ctest --test-dir build --output-on-failure
-      - run: lcov --capture --directory build --rc lcov_branch_coverage=1 --output-file coverage.info --ignore-errors mismatch && lcov --remove coverage.info '*/tests/*' '*/build/*' --rc lcov_branch_coverage=1 --output-file coverage.info --ignore-errors unused
+      - name: Enforce production runtime coverage gate
+        run: python tools/check_gcov_coverage.py --build build --min-line 93 --min-branch 80 --json coverage-summary.json --show-files
+      - run: lcov --capture --directory build --rc lcov_branch_coverage=1 --output-file coverage.raw.info --ignore-errors mismatch
+      - run: lcov --extract coverage.raw.info '*/src/*' '*/arch/*' '*/ports/*' --rc lcov_branch_coverage=1 --output-file coverage.info --ignore-errors unused
       - run: lcov --summary coverage.info --rc lcov_branch_coverage=1
       - uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7
         if: env.CODECOV_TOKEN != ''
@@ -28,4 +32,6 @@ jobs:
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: coverage
-          path: coverage.info
+          path: |
+            coverage.info
+            coverage-summary.json

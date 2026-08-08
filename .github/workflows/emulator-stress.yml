@@ -1,0 +1,70 @@
+name: Emulator fault injection
+on:
+  pull_request:
+    paths:
+      - 'tests/emulator/**'
+      - '.github/workflows/emulator-stress.yml'
+      - 'arch/**'
+      - 'src/capture/**'
+  push:
+    branches: [prod]
+  schedule:
+    - cron: '41 3 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cortex-m-qemu:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - run: sudo apt-get update && sudo apt-get install -y gcc-arm-none-eabi qemu-system-arm
+      - name: Build and inject Cortex-M faults
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build/emulator
+          for scenario in HARDFAULT WATCHDOG_MODEL STACK_CANARY; do
+            arm-none-eabi-gcc tests/emulator/cortex_m_fault.c arch/cortex-m/cortex_m_fault.S \
+              -DLS_EMULATOR_${scenario}=1 -mcpu=cortex-m3 -mthumb -Os \
+              -ffreestanding -fno-builtin -nostdlib \
+              -Wl,--gc-sections,-T,tests/emulator/cortex_m.ld \
+              -o build/emulator/cortex-m-${scenario}.elf
+            timeout 15 qemu-system-arm -M mps2-an385 -nographic \
+              -semihosting-config enable=on,target=native \
+              -kernel build/emulator/cortex-m-${scenario}.elf
+          done
+  rv32-renode:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+      - run: sudo apt-get update && sudo apt-get install -y gcc-riscv64-unknown-elf
+      - name: Build RV32 trap fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build/emulator
+          riscv64-unknown-elf-gcc tests/emulator/rv32_fault.c \
+            -march=rv32imac_zicsr -mabi=ilp32 -Os -ffreestanding -fno-builtin -nostdlib \
+            -Wl,--gc-sections,-T,tests/emulator/rv32.ld \
+            -o build/emulator/latch-renode-rv32.elf
+      - name: Install pinned Renode 1.16.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          archive=build/renode.tar.gz
+          curl --fail --location --retry 3 \
+            https://github.com/renode/renode/releases/download/v1.16.1/renode-1.16.1.linux-portable.tar.gz \
+            --output "$archive"
+          echo '1a532d4b5b82de0dd154970c401e0c7b0e498d17304b2cecc007e306c8f9617c  build/renode.tar.gz' | sha256sum --check
+          mkdir -p build/renode
+          tar -xzf "$archive" -C build/renode --strip-components=1
+          python -m pip install --disable-pip-version-check \
+            --requirement build/renode/tests/requirements.txt
+      - name: Inject RV32 illegal-instruction trap
+        run: build/renode/renode-test tests/emulator/rv32_fault.robot

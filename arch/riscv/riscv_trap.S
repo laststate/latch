@@ -3,6 +3,7 @@
 .global ls_riscv_trap_handler
 .type ls_riscv_trap_handler, @function
 .extern ls_riscv_trap_from_saved
+.extern ls_riscv_emergency_stack_top
 ls_riscv_trap_handler:
   csrrw sp, mscratch, sp
   addi sp, sp, -144
@@ -39,6 +40,11 @@ ls_riscv_trap_handler:
   sw t6, 124(sp)
   csrr t0, mscratch
   sw t0, 8(sp)
+  /* Keep mscratch pointing at the emergency top while C runs. A nested trap
+     then uses known-good emergency memory rather than the interrupted stack. */
+  la t0, ls_riscv_emergency_stack_top
+  lw t0, 0(t0)
+  csrw mscratch, t0
   csrr t0, mstatus
   sw t0, 128(sp)
   csrr t0, mcause
