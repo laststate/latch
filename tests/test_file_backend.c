@@ -387,8 +387,6 @@ static int test_boot_and_transport(void) {
     CHECK((size_t)status.st_size == capacity);
     int path_fd = open(path, O_RDONLY);
     CHECK(path_fd >= 0);
-    int path_fd = open(path, O_RDONLY);
-    CHECK(path_fd >= 0);
 
     CHECK(ls_init(&config) == LS_OK);
     ls_storage_register(&storage);
@@ -410,11 +408,6 @@ static int test_boot_and_transport(void) {
     CHECK(ls_file_storage_close(&file) == LS_OK);
     CHECK(unlink(output) == 0);
     CHECK(rmdir(directory) == 0);
-    struct stat final_status;
-    CHECK(fstat(path_fd, &final_status) == 0);
-    CHECK(final_status.st_dev == status.st_dev);
-    CHECK(final_status.st_ino == status.st_ino);
-    CHECK(close(path_fd) == 0);
     struct stat final_status;
     CHECK(fstat(path_fd, &final_status) == 0);
     CHECK(final_status.st_dev == status.st_dev);

@@ -30,7 +30,7 @@ static LS_LINUX_SIGNAL_SAFE uint32_t signal_record_crc32(const volatile uint8_t 
     for (size_t index = 0; index < length; ++index) {
         crc ^= bytes[index];
         for (unsigned bit = 0; bit < 8u; ++bit)
-            crc = (crc >> 1u) ^ (UINT32_C(0xedb88320) & (uint32_t)-(int32_t)(crc & 1u));
+            crc = (crc >> 1u) ^ (UINT32_C(0xedb88320) & (UINT32_C(0) - (uint32_t)(crc & 1u)));
     }
     return ~crc;
 }
