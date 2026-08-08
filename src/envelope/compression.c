@@ -107,7 +107,7 @@ static uint32_t zigzag_encode(int32_t value) {
     return (bits << 1) ^ (uint32_t)-(value < 0);
 }
 static int32_t zigzag_decode(uint32_t value) {
-    return (int32_t)((value >> 1) ^ (uint32_t)-(int32_t)(value & 1u));
+    return (int32_t)((value >> 1) ^ (uint32_t)(-(int32_t)(value & 1u)));
 }
 ls_result_t ls_delta_u32_encode(const uint32_t *values, size_t count, uint8_t *output,
                                 size_t capacity, size_t *written) {

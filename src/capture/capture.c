@@ -18,7 +18,7 @@ static uint32_t minimal_crc32_update(uint32_t crc, const volatile uint8_t *data,
     while (length-- != 0u) {
         crc ^= *data++;
         for (unsigned bit = 0; bit < 8u; ++bit) {
-            crc = (crc >> 1u) ^ (0xedb88320u & (uint32_t)-(int32_t)(crc & 1u));
+            crc = (crc >> 1u) ^ (0xedb88320u & (uint32_t)(-(int32_t)(crc & 1u)));
         }
     }
     return crc;

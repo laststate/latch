@@ -45,7 +45,7 @@ uint32_t ls_crc32(const void *data, size_t length) {
     while (length--) {
         crc ^= *p++;
         for (unsigned i = 0; i < 8; i++)
-            crc = (crc >> 1) ^ (0xedb88320u & (uint32_t)-(int32_t)(crc & 1u));
+            crc = (crc >> 1) ^ (0xedb88320u & (uint32_t)(-(int32_t)(crc & 1u)));
     }
     return ~crc;
 }
