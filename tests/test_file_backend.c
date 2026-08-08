@@ -382,11 +382,11 @@ static int test_boot_and_transport(void) {
     ls_storage_register(&storage);
     /* The backing path is missing: ls_boot() exercises lazy erased initialization. */
     CHECK(ls_boot() == LS_OK);
-    struct stat status;
-    CHECK(stat(path, &status) == 0);
-    CHECK((size_t)status.st_size == capacity);
     int path_fd = open(path, O_RDONLY);
     CHECK(path_fd >= 0);
+    struct stat status;
+    CHECK(fstat(path_fd, &status) == 0);
+    CHECK((size_t)status.st_size == capacity);
 
     CHECK(ls_init(&config) == LS_OK);
     ls_storage_register(&storage);
