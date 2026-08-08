@@ -33,6 +33,22 @@ typedef struct {
 static LS_NOINIT volatile ls_blackbox_retained_t retained_blackbox;
 static ls_blackbox_profile_t previous_profile = LS_BLACKBOX_PROFILE_NORMAL;
 
+#ifndef LS_BLACKBOX_TEST_INITIAL_SEQUENCE
+#define LS_BLACKBOX_TEST_INITIAL_SEQUENCE 1u
+#endif
+
+static bool sequence_is_newer(uint32_t candidate, uint32_t reference) {
+    return (int32_t)(candidate - reference) > 0;
+}
+
+static uint32_t sequence_before(uint32_t sequence, size_t count) {
+    while (count > 0u) {
+        sequence = sequence == 1u ? UINT32_MAX : sequence - 1u;
+        --count;
+    }
+    return sequence;
+}
+
 static uint32_t record_crc(const ls_blackbox_retained_record_t *record) {
     return ls_crc32(record, offsetof(ls_blackbox_retained_record_t, crc));
 }
@@ -66,7 +82,8 @@ static void blackbox_reset(void) {
     ls_memset((void *)&retained_blackbox, 0, sizeof(retained_blackbox));
     retained_blackbox.magic = LS_BLACKBOX_MAGIC;
     retained_blackbox.version = LS_BLACKBOX_VERSION;
-    metadata_store_u32(&retained_blackbox.next_sequence, &retained_blackbox.next_sequence_inv, 1u);
+    metadata_store_u32(&retained_blackbox.next_sequence, &retained_blackbox.next_sequence_inv,
+                       LS_BLACKBOX_TEST_INITIAL_SEQUENCE);
     metadata_store_u32(&retained_blackbox.total_records, &retained_blackbox.total_records_inv, 0u);
     metadata_store_u32(&retained_blackbox.overwritten_records,
                        &retained_blackbox.overwritten_records_inv, 0u);
@@ -94,7 +111,7 @@ void ls_blackbox_init(void) {
         ls_blackbox_retained_record_t copy;
         ls_memcpy(&copy, (const void *)&retained_blackbox.records[index], sizeof(copy));
         valid++;
-        if ((int32_t)(copy.sequence - highest) > 0) {
+        if (highest == 0u || sequence_is_newer(copy.sequence, highest)) {
             highest = copy.sequence;
         }
     }
@@ -289,7 +306,7 @@ ls_result_t ls_blackbox_copy(ls_blackbox_record_t *records, size_t capacity, siz
             ls_blackbox_retained_record_t copy;
             ls_memcpy(&copy, (const void *)&retained_blackbox.records[i], sizeof(copy));
             valid++;
-            if ((int32_t)(copy.sequence - newest) > 0) {
+            if (newest == 0u || sequence_is_newer(copy.sequence, newest)) {
                 newest = copy.sequence;
             }
         }
@@ -299,8 +316,9 @@ ls_result_t ls_blackbox_copy(ls_blackbox_record_t *records, size_t capacity, siz
     if (!wanted) {
         return LS_OK;
     }
-    uint32_t first = newest >= (uint32_t)(wanted - 1u) ? newest - (uint32_t)(wanted - 1u) : 1u;
-    for (uint32_t sequence = first; *count < wanted; ++sequence) {
+    uint32_t first = sequence_before(newest, wanted - 1u);
+    for (uint32_t sequence = first; *count < wanted;
+         sequence = sequence == UINT32_MAX ? 1u : sequence + 1u) {
         for (size_t slot = 0u; slot < LS_BLACKBOX_CAPACITY; ++slot) {
             if (!record_valid(&retained_blackbox.records[slot])) {
                 continue;
@@ -346,7 +364,7 @@ ls_result_t ls_blackbox_get_recent(size_t age, ls_blackbox_record_t *record) {
 
     uint32_t target = newest;
     for (size_t step = 0u; step < age; ++step) {
-        target = target == 1u ? UINT32_MAX : target - 1u;
+        target = sequence_before(target, 1u);
     }
     for (size_t slot = 0u; slot < LS_BLACKBOX_CAPACITY; ++slot) {
         if (!record_valid(&retained_blackbox.records[slot])) {
