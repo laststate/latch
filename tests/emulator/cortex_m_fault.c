@@ -41,8 +41,8 @@ static void thread_report(void) {
     semihost_exit(fault_result);
 }
 
-void __attribute__((noreturn)) ls_cortex_m_fault_from_saved(uint32_t *raw_frame,
-                                                            const volatile uint32_t *saved) {
+void __attribute__((noreturn))
+ls_cortex_m_fault_from_saved(uint32_t *raw_frame, const volatile uint32_t *saved) {
     if (!raw_frame || saved != ls_cortex_m_saved_context) {
         fault_result = 9u;
     } else {
