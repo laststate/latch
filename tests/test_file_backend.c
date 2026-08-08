@@ -17,7 +17,7 @@
 #define CHECK(condition)                                                                           \
     do {                                                                                           \
         if (!(condition)) {                                                                        \
-            fprintf(stderr, "file backend check failed: %s line %d\\n", #condition, __LINE__); \
+            fprintf(stderr, "file backend check failed: %s line %d\\n", #condition, __LINE__);     \
             return 1;                                                                              \
         }                                                                                          \
     } while (0)
@@ -277,8 +277,10 @@ static int test_storage_primitives(void) {
     CHECK(close(descriptor) == 0);
     storage = (ls_file_storage_t)LS_FILE_STORAGE_INITIALIZER(path, TEST_STORAGE_SIZE);
     CHECK(ls_file_storage_init(&storage) == LS_EINVAL);
+    descriptor = open(path, O_RDONLY);
+    CHECK(descriptor >= 0);
     struct stat status;
-    CHECK(stat(path, &status) == 0);
+    CHECK(fstat(descriptor, &status) == 0);
     CHECK(status.st_size == (off_t)TEST_STORAGE_SIZE + 1);
     CHECK(ls_file_storage_close(&storage) == LS_OK);
 
@@ -289,6 +291,7 @@ static int test_storage_primitives(void) {
     CHECK(!storage.initialized && storage.fd == -1);
 #endif
 
+    CHECK(close(descriptor) == 0);
     CHECK(unlink(path) == 0);
     return 0;
 }
@@ -371,9 +374,8 @@ static int test_boot_and_transport(void) {
                                     .write = ls_file_storage_write,
                                     .erase = ls_file_storage_erase,
                                     .sync = ls_file_storage_sync};
-    ls_identity_t identity = {.project_id = "test",
-                              .device_id = "linux-file",
-                              .firmware_build_id = "linux-file-backend"};
+    ls_identity_t identity = {
+        .project_id = "test", .device_id = "linux-file", .firmware_build_id = "linux-file-backend"};
     ls_config_t config = {.identity = &identity, .architecture = LS_ARCH_LINUX};
 
     CHECK(ls_init(&config) == LS_OK);
@@ -383,6 +385,8 @@ static int test_boot_and_transport(void) {
     struct stat status;
     CHECK(stat(path, &status) == 0);
     CHECK((size_t)status.st_size == capacity);
+    int path_fd = open(path, O_RDONLY);
+    CHECK(path_fd >= 0);
 
     CHECK(ls_init(&config) == LS_OK);
     ls_storage_register(&storage);
@@ -404,6 +408,11 @@ static int test_boot_and_transport(void) {
     CHECK(ls_file_storage_close(&file) == LS_OK);
     CHECK(unlink(output) == 0);
     CHECK(rmdir(directory) == 0);
+    struct stat final_status;
+    CHECK(fstat(path_fd, &final_status) == 0);
+    CHECK(final_status.st_dev == status.st_dev);
+    CHECK(final_status.st_ino == status.st_ino);
+    CHECK(close(path_fd) == 0);
     CHECK(unlink(path) == 0);
     return 0;
 }

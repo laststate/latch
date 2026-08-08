@@ -125,14 +125,13 @@ static int test_nordic(void) {
     resetreas = LS_NRF53_RESETREAS_VBUS;
     CHECK(ls_nrf_reset_info(&port).reason == LS_RESET_LOW_POWER_WAKE);
     ls_nrf_reset_clear(&port);
-    CHECK(resetreas == (LS_NRF53_RESETREAS_RESETPIN | LS_NRF53_RESETREAS_DOG0 |
-                        LS_NRF53_RESETREAS_CTRLAP | LS_NRF53_RESETREAS_SREQ |
-                        LS_NRF53_RESETREAS_LOCKUP | LS_NRF53_RESETREAS_OFF |
-                        LS_NRF53_RESETREAS_LPCOMP | LS_NRF53_RESETREAS_DIF |
-                        LS_NRF53_RESETREAS_LSREQ | LS_NRF53_RESETREAS_LLOCKUP |
-                        LS_NRF53_RESETREAS_LDOG | LS_NRF53_RESETREAS_MFORCEOFF |
-                        LS_NRF53_RESETREAS_NFC | LS_NRF53_RESETREAS_DOG1 |
-                        LS_NRF53_RESETREAS_VBUS | LS_NRF53_RESETREAS_LCTRLAP));
+    CHECK(resetreas ==
+          (LS_NRF53_RESETREAS_RESETPIN | LS_NRF53_RESETREAS_DOG0 | LS_NRF53_RESETREAS_CTRLAP |
+           LS_NRF53_RESETREAS_SREQ | LS_NRF53_RESETREAS_LOCKUP | LS_NRF53_RESETREAS_OFF |
+           LS_NRF53_RESETREAS_LPCOMP | LS_NRF53_RESETREAS_DIF | LS_NRF53_RESETREAS_LSREQ |
+           LS_NRF53_RESETREAS_LLOCKUP | LS_NRF53_RESETREAS_LDOG | LS_NRF53_RESETREAS_MFORCEOFF |
+           LS_NRF53_RESETREAS_NFC | LS_NRF53_RESETREAS_DOG1 | LS_NRF53_RESETREAS_VBUS |
+           LS_NRF53_RESETREAS_LCTRLAP));
     return 0;
 }
 
@@ -171,8 +170,7 @@ static int test_nxp(void) {
     CHECK(ls_nxp_reset_info(&imxrt_port).reason == LS_RESET_WATCHDOG);
     status = LS_NXP_IMXRT105X_SRSR_LOCKUP_SYSRESETREQ;
     CHECK(ls_nxp_reset_info(&imxrt_port).reason == LS_RESET_UNKNOWN);
-    CHECK(ls_nxp_reset_info(&imxrt_port).raw_reason ==
-          LS_NXP_IMXRT105X_SRSR_LOCKUP_SYSRESETREQ);
+    CHECK(ls_nxp_reset_info(&imxrt_port).raw_reason == LS_NXP_IMXRT105X_SRSR_LOCKUP_SYSRESETREQ);
     ls_nxp_reset_clear(&imxrt_port);
     CHECK(status == (LS_NXP_IMXRT105X_SRSR_IPP_RESET_B | LS_NXP_IMXRT105X_SRSR_LOCKUP_SYSRESETREQ |
                      LS_NXP_IMXRT105X_SRSR_CSU_RESET_B | LS_NXP_IMXRT105X_SRSR_IPP_USER_RESET_B |

@@ -6,7 +6,7 @@
 #define CHECK(condition)                                                                           \
     do {                                                                                           \
         if (!(condition)) {                                                                        \
-            fprintf(stderr, "crypto provider failed: %s:%d\n", #condition, __LINE__);            \
+            fprintf(stderr, "crypto provider failed: %s:%d\n", #condition, __LINE__);              \
             return 1;                                                                              \
         }                                                                                          \
     } while (0)
@@ -46,16 +46,15 @@ static ls_result_t provider_hkdf(void *context, const uint8_t *salt, size_t salt
 }
 
 static ls_result_t provider_encrypt(void *context, const uint8_t key[32], const uint8_t nonce[24],
-                                    const uint8_t *aad, size_t aad_length,
-                                    const uint8_t *plaintext, uint8_t *ciphertext, size_t length,
-                                    uint8_t tag[16]) {
+                                    const uint8_t *aad, size_t aad_length, const uint8_t *plaintext,
+                                    uint8_t *ciphertext, size_t length, uint8_t tag[16]) {
     provider_state_t *state = context;
     state->encrypt_calls++;
     if (state->encrypt_result != LS_OK) {
         return state->encrypt_result;
     }
-    return ls_xchacha20_poly1305_encrypt(key, nonce, aad, aad_length, plaintext, ciphertext,
-                                         length, tag);
+    return ls_xchacha20_poly1305_encrypt(key, nonce, aad, aad_length, plaintext, ciphertext, length,
+                                         tag);
 }
 
 static ls_result_t provider_decrypt(void *context, const uint8_t key[32], const uint8_t nonce[24],
@@ -67,8 +66,8 @@ static ls_result_t provider_decrypt(void *context, const uint8_t key[32], const 
     if (state->decrypt_result != LS_OK) {
         return state->decrypt_result;
     }
-    return ls_xchacha20_poly1305_decrypt(key, nonce, aad, aad_length, ciphertext, plaintext,
-                                         length, tag);
+    return ls_xchacha20_poly1305_decrypt(key, nonce, aad, aad_length, ciphertext, plaintext, length,
+                                         tag);
 }
 
 static bool available(void *context) {
@@ -101,12 +100,18 @@ int main(void) {
     memset(storage_bytes, 0xff, sizeof storage_bytes);
     ls_memory_storage_t memory = {storage_bytes, sizeof storage_bytes};
     ls_storage_backend_t storage = {
-        .name = "ram", .context = &memory, .capacity = sizeof storage_bytes,
-        .read = ls_memory_storage_read, .write = ls_memory_storage_write,
+        .name = "ram",
+        .context = &memory,
+        .capacity = sizeof storage_bytes,
+        .read = ls_memory_storage_read,
+        .write = ls_memory_storage_write,
         .erase = ls_memory_storage_erase,
     };
     ls_transport_backend_t transport = {
-        .name = "sink", .priority = 1u, .available = available, .send = send_data,
+        .name = "sink",
+        .priority = 1u,
+        .available = available,
+        .send = send_data,
         .max_payload = mtu,
     };
     provider_state_t state = {0};

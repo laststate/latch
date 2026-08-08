@@ -18,7 +18,7 @@ static uint32_t test_crc32(const uint8_t *data, size_t length) {
     for (size_t index = 0; index < length; ++index) {
         crc ^= data[index];
         for (unsigned bit = 0; bit < 8u; ++bit)
-            crc = (crc >> 1u) ^ (0xedb88320u & (uint32_t) - (int32_t)(crc & 1u));
+            crc = (crc >> 1u) ^ (0xedb88320u & (uint32_t)-(int32_t)(crc & 1u));
     }
     return ~crc;
 }

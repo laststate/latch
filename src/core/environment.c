@@ -53,5 +53,6 @@ ls_result_t ls_environment_get_summary(ls_environment_summary_t *summary) {
 }
 
 bool ls_environment_leak_detected(void) {
-    return (ls_runtime.environment.last.flags & (LS_ENV_LEAK_DETECTED | LS_ENV_WATER_INGRESS)) != 0u;
+    return (ls_runtime.environment.last.flags & (LS_ENV_LEAK_DETECTED | LS_ENV_WATER_INGRESS)) !=
+           0u;
 }

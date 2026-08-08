@@ -143,16 +143,18 @@ int main(void) {
                                       &plaintext_length) == LS_OK);
     CHECK(plaintext_length > 0u);
     size_t rejected_length = 123u;
-    CHECK(ls_envelope_decrypt_payload(envelope, envelope_length, plaintext, 1u,
-                                      &rejected_length) == LS_ENOSPACE);
-    CHECK(ls_envelope_decrypt_payload(envelope, envelope_length, NULL, 1u,
-                                      &rejected_length) == LS_EINVAL);
+    CHECK(ls_envelope_decrypt_payload(envelope, envelope_length, plaintext, 1u, &rejected_length) ==
+          LS_ENOSPACE);
+    CHECK(ls_envelope_decrypt_payload(envelope, envelope_length, NULL, 1u, &rejected_length) ==
+          LS_EINVAL);
     uint8_t wrong_key_id[LS_MAX_EVENT_SIZE];
     memcpy(wrong_key_id, envelope, envelope_length);
     wrong_key_id[LS_LEP_HEADER_SIZE + LS_XCHACHA20_NONCE_SIZE] ^= 1u;
-    uint32_t encrypted_payload_length = (uint32_t)wrong_key_id[16] | ((uint32_t)wrong_key_id[17] << 8) |
-                                        ((uint32_t)wrong_key_id[18] << 16) | ((uint32_t)wrong_key_id[19] << 24);
-    size_t encrypted_crc_offset = LS_LEP_HEADER_SIZE + LS_ENVELOPE_SECURITY_METADATA_SIZE + encrypted_payload_length;
+    uint32_t encrypted_payload_length =
+        (uint32_t)wrong_key_id[16] | ((uint32_t)wrong_key_id[17] << 8) |
+        ((uint32_t)wrong_key_id[18] << 16) | ((uint32_t)wrong_key_id[19] << 24);
+    size_t encrypted_crc_offset =
+        LS_LEP_HEADER_SIZE + LS_ENVELOPE_SECURITY_METADATA_SIZE + encrypted_payload_length;
     uint32_t metadata_crc = ls_crc32(wrong_key_id + LS_LEP_HEADER_SIZE,
                                      LS_ENVELOPE_SECURITY_METADATA_SIZE + encrypted_payload_length);
     wrong_key_id[encrypted_crc_offset] = (uint8_t)metadata_crc;
@@ -167,8 +169,8 @@ int main(void) {
     CHECK(ls_envelope_visit_secure(envelope, envelope_length, plaintext, sizeof(plaintext),
                                    count_tlv, &tlvs) == LS_OK);
     CHECK(tlvs > 0u);
-    CHECK(ls_envelope_visit_secure(envelope, envelope_length, plaintext, 1u,
-                                   count_tlv, &tlvs) == LS_ENOSPACE);
+    CHECK(ls_envelope_visit_secure(envelope, envelope_length, plaintext, 1u, count_tlv, &tlvs) ==
+          LS_ENOSPACE);
     for (size_t index = 0; index < plaintext_length; ++index) {
         CHECK(plaintext[index] == 0u);
     }

@@ -218,7 +218,8 @@ bool ls_security_enabled(void) {
 }
 ls_result_t ls_security_set_policy(const ls_security_policy_t *policy) {
 #if LS_REQUIRE_EXTERNAL_CRYPTO_PROVIDER
-    if (policy && policy->algorithm == LS_SECURITY_HMAC_SHA256) return LS_ENOTSUP;
+    if (policy && policy->algorithm == LS_SECURITY_HMAC_SHA256)
+        return LS_ENOTSUP;
 #endif
     if (!policy ||
         (policy->algorithm != LS_SECURITY_HMAC_SHA256 &&

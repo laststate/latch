@@ -49,13 +49,11 @@ static void metadata_store_u32(volatile uint32_t *value, volatile uint32_t *inve
     *inverse = ~updated;
 }
 
-static bool metadata_u32_valid(volatile const uint32_t *value,
-                               volatile const uint32_t *inverse) {
+static bool metadata_u32_valid(volatile const uint32_t *value, volatile const uint32_t *inverse) {
     return *inverse == ~(*value);
 }
 
-static void metadata_store_u8(volatile uint8_t *value, volatile uint8_t *inverse,
-                              uint8_t updated) {
+static void metadata_store_u8(volatile uint8_t *value, volatile uint8_t *inverse, uint8_t updated) {
     *value = updated;
     *inverse = (uint8_t)~updated;
 }
@@ -72,8 +70,8 @@ static void blackbox_reset(void) {
     metadata_store_u32(&retained_blackbox.total_records, &retained_blackbox.total_records_inv, 0u);
     metadata_store_u32(&retained_blackbox.overwritten_records,
                        &retained_blackbox.overwritten_records_inv, 0u);
-    metadata_store_u32(&retained_blackbox.anomaly_until_ms,
-                       &retained_blackbox.anomaly_until_ms_inv, 0u);
+    metadata_store_u32(&retained_blackbox.anomaly_until_ms, &retained_blackbox.anomaly_until_ms_inv,
+                       0u);
     metadata_store_u8(&retained_blackbox.frozen, &retained_blackbox.frozen_inv, 0u);
     metadata_store_u8(&retained_blackbox.profile, &retained_blackbox.profile_inv,
                       (uint8_t)LS_BLACKBOX_PROFILE_NORMAL);
@@ -238,8 +236,7 @@ void ls_blackbox_set_profile(ls_blackbox_profile_t profile) {
         ls_blackbox_init();
     }
     previous_profile = profile;
-    metadata_store_u8(&retained_blackbox.profile, &retained_blackbox.profile_inv,
-                      (uint8_t)profile);
+    metadata_store_u8(&retained_blackbox.profile, &retained_blackbox.profile_inv, (uint8_t)profile);
     if (profile != LS_BLACKBOX_PROFILE_ANOMALY) {
         metadata_store_u32(&retained_blackbox.anomaly_until_ms,
                            &retained_blackbox.anomaly_until_ms_inv, 0u);
@@ -259,8 +256,8 @@ void ls_blackbox_anomaly_begin(uint32_t duration_ms) {
     metadata_store_u8(&retained_blackbox.profile, &retained_blackbox.profile_inv,
                       (uint8_t)LS_BLACKBOX_PROFILE_ANOMALY);
     uint32_t until = (ls_runtime.initialized ? ls_uptime_ms() : 0u) + duration_ms;
-    metadata_store_u32(&retained_blackbox.anomaly_until_ms,
-                       &retained_blackbox.anomaly_until_ms_inv, until);
+    metadata_store_u32(&retained_blackbox.anomaly_until_ms, &retained_blackbox.anomaly_until_ms_inv,
+                       until);
 }
 
 void ls_blackbox_poll(void) {

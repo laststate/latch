@@ -33,7 +33,8 @@ ls_result_t ls_provisioning_activate(uint32_t key_id, uint32_t monotonic_counter
 
 ls_result_t ls_provisioning_begin_rotation(uint32_t new_key_id, uint32_t monotonic_counter) {
     if (ls_runtime.persistent.provision_state != LS_PROVISIONING_ACTIVE || new_key_id == 0u ||
-        new_key_id == ls_runtime.persistent.provision_key_id || !monotonic_allowed(monotonic_counter)) {
+        new_key_id == ls_runtime.persistent.provision_key_id ||
+        !monotonic_allowed(monotonic_counter)) {
         return LS_EINVAL;
     }
     ls_runtime.persistent.provision_state = LS_PROVISIONING_ROTATING;

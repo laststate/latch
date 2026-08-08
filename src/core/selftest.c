@@ -37,8 +37,8 @@ ls_result_t ls_selftest_run(ls_selftest_report_t *report) {
             if (test->required && index < 32u) {
                 report->failed_required_mask |= 1u << index;
             }
-            (void)ls_blackbox_record_values(LS_BLACKBOX_STATE, test->id, LS_BLACKBOX_ERROR,
-                                            result, test->required ? 1 : 0, 0, 0);
+            (void)ls_blackbox_record_values(LS_BLACKBOX_STATE, test->id, LS_BLACKBOX_ERROR, result,
+                                            test->required ? 1 : 0, 0, 0);
             ls_error_t error = {"selftest", (int32_t)test->id,
                                 test->required ? LS_SEVERITY_ERROR : LS_SEVERITY_WARNING,
                                 test->name};

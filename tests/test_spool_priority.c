@@ -6,7 +6,7 @@
 #define CHECK(condition)                                                                           \
     do {                                                                                           \
         if (!(condition)) {                                                                        \
-            fprintf(stderr, "spool priority failed: %s:%d\n", #condition, __LINE__);             \
+            fprintf(stderr, "spool priority failed: %s:%d\n", #condition, __LINE__);               \
             return 1;                                                                              \
         }                                                                                          \
     } while (0)
@@ -27,7 +27,8 @@ static size_t mtu(void *context) {
     return LS_MAX_EVENT_SIZE;
 }
 
-static ls_result_t visit_priority(void *context, uint16_t type, const uint8_t *value, uint16_t length) {
+static ls_result_t visit_priority(void *context, uint16_t type, const uint8_t *value,
+                                  uint16_t length) {
     (void)context;
     if (type == LS_TLV_EVENT && length >= 1u && delivered < sizeof(delivered_priorities)) {
         delivered_priorities[delivered] = value[0];

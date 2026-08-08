@@ -3,7 +3,8 @@
 #include "laststate/blackbox.h"
 
 void ls_trace_task_switch(uint16_t previous_task, uint16_t next_task) {
-    (void)ls_blackbox_record_values(LS_BLACKBOX_TASK, next_task, 0u, previous_task, next_task, 0, 0);
+    (void)ls_blackbox_record_values(LS_BLACKBOX_TASK, next_task, 0u, previous_task, next_task, 0,
+                                    0);
 }
 
 void ls_trace_irq_enter(uint16_t irq) {

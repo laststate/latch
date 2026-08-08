@@ -4,7 +4,13 @@
 #include "laststate/latch.h"
 #include "../src/core/internal.h"
 
-#define CHECK(x) do { if (!(x)) { fprintf(stderr, "stream edges failed: %s:%d\n", #x, __LINE__); return 1; } } while (0)
+#define CHECK(x)                                                                                   \
+    do {                                                                                           \
+        if (!(x)) {                                                                                \
+            fprintf(stderr, "stream edges failed: %s:%d\n", #x, __LINE__);                         \
+            return 1;                                                                              \
+        }                                                                                          \
+    } while (0)
 
 typedef struct {
     unsigned calls;
@@ -37,7 +43,8 @@ static int make_envelope(uint8_t *out, size_t capacity, size_t *length) {
 }
 
 int main(void) {
-    const ls_identity_t identity = {.project_id = "stream", .device_id = "host", .firmware_build_id = "strmedge"};
+    const ls_identity_t identity = {
+        .project_id = "stream", .device_id = "host", .firmware_build_id = "strmedge"};
     ls_config_t config = {.identity = &identity};
     CHECK(ls_init(&config) == LS_OK);
 
@@ -111,7 +118,8 @@ int main(void) {
     CHECK(ls_stream_transport_send(&stream, envelope, envelope_length) == LS_OK);
     CHECK(!stream.pending && !stream.awaiting_ack);
 
-    uint8_t ack[LS_LSAK_SIZE] = {'L','S','A','K',LS_LSAK_VERSION,LS_LSAK_ACK_DUPLICATE,0,0,1,2,3,4};
+    uint8_t ack[LS_LSAK_SIZE] = {'L', 'S', 'A', 'K', LS_LSAK_VERSION, LS_LSAK_ACK_DUPLICATE, 0, 0,
+                                 1,   2,   3,   4};
     ls_lsak_t parsed;
     CHECK(ls_lsak_parse(ack, sizeof ack, &parsed) == LS_OK);
     CHECK(ls_lsak_is_success(LS_LSAK_ACK_STORED));
@@ -125,26 +133,44 @@ int main(void) {
     }
 
     /* Frame parser: exercise each independent header discriminator and defaults. */
-    uint8_t frame[LS_MAX_EVENT_SIZE + LS_STREAM_TRANSPORT_HEADER_SIZE + LS_STREAM_TRANSPORT_TRAILER_SIZE];
+    uint8_t frame[LS_MAX_EVENT_SIZE + LS_STREAM_TRANSPORT_HEADER_SIZE +
+                  LS_STREAM_TRANSPORT_TRAILER_SIZE];
     size_t frame_length = 0u;
     mock.calls = 0u;
     stream.wait_ack = NULL;
     stream.context = &mock;
     /* Capture the exact stream bytes using a local all-at-once sink. */
-    frame[0] = 'L'; frame[1] = 'S'; frame[2] = LS_STREAM_TRANSPORT_VERSION; frame[3] = 0u;
+    frame[0] = 'L';
+    frame[1] = 'S';
+    frame[2] = LS_STREAM_TRANSPORT_VERSION;
+    frame[3] = 0u;
     uint32_t n = (uint32_t)envelope_length;
-    frame[4]=(uint8_t)n; frame[5]=(uint8_t)(n>>8); frame[6]=(uint8_t)(n>>16); frame[7]=(uint8_t)(n>>24);
+    frame[4] = (uint8_t)n;
+    frame[5] = (uint8_t)(n >> 8);
+    frame[6] = (uint8_t)(n >> 16);
+    frame[7] = (uint8_t)(n >> 24);
     memcpy(frame + LS_STREAM_TRANSPORT_HEADER_SIZE, envelope, envelope_length);
     uint32_t crc = ls_crc32(envelope, envelope_length);
     size_t t = LS_STREAM_TRANSPORT_HEADER_SIZE + envelope_length;
-    frame[t]=(uint8_t)crc; frame[t+1]=(uint8_t)(crc>>8); frame[t+2]=(uint8_t)(crc>>16); frame[t+3]=(uint8_t)(crc>>24);
+    frame[t] = (uint8_t)crc;
+    frame[t + 1] = (uint8_t)(crc >> 8);
+    frame[t + 2] = (uint8_t)(crc >> 16);
+    frame[t + 3] = (uint8_t)(crc >> 24);
     frame_length = t + 4u;
     ls_stream_frame_t parsed_frame;
     CHECK(ls_stream_frame_parse(frame, frame_length, 0u, &parsed_frame) == LS_OK);
-    frame[0]='X'; CHECK(ls_stream_frame_parse(frame, frame_length, 0u, &parsed_frame)==LS_ECORRUPT); frame[0]='L';
-    frame[1]='X'; CHECK(ls_stream_frame_parse(frame, frame_length, 0u, &parsed_frame)==LS_ECORRUPT); frame[1]='S';
-    frame[2]=2u; CHECK(ls_stream_frame_parse(frame, frame_length, 0u, &parsed_frame)==LS_ENOTSUP); frame[2]=LS_STREAM_TRANSPORT_VERSION;
-    frame[3]=1u; CHECK(ls_stream_frame_parse(frame, frame_length, 0u, &parsed_frame)==LS_ENOTSUP); frame[3]=0u;
+    frame[0] = 'X';
+    CHECK(ls_stream_frame_parse(frame, frame_length, 0u, &parsed_frame) == LS_ECORRUPT);
+    frame[0] = 'L';
+    frame[1] = 'X';
+    CHECK(ls_stream_frame_parse(frame, frame_length, 0u, &parsed_frame) == LS_ECORRUPT);
+    frame[1] = 'S';
+    frame[2] = 2u;
+    CHECK(ls_stream_frame_parse(frame, frame_length, 0u, &parsed_frame) == LS_ENOTSUP);
+    frame[2] = LS_STREAM_TRANSPORT_VERSION;
+    frame[3] = 1u;
+    CHECK(ls_stream_frame_parse(frame, frame_length, 0u, &parsed_frame) == LS_ENOTSUP);
+    frame[3] = 0u;
 
     return 0;
 }

@@ -199,7 +199,8 @@ bool ls_update_version_allowed(uint32_t version_counter) {
 
 ls_result_t ls_update_stage(uint32_t version_counter, uint32_t image_fingerprint,
                             uint32_t signing_key_id) {
-    if (!ls_update_version_allowed(version_counter) || image_fingerprint == 0u || signing_key_id == 0u)
+    if (!ls_update_version_allowed(version_counter) || image_fingerprint == 0u ||
+        signing_key_id == 0u)
         return LS_EINVAL;
     ls_runtime.persistent.update_pending_version = version_counter;
     ls_runtime.persistent.update_image_fingerprint = image_fingerprint;
@@ -209,8 +210,8 @@ ls_result_t ls_update_stage(uint32_t version_counter, uint32_t image_fingerprint
 }
 
 ls_result_t ls_update_confirm_version(uint32_t version_counter) {
-    if (ls_runtime.persistent.update_state != (uint8_t)LS_UPDATE_PENDING ||
-        version_counter == 0u || version_counter != ls_runtime.persistent.update_pending_version)
+    if (ls_runtime.persistent.update_state != (uint8_t)LS_UPDATE_PENDING || version_counter == 0u ||
+        version_counter != ls_runtime.persistent.update_pending_version)
         return LS_EINVAL;
     if (version_counter > ls_runtime.persistent.update_version_floor)
         ls_runtime.persistent.update_version_floor = version_counter;
@@ -220,8 +221,8 @@ ls_result_t ls_update_confirm_version(uint32_t version_counter) {
 }
 
 ls_result_t ls_update_mark_version_rollback(uint32_t failed_version) {
-    if (ls_runtime.persistent.update_state != (uint8_t)LS_UPDATE_PENDING ||
-        failed_version == 0u || failed_version != ls_runtime.persistent.update_pending_version)
+    if (ls_runtime.persistent.update_state != (uint8_t)LS_UPDATE_PENDING || failed_version == 0u ||
+        failed_version != ls_runtime.persistent.update_pending_version)
         return LS_EINVAL;
     if (ls_runtime.persistent.update_rollback_count != UINT32_MAX)
         ls_runtime.persistent.update_rollback_count++;
@@ -231,8 +232,8 @@ ls_result_t ls_update_mark_version_rollback(uint32_t failed_version) {
 }
 
 ls_result_t ls_update_abort_stage(uint32_t version_counter) {
-    if (ls_runtime.persistent.update_state != (uint8_t)LS_UPDATE_PENDING ||
-        version_counter == 0u || version_counter != ls_runtime.persistent.update_pending_version) {
+    if (ls_runtime.persistent.update_state != (uint8_t)LS_UPDATE_PENDING || version_counter == 0u ||
+        version_counter != ls_runtime.persistent.update_pending_version) {
         return LS_EINVAL;
     }
     ls_runtime.persistent.update_pending_version = 0u;

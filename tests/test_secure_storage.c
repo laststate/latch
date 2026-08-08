@@ -20,7 +20,9 @@ static ls_result_t random_bytes(void *context, uint8_t *out, size_t length) {
     return LS_OK;
 }
 static ls_result_t random_fail(void *context, uint8_t *out, size_t length) {
-    (void)context; (void)out; (void)length;
+    (void)context;
+    (void)out;
+    (void)length;
     return LS_EIO;
 }
 static ls_result_t random_zero(void *context, uint8_t *out, size_t length) {
@@ -61,9 +63,14 @@ int main(void) {
     uint8_t invalid_workspace[128] = {0};
     uint8_t invalid_key[32] = {0};
     ls_storage_backend_t invalid_storage = {0};
-    CHECK(ls_secure_storage_init(NULL, &invalid_storage, invalid_workspace, sizeof invalid_workspace, 16u, invalid_key, 1u, random_bytes, &rng) == LS_EINVAL);
-    CHECK(ls_secure_storage_init(&invalid_secure, NULL, invalid_workspace, sizeof invalid_workspace, 16u, invalid_key, 1u, random_bytes, &rng) == LS_EINVAL);
-    CHECK(ls_secure_storage_init(&invalid_secure, &invalid_storage, invalid_workspace, sizeof invalid_workspace, 16u, invalid_key, 1u, random_bytes, &rng) == LS_EINVAL);
+    CHECK(ls_secure_storage_init(NULL, &invalid_storage, invalid_workspace,
+                                 sizeof invalid_workspace, 16u, invalid_key, 1u, random_bytes,
+                                 &rng) == LS_EINVAL);
+    CHECK(ls_secure_storage_init(&invalid_secure, NULL, invalid_workspace, sizeof invalid_workspace,
+                                 16u, invalid_key, 1u, random_bytes, &rng) == LS_EINVAL);
+    CHECK(ls_secure_storage_init(&invalid_secure, &invalid_storage, invalid_workspace,
+                                 sizeof invalid_workspace, 16u, invalid_key, 1u, random_bytes,
+                                 &rng) == LS_EINVAL);
     ls_secure_storage_destroy(NULL);
     memset(physical, 0xff, sizeof physical);
     ls_storage_sim_t sim = {physical, sizeof physical, true, 0, 0, 0};
@@ -155,9 +162,13 @@ int main(void) {
     uint8_t plain_storage_bytes[1024];
     memset(plain_storage_bytes, 0xff, sizeof plain_storage_bytes);
     ls_memory_storage_t plain_memory = {plain_storage_bytes, sizeof plain_storage_bytes};
-    ls_storage_backend_t plain_storage = {.name="plain", .context=&plain_memory,
-        .capacity=sizeof plain_storage_bytes, .read=ls_memory_storage_read,
-        .write=ls_memory_storage_write, .erase=ls_memory_storage_erase, .sync=NULL};
+    ls_storage_backend_t plain_storage = {.name = "plain",
+                                          .context = &plain_memory,
+                                          .capacity = sizeof plain_storage_bytes,
+                                          .read = ls_memory_storage_read,
+                                          .write = ls_memory_storage_write,
+                                          .erase = ls_memory_storage_erase,
+                                          .sync = NULL};
     uint8_t small_workspace[256];
     ls_secure_storage_t small;
     CHECK(ls_secure_storage_init(&small, &plain_storage, small_workspace, sizeof small_workspace,

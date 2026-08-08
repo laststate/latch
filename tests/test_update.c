@@ -7,7 +7,7 @@
 #define CHECK(condition)                                                                           \
     do {                                                                                           \
         if (!(condition)) {                                                                        \
-            fprintf(stderr, "update test failed: %s:%d\n", #condition, __LINE__);                \
+            fprintf(stderr, "update test failed: %s:%d\n", #condition, __LINE__);                  \
             return 1;                                                                              \
         }                                                                                          \
     } while (0)
@@ -43,8 +43,11 @@ static int update_lifecycle(void) {
     memset(bytes, 0xff, sizeof bytes);
     memory = (ls_memory_storage_t){bytes, sizeof bytes};
     storage = (ls_storage_backend_t){
-        .name = "ram", .context = &memory, .capacity = sizeof bytes,
-        .read = ls_memory_storage_read, .write = ls_memory_storage_write,
+        .name = "ram",
+        .context = &memory,
+        .capacity = sizeof bytes,
+        .read = ls_memory_storage_read,
+        .write = ls_memory_storage_write,
         .erase = ls_memory_storage_erase,
     };
     CHECK(configure() == 0);
@@ -85,8 +88,11 @@ static int legacy_boot_migration(void) {
     memset(bytes, 0xff, sizeof bytes);
     memory = (ls_memory_storage_t){bytes, sizeof bytes};
     storage = (ls_storage_backend_t){
-        .name = "ram", .context = &memory, .capacity = sizeof bytes,
-        .read = ls_memory_storage_read, .write = ls_memory_storage_write,
+        .name = "ram",
+        .context = &memory,
+        .capacity = sizeof bytes,
+        .read = ls_memory_storage_read,
+        .write = ls_memory_storage_write,
         .erase = ls_memory_storage_erase,
     };
     CHECK(configure() == 0);

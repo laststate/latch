@@ -16,8 +16,7 @@ static uint8_t retained[50000];
 
 static void refresh_snapshot_crcs(ls_minimal_snapshot_t *snapshot) {
     snapshot->crc = ls_crc32(snapshot, offsetof(ls_minimal_snapshot_t, crc));
-    snapshot->extension_crc =
-        ls_crc32(snapshot, offsetof(ls_minimal_snapshot_t, extension_crc));
+    snapshot->extension_crc = ls_crc32(snapshot, offsetof(ls_minimal_snapshot_t, extension_crc));
     snapshot->context_crc = ls_crc32(snapshot, offsetof(ls_minimal_snapshot_t, context_crc));
 }
 

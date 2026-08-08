@@ -71,11 +71,11 @@ void __attribute__((noreturn)) ls_cortex_m_fault_from_saved(uint32_t *raw_frame,
      * pop the hardware frame from the emergency stack and resume at the
      * canary/fill garbage. Restore the MSP/PSP captured by the entry so
      * the modified PC above is the one the exception return observes. */
-    __asm volatile(
-        "msr msp, %0\n"
-        "msr psp, %1\n"
-        "bx lr"
-        :: "r"(saved[8]), "r"(saved[9]) : "memory");
+    __asm volatile("msr msp, %0\n"
+                   "msr psp, %1\n"
+                   "bx lr" ::"r"(saved[8]),
+                   "r"(saved[9])
+                   : "memory");
     __builtin_unreachable();
 }
 

@@ -20,7 +20,7 @@ int main(void) {
 #define CHECK(condition)                                                                           \
     do {                                                                                           \
         if (!(condition)) {                                                                        \
-            fprintf(stderr, "linux signal check failed: %s at line %d\n", #condition, __LINE__); \
+            fprintf(stderr, "linux signal check failed: %s at line %d\n", #condition, __LINE__);   \
             return 1;                                                                              \
         }                                                                                          \
     } while (0)
@@ -54,7 +54,7 @@ static int test_normal_configuration(void) {
     CHECK(ls_linux_signal_register_alt_stack(NULL, sizeof(configuration_stack)) == LS_EINVAL);
     CHECK(ls_linux_signal_register_alt_stack(configuration_stack, 1u) == LS_EINVAL);
     CHECK(ls_linux_signal_register_alt_stack(intentionally_unaligned_stack + 1u,
-                                              sizeof(intentionally_unaligned_stack) - 1u) ==
+                                             sizeof(intentionally_unaligned_stack) - 1u) ==
           LS_EINVAL);
     CHECK(pipe(pipe_fds) == 0);
     config = (ls_linux_signal_config_t){

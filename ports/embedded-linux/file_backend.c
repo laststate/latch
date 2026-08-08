@@ -102,8 +102,7 @@ static ls_result_t descriptor_is_regular_file(int descriptor) {
     return LS_OK;
 }
 
-static ls_result_t write_all(int descriptor, const uint8_t *source, size_t length,
-                             size_t offset) {
+static ls_result_t write_all(int descriptor, const uint8_t *source, size_t length, size_t offset) {
     size_t completed = 0;
     while (completed < length) {
         size_t remaining = length - completed;
@@ -163,7 +162,9 @@ static ls_result_t read_all(int descriptor, uint8_t *destination, size_t length,
 
 static ls_result_t erase_range(int descriptor, size_t offset, size_t length) {
     uint8_t erased[LS_FILE_ERASE_CHUNK_SIZE];
-    memset(erased, 0xff, sizeof(erased));
+    for (size_t i = 0; i < sizeof(erased); ++i) {
+        erased[i] = 0xffu;
+    }
 
     while (length) {
         size_t count = length > sizeof(erased) ? sizeof(erased) : length;
@@ -209,8 +210,8 @@ ls_result_t ls_file_storage_init(ls_file_storage_t *file) {
     }
 
     file->fd = -1;
-    int descriptor = open_retry(file->path, O_RDWR | O_CREAT | O_CLOEXEC | O_NOFOLLOW,
-                                S_IRUSR | S_IWUSR);
+    int descriptor =
+        open_retry(file->path, O_RDWR | O_CREAT | O_CLOEXEC | O_NOFOLLOW, S_IRUSR | S_IWUSR);
     if (descriptor < 0) {
         return LS_EIO;
     }
@@ -331,11 +332,17 @@ ls_result_t ls_file_transport_send(void *context, const uint8_t *data, size_t le
         return LS_EINVAL;
     }
 
-    char name[32];
-    int written = snprintf(name, sizeof(name), "%08x.lst", (unsigned)info.event_id);
-    if (written <= 0 || (size_t)written >= sizeof(name)) {
-        return LS_ENOSPACE;
+    static const char hex[] = "0123456789abcdef";
+    char name[13];
+    for (size_t i = 0; i < 8u; ++i) {
+        unsigned shift = (unsigned)((7u - i) * 4u);
+        name[i] = hex[(info.event_id >> shift) & 0x0fu];
     }
+    name[8] = '.';
+    name[9] = 'l';
+    name[10] = 's';
+    name[11] = 't';
+    name[12] = '\0';
 
     int directory =
         open_retry(transport->directory, O_RDONLY | O_DIRECTORY | O_CLOEXEC | O_NOFOLLOW, 0);

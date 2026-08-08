@@ -549,8 +549,8 @@ static ls_result_t put_blackbox(ls_writer_t *writer, bool *truncated) {
             result = ls_writer_u32(&nested, (uint32_t)record.value[value_index]);
         if (result != LS_OK)
             return result;
-        result = put_optional_tlv(writer, LS_TLV_BLACKBOX, value, (uint16_t)nested.length,
-                                  truncated);
+        result =
+            put_optional_tlv(writer, LS_TLV_BLACKBOX, value, (uint16_t)nested.length, truncated);
         if (result != LS_OK)
             return result;
         if (*truncated)
@@ -566,25 +566,39 @@ static ls_result_t put_mission(ls_writer_t *writer, bool *truncated) {
     uint8_t value[256];
     ls_writer_t nested = {value, sizeof(value), 0u};
     ls_result_t result = ls_writer_u8(&nested, 1u);
-    if (result == LS_OK) result = ls_writer_u32(&nested, ls_hash_string(mission->mission_id));
-    if (result == LS_OK) result = ls_writer_u32(&nested, ls_hash_string(mission->dive_id));
-    if (result == LS_OK) result = ls_writer_u32(&nested, ls_hash_string(mission->node_id));
-    if (result == LS_OK) result = ls_writer_u32(&nested, ls_hash_string(mission->vehicle_mode));
-    if (result == LS_OK) result = ls_writer_u32(&nested, mission->phase);
-    if (result == LS_OK) result = ls_writer_u32(&nested, (uint32_t)mission->depth_cm);
-    if (result == LS_OK) result = ls_writer_u32(&nested, ls_mission_elapsed_ms());
-    if (result == LS_OK) result = ls_writer_u64(&nested, mission->incident_hi);
-    if (result == LS_OK) result = ls_writer_u64(&nested, mission->incident_lo);
-    if (result == LS_OK) result = ls_writer_u8(&nested, mission->incident_active ? 1u : 0u);
+    if (result == LS_OK)
+        result = ls_writer_u32(&nested, ls_hash_string(mission->mission_id));
+    if (result == LS_OK)
+        result = ls_writer_u32(&nested, ls_hash_string(mission->dive_id));
+    if (result == LS_OK)
+        result = ls_writer_u32(&nested, ls_hash_string(mission->node_id));
+    if (result == LS_OK)
+        result = ls_writer_u32(&nested, ls_hash_string(mission->vehicle_mode));
+    if (result == LS_OK)
+        result = ls_writer_u32(&nested, mission->phase);
+    if (result == LS_OK)
+        result = ls_writer_u32(&nested, (uint32_t)mission->depth_cm);
+    if (result == LS_OK)
+        result = ls_writer_u32(&nested, ls_mission_elapsed_ms());
+    if (result == LS_OK)
+        result = ls_writer_u64(&nested, mission->incident_hi);
+    if (result == LS_OK)
+        result = ls_writer_u64(&nested, mission->incident_lo);
+    if (result == LS_OK)
+        result = ls_writer_u8(&nested, mission->incident_active ? 1u : 0u);
 #if LS_STORE_STRINGS
     if (result == LS_OK)
-        result = put_string_field(&nested, 1u, mission->mission_id, string_value_capacity(&nested), truncated);
+        result = put_string_field(&nested, 1u, mission->mission_id, string_value_capacity(&nested),
+                                  truncated);
     if (result == LS_OK)
-        result = put_string_field(&nested, 2u, mission->dive_id, string_value_capacity(&nested), truncated);
+        result = put_string_field(&nested, 2u, mission->dive_id, string_value_capacity(&nested),
+                                  truncated);
     if (result == LS_OK)
-        result = put_string_field(&nested, 3u, mission->node_id, string_value_capacity(&nested), truncated);
+        result = put_string_field(&nested, 3u, mission->node_id, string_value_capacity(&nested),
+                                  truncated);
     if (result == LS_OK)
-        result = put_string_field(&nested, 4u, mission->vehicle_mode, string_value_capacity(&nested), truncated);
+        result = put_string_field(&nested, 4u, mission->vehicle_mode,
+                                  string_value_capacity(&nested), truncated);
 #endif
     if (result != LS_OK)
         return result;
@@ -598,11 +612,16 @@ static ls_result_t put_time_sync(ls_writer_t *writer, bool *truncated) {
     uint8_t value[32];
     ls_writer_t nested = {value, sizeof(value), 0u};
     ls_result_t result = ls_writer_u8(&nested, 1u);
-    if (result == LS_OK) result = ls_writer_u8(&nested, (uint8_t)state->source);
-    if (result == LS_OK) result = ls_writer_u64(&nested, state->utc_ms_at_sync);
-    if (result == LS_OK) result = ls_writer_u32(&nested, state->monotonic_ms_at_sync);
-    if (result == LS_OK) result = ls_writer_u32(&nested, state->uncertainty_ms);
-    if (result == LS_OK) result = ls_writer_u32(&nested, state->generation);
+    if (result == LS_OK)
+        result = ls_writer_u8(&nested, (uint8_t)state->source);
+    if (result == LS_OK)
+        result = ls_writer_u64(&nested, state->utc_ms_at_sync);
+    if (result == LS_OK)
+        result = ls_writer_u32(&nested, state->monotonic_ms_at_sync);
+    if (result == LS_OK)
+        result = ls_writer_u32(&nested, state->uncertainty_ms);
+    if (result == LS_OK)
+        result = ls_writer_u32(&nested, state->generation);
     if (result != LS_OK)
         return result;
     return put_optional_tlv(writer, LS_TLV_TIME_SYNC, value, (uint16_t)nested.length, truncated);
@@ -615,11 +634,16 @@ static ls_result_t put_provisioning(ls_writer_t *writer, bool *truncated) {
     uint8_t value[32];
     ls_writer_t nested = {value, sizeof(value), 0u};
     ls_result_t result = ls_writer_u8(&nested, 1u);
-    if (result == LS_OK) result = ls_writer_u8(&nested, (uint8_t)state.state);
-    if (result == LS_OK) result = ls_writer_u32(&nested, state.key_id);
-    if (result == LS_OK) result = ls_writer_u32(&nested, state.pending_key_id);
-    if (result == LS_OK) result = ls_writer_u32(&nested, state.generation);
-    if (result == LS_OK) result = ls_writer_u32(&nested, state.monotonic_counter);
+    if (result == LS_OK)
+        result = ls_writer_u8(&nested, (uint8_t)state.state);
+    if (result == LS_OK)
+        result = ls_writer_u32(&nested, state.key_id);
+    if (result == LS_OK)
+        result = ls_writer_u32(&nested, state.pending_key_id);
+    if (result == LS_OK)
+        result = ls_writer_u32(&nested, state.generation);
+    if (result == LS_OK)
+        result = ls_writer_u32(&nested, state.monotonic_counter);
     if (result != LS_OK)
         return result;
     return put_optional_tlv(writer, LS_TLV_PROVISIONING, value, (uint16_t)nested.length, truncated);
@@ -632,10 +656,14 @@ static ls_result_t put_supervisor(ls_writer_t *writer, bool *truncated) {
     uint8_t value[24];
     ls_writer_t nested = {value, sizeof(value), 0u};
     ls_result_t result = ls_writer_u8(&nested, 1u);
-    if (result == LS_OK) result = ls_writer_u32(&nested, state.active_alarms);
-    if (result == LS_OK) result = ls_writer_u32(&nested, state.previous_alarms);
-    if (result == LS_OK) result = ls_writer_u32(&nested, state.transitions);
-    if (result == LS_OK) result = ls_writer_u32(&nested, state.last_change_ms);
+    if (result == LS_OK)
+        result = ls_writer_u32(&nested, state.active_alarms);
+    if (result == LS_OK)
+        result = ls_writer_u32(&nested, state.previous_alarms);
+    if (result == LS_OK)
+        result = ls_writer_u32(&nested, state.transitions);
+    if (result == LS_OK)
+        result = ls_writer_u32(&nested, state.last_change_ms);
     if (result != LS_OK)
         return result;
     return put_optional_tlv(writer, LS_TLV_SUPERVISOR, value, (uint16_t)nested.length, truncated);
@@ -875,16 +903,26 @@ static ls_result_t put_environment(ls_writer_t *writer, bool *truncated) {
     uint8_t value[40];
     ls_writer_t nested = {value, sizeof(value), 0u};
     result = ls_writer_u8(&nested, 1u);
-    if (result == LS_OK) result = ls_writer_u32(&nested, summary.last.timestamp_ms);
-    if (result == LS_OK) result = ls_writer_u32(&nested, summary.last.pressure_pa);
-    if (result == LS_OK) result = ls_writer_u32(&nested, (uint32_t)summary.last.depth_cm);
-    if (result == LS_OK) result = ls_writer_u16(&nested, (uint16_t)summary.last.internal_temperature_c);
-    if (result == LS_OK) result = ls_writer_u16(&nested, summary.last.humidity_permyriad);
-    if (result == LS_OK) result = ls_writer_u16(&nested, summary.last.vibration_mg_rms);
-    if (result == LS_OK) result = ls_writer_u16(&nested, summary.last.flags);
-    if (result == LS_OK) result = ls_writer_u32(&nested, summary.sample_count);
-    if (result == LS_OK) result = ls_writer_u32(&nested, summary.leak_events);
-    if (result != LS_OK) return result;
+    if (result == LS_OK)
+        result = ls_writer_u32(&nested, summary.last.timestamp_ms);
+    if (result == LS_OK)
+        result = ls_writer_u32(&nested, summary.last.pressure_pa);
+    if (result == LS_OK)
+        result = ls_writer_u32(&nested, (uint32_t)summary.last.depth_cm);
+    if (result == LS_OK)
+        result = ls_writer_u16(&nested, (uint16_t)summary.last.internal_temperature_c);
+    if (result == LS_OK)
+        result = ls_writer_u16(&nested, summary.last.humidity_permyriad);
+    if (result == LS_OK)
+        result = ls_writer_u16(&nested, summary.last.vibration_mg_rms);
+    if (result == LS_OK)
+        result = ls_writer_u16(&nested, summary.last.flags);
+    if (result == LS_OK)
+        result = ls_writer_u32(&nested, summary.sample_count);
+    if (result == LS_OK)
+        result = ls_writer_u32(&nested, summary.leak_events);
+    if (result != LS_OK)
+        return result;
     return put_optional_tlv(writer, LS_TLV_ENVIRONMENT, value, (uint16_t)nested.length, truncated);
 }
 
@@ -1018,8 +1056,8 @@ ls_result_t ls_envelope_encode(const ls_event_t *event, uint8_t *out, size_t cap
             (uint8_t)(event_id >> 8),  (uint8_t)(event_id >> 16), (uint8_t)(event_id >> 24),
         };
         result = ls_crypto_hkdf_sha256(salt, sizeof(salt), ls_runtime.security_key,
-                                ls_runtime.security_key_length, label, sizeof(label) - 1u, derived,
-                                sizeof(derived));
+                                       ls_runtime.security_key_length, label, sizeof(label) - 1u,
+                                       derived, sizeof(derived));
         if (result != LS_OK) {
             ls_secure_zero(out, LS_LEP_HEADER_SIZE + metadata_size + payload.length);
             return result;
@@ -1028,9 +1066,9 @@ ls_result_t ls_envelope_encode(const ls_event_t *event, uint8_t *out, size_t cap
         uint8_t *ciphertext = out + LS_LEP_HEADER_SIZE + metadata_size;
         size_t crc_offset = LS_LEP_HEADER_SIZE + metadata_size + payload.length;
         uint8_t *tag = out + crc_offset + 4u;
-        result =
-            ls_crypto_xchacha20_poly1305_encrypt(derived, nonce, out, LS_LEP_HEADER_SIZE + metadata_size,
-                                          ciphertext, ciphertext, payload.length, tag);
+        result = ls_crypto_xchacha20_poly1305_encrypt(derived, nonce, out,
+                                                      LS_LEP_HEADER_SIZE + metadata_size,
+                                                      ciphertext, ciphertext, payload.length, tag);
         ls_secure_zero(derived, sizeof(derived));
         if (result != LS_OK) {
             ls_secure_zero(out, crc_offset + 4u + authentication_size);
@@ -1247,9 +1285,9 @@ ls_result_t ls_envelope_decrypt_payload(const uint8_t *data, size_t length, uint
         (uint8_t)(sequence >> 16), (uint8_t)(sequence >> 24), (uint8_t)event_id,
         (uint8_t)(event_id >> 8),  (uint8_t)(event_id >> 16), (uint8_t)(event_id >> 24),
     };
-    result =
-        ls_crypto_hkdf_sha256(salt, sizeof(salt), ls_runtime.security_key, ls_runtime.security_key_length,
-                       label, sizeof(label) - 1u, derived, sizeof(derived));
+    result = ls_crypto_hkdf_sha256(salt, sizeof(salt), ls_runtime.security_key,
+                                   ls_runtime.security_key_length, label, sizeof(label) - 1u,
+                                   derived, sizeof(derived));
     if (result == LS_OK) {
         const uint8_t *ciphertext = data + LS_LEP_HEADER_SIZE + LS_ENVELOPE_SECURITY_METADATA_SIZE;
         const uint8_t *tag = ciphertext + info.payload_length + 4u;

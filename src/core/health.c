@@ -34,7 +34,7 @@ ls_result_t ls_health_get(const char *name, ls_health_t *health) {
     for (size_t i = 0; i < ls_runtime.health_count; ++i) {
         if (hash == ls_hash_string(ls_runtime.health[i].name)) {
             ls_health_record_t *record = &ls_runtime.health[i];
-            *health = (ls_health_t){record->name, record->deadline_ms, record->last_touch_ms,
+            *health = (ls_health_t){record->name,   record->deadline_ms,     record->last_touch_ms,
                                     record->misses, record->max_lateness_ms, record->expired};
             return LS_OK;
         }
@@ -47,7 +47,7 @@ size_t ls_health_snapshot(ls_health_t *health, size_t capacity) {
     size_t count = ls_runtime.health_count < capacity ? ls_runtime.health_count : capacity;
     for (size_t i = 0u; i < count; ++i) {
         ls_health_record_t *record = &ls_runtime.health[i];
-        health[i] = (ls_health_t){record->name, record->deadline_ms, record->last_touch_ms,
+        health[i] = (ls_health_t){record->name,   record->deadline_ms,     record->last_touch_ms,
                                   record->misses, record->max_lateness_ms, record->expired};
     }
     return count;
@@ -130,8 +130,9 @@ ls_result_t ls_power_get_summary(ls_power_summary_t *summary) {
     summary->minimum_vdd_mv = UINT16_MAX;
     summary->minimum_battery_mv = UINT16_MAX;
     for (size_t count = 0u; count < ls_runtime.power_count; ++count) {
-        size_t index = (ls_runtime.power_next + LS_POWER_SAMPLE_CAPACITY - ls_runtime.power_count + count) %
-                       LS_POWER_SAMPLE_CAPACITY;
+        size_t index =
+            (ls_runtime.power_next + LS_POWER_SAMPLE_CAPACITY - ls_runtime.power_count + count) %
+            LS_POWER_SAMPLE_CAPACITY;
         const ls_power_sample_t *sample = &ls_runtime.power_samples[index];
         if (sample->vdd_mv < summary->minimum_vdd_mv)
             summary->minimum_vdd_mv = sample->vdd_mv;

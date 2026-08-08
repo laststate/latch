@@ -7,13 +7,13 @@
 #include <stddef.h>
 
 #if defined(__clang__)
-#define LS_LINUX_SIGNAL_SAFE                                                                     \
-    __attribute__((noinline, no_instrument_function, no_profile_instrument_function,              \
-                   no_stack_protector, no_sanitize("address"), no_sanitize("thread"),             \
+#define LS_LINUX_SIGNAL_SAFE                                                                       \
+    __attribute__((noinline, no_instrument_function, no_profile_instrument_function,               \
+                   no_stack_protector, no_sanitize("address"), no_sanitize("thread"),              \
                    no_sanitize("undefined")))
 #elif defined(__GNUC__)
-#define LS_LINUX_SIGNAL_SAFE                                                                    \
-    __attribute__((noinline, no_instrument_function, no_profile_instrument_function,            \
+#define LS_LINUX_SIGNAL_SAFE                                                                       \
+    __attribute__((noinline, no_instrument_function, no_profile_instrument_function,               \
                    no_stack_protector, no_sanitize_address, no_sanitize_undefined))
 #else
 #define LS_LINUX_SIGNAL_SAFE
@@ -41,9 +41,8 @@ bool ls_linux_signal_record_validate(const ls_linux_signal_record_t *record) {
         record->commit != LS_LINUX_SIGNAL_RECORD_COMMIT ||
         record->register_count > LS_LINUX_SIGNAL_RECORD_REGISTER_CAPACITY)
         return false;
-    return record->crc32 ==
-           signal_record_crc32((const volatile uint8_t *)(const void *)record,
-                               offsetof(ls_linux_signal_record_t, crc32));
+    return record->crc32 == signal_record_crc32((const volatile uint8_t *)(const void *)record,
+                                                offsetof(ls_linux_signal_record_t, crc32));
 }
 
 #if defined(__linux__)
@@ -94,7 +93,7 @@ static bool alt_stack_size_valid(size_t size) {
 
 #if defined(__x86_64__)
 static LS_LINUX_SIGNAL_SAFE void signal_record_x86_64(volatile ls_linux_signal_record_t *record,
-                                                       const ucontext_t *machine) {
+                                                      const ucontext_t *machine) {
     const greg_t *registers = machine->uc_mcontext.gregs;
     record->architecture = LS_LINUX_RAW_ARCH_X86_64;
     record->register_count = LS_LINUX_X86_64_REGISTER_COUNT;
@@ -127,7 +126,7 @@ static LS_LINUX_SIGNAL_SAFE void signal_record_x86_64(volatile ls_linux_signal_r
 }
 #elif defined(__aarch64__)
 static LS_LINUX_SIGNAL_SAFE void signal_record_aarch64(volatile ls_linux_signal_record_t *record,
-                                                        const ucontext_t *machine) {
+                                                       const ucontext_t *machine) {
     record->architecture = LS_LINUX_RAW_ARCH_AARCH64;
     record->register_count = LS_LINUX_AARCH64_REGISTER_COUNT;
     for (unsigned index = 0; index < 31u; ++index)
@@ -149,8 +148,7 @@ static LS_LINUX_SIGNAL_SAFE void signal_handler(int number, siginfo_t *info, voi
     signal_record_zero(&record);
     record.signal_number = number;
     record.signal_code = info ? info->si_code : 0;
-    if (info &&
-        (number == SIGSEGV || number == SIGBUS || number == SIGILL || number == SIGFPE))
+    if (info && (number == SIGSEGV || number == SIGBUS || number == SIGILL || number == SIGFPE))
         record.fault_address = (uint64_t)(uintptr_t)info->si_addr;
 #if defined(__x86_64__)
     if (opaque)
@@ -171,8 +169,7 @@ static LS_LINUX_SIGNAL_SAFE void signal_handler(int number, siginfo_t *info, voi
     _exit(128 + number);
 }
 
-ls_result_t ls_linux_signal_register_alt_stack(void *alternate_stack,
-                                               size_t alternate_stack_size) {
+ls_result_t ls_linux_signal_register_alt_stack(void *alternate_stack, size_t alternate_stack_size) {
     stack_t stack;
     if (!alternate_stack || !alt_stack_size_valid(alternate_stack_size) ||
         ((uintptr_t)alternate_stack % _Alignof(max_align_t)) != 0u)

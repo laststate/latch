@@ -36,7 +36,7 @@ static ls_result_t derive_key(const ls_secure_storage_t *secure, uint32_t genera
                        (uint8_t)(generation >> 16),
                        (uint8_t)(generation >> 24)};
     return ls_crypto_hkdf_sha256(salt, sizeof salt, secure->key, sizeof secure->key, label,
-                          sizeof label - 1u, derived, 32u);
+                                 sizeof label - 1u, derived, 32u);
 }
 static ls_result_t load_image(ls_secure_storage_t *secure) {
     ls_result_t result =
@@ -97,9 +97,9 @@ static ls_result_t seal_image(ls_secure_storage_t *secure) {
     uint8_t derived[32];
     result = derive_key(secure, header.generation, derived);
     if (result == LS_OK)
-        result = ls_crypto_xchacha20_poly1305_encrypt(derived, header.nonce, (const uint8_t *)&header,
-                                               sizeof header, ciphertext, ciphertext,
-                                               secure->logical_capacity, tag);
+        result = ls_crypto_xchacha20_poly1305_encrypt(
+            derived, header.nonce, (const uint8_t *)&header, sizeof header, ciphertext, ciphertext,
+            secure->logical_capacity, tag);
     ls_secure_zero(derived, sizeof derived);
     if (result == LS_OK)
         write32(ciphertext + secure->logical_capacity,

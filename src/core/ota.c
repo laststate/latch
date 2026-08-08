@@ -38,14 +38,13 @@ ls_result_t ls_ota_stage_candidate(const ls_ota_backend_t *backend, uint32_t ver
              * anti-rollback floor. */
             (void)ls_update_abort_stage(version_counter);
             (void)ls_blackbox_record_values(LS_BLACKBOX_STATE, 0x0a04u,
-                                             LS_BLACKBOX_IMPORTANT | LS_BLACKBOX_ERROR,
-                                             (int32_t)version_counter, (int32_t)result, 0, 0);
+                                            LS_BLACKBOX_IMPORTANT | LS_BLACKBOX_ERROR,
+                                            (int32_t)version_counter, (int32_t)result, 0, 0);
         }
     }
     if (result == LS_OK) {
-        ls_release_mark_pending(ls_runtime.config.identity
-                                    ? ls_runtime.config.identity->firmware_version
-                                    : 0);
+        ls_release_mark_pending(
+            ls_runtime.config.identity ? ls_runtime.config.identity->firmware_version : 0);
         ls_reset_mark_expected(true);
         (void)ls_blackbox_record_values(LS_BLACKBOX_STATE, 0x0a01u, LS_BLACKBOX_IMPORTANT,
                                         (int32_t)version_counter, (int32_t)signing_key_id,

@@ -471,9 +471,9 @@ ls_result_t ls_spool_flush(void) {
         }
 
         uint8_t data[LS_MAX_EVENT_SIZE];
-        ls_result_t result = ls_runtime.storage->read(
-            ls_runtime.storage->context, slot_offset(selected_slot) + sizeof(selected), data,
-            selected.length);
+        ls_result_t result = ls_runtime.storage->read(ls_runtime.storage->context,
+                                                      slot_offset(selected_slot) + sizeof(selected),
+                                                      data, selected.length);
         if (result != LS_OK || selected.data_crc != ls_crc32(data, selected.length)) {
             ls_runtime.spool_corrupt_records++;
             result = acknowledge_record(selected_slot);

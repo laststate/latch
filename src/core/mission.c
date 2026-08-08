@@ -15,14 +15,14 @@ ls_result_t ls_mission_begin(const char *mission_id, const char *dive_id, const 
         return LS_EINVAL;
     }
     ls_memset(&ls_runtime.mission, 0, sizeof(ls_runtime.mission));
-    ls_copy_string(ls_runtime.mission.mission_id, sizeof(ls_runtime.mission.mission_id), mission_id);
+    ls_copy_string(ls_runtime.mission.mission_id, sizeof(ls_runtime.mission.mission_id),
+                   mission_id);
     ls_copy_string(ls_runtime.mission.dive_id, sizeof(ls_runtime.mission.dive_id), dive_id);
     ls_copy_string(ls_runtime.mission.node_id, sizeof(ls_runtime.mission.node_id), node_id);
     ls_runtime.mission.mission_started_ms = ls_uptime_ms();
-    (void)ls_blackbox_record_values(LS_BLACKBOX_MISSION, 1u, LS_BLACKBOX_IMPORTANT,
-                                    (int32_t)ls_hash_string(mission_id),
-                                    (int32_t)ls_hash_string(dive_id),
-                                    (int32_t)ls_hash_string(node_id), 0);
+    (void)ls_blackbox_record_values(
+        LS_BLACKBOX_MISSION, 1u, LS_BLACKBOX_IMPORTANT, (int32_t)ls_hash_string(mission_id),
+        (int32_t)ls_hash_string(dive_id), (int32_t)ls_hash_string(node_id), 0);
     return LS_OK;
 }
 
@@ -37,9 +37,8 @@ void ls_mission_end(void) {
 void ls_mission_set_mode(const char *mode, uint32_t phase) {
     ls_copy_string(ls_runtime.mission.vehicle_mode, sizeof(ls_runtime.mission.vehicle_mode), mode);
     ls_runtime.mission.phase = phase;
-    (void)ls_blackbox_record_values(LS_BLACKBOX_MISSION, 3u, 0u,
-                                    (int32_t)ls_hash_string(mode), (int32_t)phase,
-                                    ls_runtime.mission.depth_cm, 0);
+    (void)ls_blackbox_record_values(LS_BLACKBOX_MISSION, 3u, 0u, (int32_t)ls_hash_string(mode),
+                                    (int32_t)phase, ls_runtime.mission.depth_cm, 0);
 }
 
 void ls_mission_set_depth_cm(int32_t depth_cm) {
@@ -56,9 +55,8 @@ ls_result_t ls_mission_get(ls_mission_context_t *context) {
 }
 
 uint32_t ls_mission_elapsed_ms(void) {
-    return ls_runtime.mission.mission_id[0]
-               ? ls_uptime_ms() - ls_runtime.mission.mission_started_ms
-               : 0u;
+    return ls_runtime.mission.mission_id[0] ? ls_uptime_ms() - ls_runtime.mission.mission_started_ms
+                                            : 0u;
 }
 
 ls_result_t ls_incident_begin(uint64_t incident_hi, uint64_t incident_lo) {
@@ -69,13 +67,13 @@ ls_result_t ls_incident_begin(uint64_t incident_hi, uint64_t incident_lo) {
             incident_hi = read_u64_le(random + 8u);
             ls_secure_zero(random, sizeof(random));
         } else {
-            uint32_t seed = ls_hash_string(ls_runtime.config.identity
-                                               ? ls_runtime.config.identity->device_id
-                                               : 0) ^
-                            ls_hash_string(ls_build_id()) ^ ls_boot_count() ^ ls_uptime_ms();
+            uint32_t seed =
+                ls_hash_string(ls_runtime.config.identity ? ls_runtime.config.identity->device_id
+                                                          : 0) ^
+                ls_hash_string(ls_build_id()) ^ ls_boot_count() ^ ls_uptime_ms();
             incident_hi = ((uint64_t)seed << 32) |
                           (uint64_t)ls_event_fingerprint("incident", (int32_t)ls_boot_count(),
-                                                        ls_runtime.sequence);
+                                                         ls_runtime.sequence);
             incident_lo = ((uint64_t)ls_runtime.sequence << 32) |
                           (uint64_t)ls_event_fingerprint("mission", (int32_t)ls_uptime_ms(), seed);
         }

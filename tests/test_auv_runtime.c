@@ -6,7 +6,7 @@
 #define CHECK(condition)                                                                           \
     do {                                                                                           \
         if (!(condition)) {                                                                        \
-            fprintf(stderr, "AUV runtime check failed: %s:%d\n", #condition, __LINE__);          \
+            fprintf(stderr, "AUV runtime check failed: %s:%d\n", #condition, __LINE__);            \
             return 1;                                                                              \
         }                                                                                          \
     } while (0)
@@ -82,12 +82,18 @@ static ls_result_t visit(void *context, uint16_t type, const uint8_t *value, uin
     tlvs_t *tlvs = (tlvs_t *)context;
     CHECK(value != NULL);
     CHECK(length != 0u);
-    if (type == LS_TLV_BLACKBOX) tlvs->blackbox = true;
-    if (type == LS_TLV_MISSION) tlvs->mission = true;
-    if (type == LS_TLV_TIME_SYNC) tlvs->time_sync = true;
-    if (type == LS_TLV_PROVISIONING) tlvs->provisioning = true;
-    if (type == LS_TLV_SUPERVISOR) tlvs->supervisor = true;
-    if (type == LS_TLV_ENVIRONMENT) tlvs->environment = true;
+    if (type == LS_TLV_BLACKBOX)
+        tlvs->blackbox = true;
+    if (type == LS_TLV_MISSION)
+        tlvs->mission = true;
+    if (type == LS_TLV_TIME_SYNC)
+        tlvs->time_sync = true;
+    if (type == LS_TLV_PROVISIONING)
+        tlvs->provisioning = true;
+    if (type == LS_TLV_SUPERVISOR)
+        tlvs->supervisor = true;
+    if (type == LS_TLV_ENVIRONMENT)
+        tlvs->environment = true;
     return LS_OK;
 }
 
@@ -111,12 +117,19 @@ static int setup(void) {
 
     memory = (ls_memory_storage_t){storage_bytes, sizeof(storage_bytes)};
     storage = (ls_storage_backend_t){
-        .name = "ram", .context = &memory, .capacity = sizeof(storage_bytes),
-        .read = ls_memory_storage_read, .write = ls_memory_storage_write,
+        .name = "ram",
+        .context = &memory,
+        .capacity = sizeof(storage_bytes),
+        .read = ls_memory_storage_read,
+        .write = ls_memory_storage_write,
         .erase = ls_memory_storage_erase,
     };
     transport = (ls_transport_backend_t){
-        .name = "sink", .priority = 1u, .available = online, .send = send_data, .max_payload = mtu,
+        .name = "sink",
+        .priority = 1u,
+        .available = online,
+        .send = send_data,
+        .max_payload = mtu,
     };
     CHECK(ls_init(&config) == LS_OK);
     ls_storage_register(&storage);
@@ -143,7 +156,8 @@ static int test_blackbox_mission_time(void) {
     CHECK(ls_blackbox_record_values(LS_BLACKBOX_USER, 1u, 0u, 0, 0, 0, 0) == LS_OK);
     CHECK(ls_blackbox_get_stats(&stats) == LS_OK);
     CHECK(stats.count == before);
-    CHECK(ls_blackbox_record_values(LS_BLACKBOX_USER, 1u, LS_BLACKBOX_IMPORTANT, 0, 0, 0, 0) == LS_OK);
+    CHECK(ls_blackbox_record_values(LS_BLACKBOX_USER, 1u, LS_BLACKBOX_IMPORTANT, 0, 0, 0, 0) ==
+          LS_OK);
     CHECK(ls_blackbox_get_stats(&stats) == LS_OK);
     CHECK(stats.count == before + 1u);
     ls_blackbox_anomaly_begin(50u);
@@ -191,8 +205,8 @@ static int test_health_power_supervisor(void) {
     CHECK(ls_health_snapshot(snapshot, 4u) >= 1u);
     ls_health_touch("control");
 
-    ls_power_sample_t power = {.vdd_mv = 2900u, .battery_mv = 10500u, .current_ma = 420,
-                               .temperature_c = 72};
+    ls_power_sample_t power = {
+        .vdd_mv = 2900u, .battery_mv = 10500u, .current_ma = 420, .temperature_c = 72};
     ls_power_sample(&power);
     ls_power_summary_t summary;
     CHECK(ls_power_get_summary(&summary) == LS_OK);
@@ -250,11 +264,15 @@ static int test_provisioning_attestation_selftest_faults(void) {
     CHECK(ls_provisioning_commit_rotation() == LS_OK);
     CHECK(ls_provisioning_get_state().key_id == 8u);
 
-    ls_secure_element_t element = {.context = &random_counter, .random = se_random,
-                                   .sign_sha256 = se_sign, .read_certificate = se_cert, .destroy_key = se_destroy};
+    ls_secure_element_t element = {.context = &random_counter,
+                                   .random = se_random,
+                                   .sign_sha256 = se_sign,
+                                   .read_certificate = se_cert,
+                                   .destroy_key = se_destroy};
     uint8_t digest[32], signature[64];
     static const uint8_t challenge[] = {1u, 2u, 3u, 4u};
-    CHECK(ls_provisioning_attest(&element, challenge, sizeof(challenge), digest, signature) == LS_OK);
+    CHECK(ls_provisioning_attest(&element, challenge, sizeof(challenge), digest, signature) ==
+          LS_OK);
     CHECK(signature[0] == (uint8_t)(digest[0] ^ 0xa5u));
 
     ls_selftest_clear();
@@ -277,8 +295,11 @@ static int test_provisioning_attestation_selftest_faults(void) {
     ls_fault_injection_disarm("spool.before_commit");
     CHECK(ls_fault_injection_get("spool.before_commit", &state) == LS_EAGAIN);
 
-    ls_arch_context_t crash = {.architecture = LS_ARCH_CORTEX_M, .fault = LS_FAULT_HARD,
-                               .pc = 0x08001234u, .lr = 0x08005678u, .cfsr = 0x82u,
+    ls_arch_context_t crash = {.architecture = LS_ARCH_CORTEX_M,
+                               .fault = LS_FAULT_HARD,
+                               .pc = 0x08001234u,
+                               .lr = 0x08005678u,
+                               .cfsr = 0x82u,
                                .fault_address = 0x20001234u};
     uint32_t fingerprint = ls_crash_fingerprint(&crash);
     CHECK(fingerprint != 0u);
@@ -293,13 +314,15 @@ static int test_envelope_extensions_and_retention(void) {
     CHECK(last_envelope_length > LS_LEP_HEADER_SIZE);
     tlvs_t tlvs = {0};
     CHECK(ls_envelope_visit(last_envelope, last_envelope_length, visit, &tlvs) == LS_OK);
-    CHECK(tlvs.blackbox && tlvs.mission && tlvs.time_sync && tlvs.provisioning && tlvs.supervisor && tlvs.environment);
+    CHECK(tlvs.blackbox && tlvs.mission && tlvs.time_sync && tlvs.provisioning && tlvs.supervisor &&
+          tlvs.environment);
 
     ls_blackbox_stats_t before;
     CHECK(ls_blackbox_get_stats(&before) == LS_OK);
     CHECK(before.count > 0u);
     /* ls_init clears normal runtime state but must preserve the retained recorder. */
-    static const ls_identity_t identity = {.project_id = "retention", .device_id = "auv-07-nav",
+    static const ls_identity_t identity = {.project_id = "retention",
+                                           .device_id = "auv-07-nav",
                                            .firmware_build_id = "auv-runtime-0001"};
     ls_config_t config = {.identity = &identity, .timestamp_ms = clock_ms};
     CHECK(ls_init(&config) == LS_OK);
@@ -313,8 +336,10 @@ static int test_envelope_extensions_and_retention(void) {
 
     CHECK(setup() == 0);
     uint8_t context = 0u;
-    ls_secure_element_t element = {.context = &context, .random = se_random,
-                                   .sign_sha256 = se_sign, .read_certificate = se_cert,
+    ls_secure_element_t element = {.context = &context,
+                                   .random = se_random,
+                                   .sign_sha256 = se_sign,
+                                   .read_certificate = se_cert,
                                    .destroy_key = se_destroy};
     destroyed_keys = 0u;
     CHECK(ls_provisioning_decommission_secure(&element) == LS_OK);

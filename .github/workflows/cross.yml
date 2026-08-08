@@ -24,7 +24,7 @@ jobs:
           cmake -S . -B build/arm-cortex-m4-small -G Ninja \
             -DCMAKE_BUILD_TYPE=MinSizeRel \
             -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/arm-none-eabi.cmake \
-            -DLS_BUILD_TESTS=OFF -DLS_STORE_STRINGS=0 \
+            -DLS_BUILD_TESTS=OFF -DLS_CONSTRAINED_PROFILE=1 -DLS_STORE_STRINGS=0 \
             -DLS_ENABLE_BREADCRUMBS=0 -DLS_ENABLE_METRICS=0 -DLS_ENABLE_LOGS=0 \
             -DLS_ENABLE_POWER_SAMPLES=0 -DLS_ENABLE_PERFORMANCE=0 \
             -DLS_ENABLE_DUMPS=0 -DLS_ENABLE_ASSERTS=0 -DLS_ENABLE_STACK_SNAPSHOT=0 \

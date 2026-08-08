@@ -13,7 +13,7 @@
 #define CHECK(condition)                                                                           \
     do {                                                                                           \
         if (!(condition)) {                                                                        \
-            fprintf(stderr, "port adapter failed: %s:%d\n", #condition, __LINE__);               \
+            fprintf(stderr, "port adapter failed: %s:%d\n", #condition, __LINE__);                 \
             return 1;                                                                              \
         }                                                                                          \
     } while (0)

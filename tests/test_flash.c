@@ -78,9 +78,12 @@ int main(void) {
     ls_flash_mirror_t invalid_mirror;
     uint8_t invalid_workspace[64];
     ls_storage_backend_t invalid_raw = {0};
-    CHECK(ls_flash_mirror_init(NULL, &invalid_raw, invalid_workspace, sizeof invalid_workspace) == LS_EINVAL);
-    CHECK(ls_flash_mirror_init(&invalid_mirror, NULL, invalid_workspace, sizeof invalid_workspace) == LS_EINVAL);
-    CHECK(ls_flash_mirror_init(&invalid_mirror, &invalid_raw, invalid_workspace, sizeof invalid_workspace) == LS_EINVAL);
+    CHECK(ls_flash_mirror_init(NULL, &invalid_raw, invalid_workspace, sizeof invalid_workspace) ==
+          LS_EINVAL);
+    CHECK(ls_flash_mirror_init(&invalid_mirror, NULL, invalid_workspace,
+                               sizeof invalid_workspace) == LS_EINVAL);
+    CHECK(ls_flash_mirror_init(&invalid_mirror, &invalid_raw, invalid_workspace,
+                               sizeof invalid_workspace) == LS_EINVAL);
     CHECK(ls_flash_mirror_physical_size_for_write(sizeof(workspace), ERASE_SIZE, WRITE_SIZE) <=
           sizeof(physical));
 
@@ -113,7 +116,8 @@ int main(void) {
 
     CHECK(mirror.backend.read(NULL, 0u, readback, 1u) == LS_EINVAL);
     CHECK(mirror.backend.read(mirror.backend.context, 0u, NULL, 1u) == LS_EINVAL);
-    CHECK(mirror.backend.read(mirror.backend.context, sizeof(workspace) + 1u, readback, 0u) == LS_EINVAL);
+    CHECK(mirror.backend.read(mirror.backend.context, sizeof(workspace) + 1u, readback, 0u) ==
+          LS_EINVAL);
     CHECK(mirror.backend.write(NULL, 0u, new_value, 1u) == LS_EINVAL);
     CHECK(mirror.backend.write(mirror.backend.context, 0u, NULL, 1u) == LS_EINVAL);
     CHECK(mirror.backend.erase(NULL, 0u, 1u) == LS_EINVAL);
@@ -122,7 +126,8 @@ int main(void) {
     CHECK(mirror.backend.read(mirror.backend.context, 0u, readback, 4u) == LS_OK);
     CHECK(readback[0] == 0xffu && readback[3] == 0xffu);
     /* Restore the baseline image used by the interruption sweep. */
-    CHECK(mirror.backend.write(mirror.backend.context, 100u, old_value, sizeof(old_value)) == LS_OK);
+    CHECK(mirror.backend.write(mirror.backend.context, 100u, old_value, sizeof(old_value)) ==
+          LS_OK);
     memcpy(baseline, physical, sizeof(physical));
 
     for (uint32_t operation = 1u; operation <= 140u; operation++) {

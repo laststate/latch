@@ -1,213 +1,213 @@
 {
   "schema": 1,
-  "generated_unix": 1786134799,
+  "generated_unix": 1786147553,
   "total_declared": 40,
   "valid_mutants": 40,
   "killed": 40,
   "survived": 0,
   "invalid": 0,
   "score_percent": 100.0,
-  "minimum_score_percent": 100.0,
+  "minimum_score_percent": 85.0,
   "results": [
     {
       "name": "crypto-assurance-threshold-weaken",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 51: latch-crypto-commercial-tests\n1/1 Test #51: latch-crypto-commercial-tests ....***Failed    0.00 sec\ncommercial crypto failed: ls_security_set_crypto_provider(&audited)==LS_OK:26\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 51 - latch-crypto-commercial-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 51: latch-crypto-commercial-tests\n1/1 Test #51: latch-crypto-commercial-tests ....***Failed    0.00 sec\ncommercial crypto failed: ls_security_set_crypto_provider(&audited) == LS_OK:95\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 51 - latch-crypto-commercial-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "crypto-kat-hkdf-bypass",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 51: latch-crypto-commercial-tests\n1/1 Test #51: latch-crypto-commercial-tests ....***Failed    0.00 sec\ncommercial crypto failed: ls_security_set_crypto_provider(&bad)==LS_EAUTH:21\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 51 - latch-crypto-commercial-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 51: latch-crypto-commercial-tests\n1/1 Test #51: latch-crypto-commercial-tests ....***Failed    0.00 sec\ncommercial crypto failed: ls_security_set_crypto_provider(&bad) == LS_EAUTH:78\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 51 - latch-crypto-commercial-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "crypto-kat-ciphertext-bypass",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 51: latch-crypto-commercial-tests\n1/1 Test #51: latch-crypto-commercial-tests ....***Failed    0.00 sec\ncommercial crypto failed: ls_security_set_crypto_provider(&bad)==LS_EAUTH:22\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 51 - latch-crypto-commercial-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 51: latch-crypto-commercial-tests\n1/1 Test #51: latch-crypto-commercial-tests ....***Failed    0.00 sec\ncommercial crypto failed: ls_security_set_crypto_provider(&bad) == LS_EAUTH:82\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 51 - latch-crypto-commercial-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "crypto-kat-tag-bypass",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 51: latch-crypto-commercial-tests\n1/1 Test #51: latch-crypto-commercial-tests ....***Failed    0.00 sec\ncommercial crypto failed: ls_security_set_crypto_provider(&audited)==LS_OK:26\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 51 - latch-crypto-commercial-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 51: latch-crypto-commercial-tests\n1/1 Test #51: latch-crypto-commercial-tests ....***Failed    0.00 sec\ncommercial crypto failed: ls_security_set_crypto_provider(&audited) == LS_OK:95\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 51 - latch-crypto-commercial-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "crypto-provider-gate-bypass",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 51: latch-crypto-commercial-tests\n1/1 Test #51: latch-crypto-commercial-tests ....***Failed    0.00 sec\ncommercial crypto failed: ls_crypto_xchacha20_poly1305_encrypt(key,nonce,NULL,0,in,out,1,tag)==LS_EAUTH:19\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 51 - latch-crypto-commercial-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 51: latch-crypto-commercial-tests\n1/1 Test #51: latch-crypto-commercial-tests ....***Failed    0.00 sec\ncommercial crypto failed: ls_crypto_xchacha20_poly1305_encrypt(key, nonce, NULL, 0, in, out, 1, tag) == LS_EAUTH:70\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 51 - latch-crypto-commercial-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "crypto-key-length-weaken",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 15: latch-security-tests\n1/1 Test #15: latch-security-tests .............***Failed    0.00 sec\nsecurity check failed: ls_security_set_key(chacha_key, sizeof(chacha_key)) == LS_OK:132\\n\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 15 - latch-security-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 15: latch-security-tests\n1/1 Test #15: latch-security-tests .............***Failed    0.00 sec\nsecurity check failed: ls_security_set_key(chacha_key, sizeof(chacha_key)) == LS_OK:132\\n\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 15 - latch-security-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "crypto-policy-key-id-zero",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 15: latch-security-tests\n1/1 Test #15: latch-security-tests .............***Failed    0.01 sec\nsecurity check failed: ls_security_set_policy(&hmac_policy) == LS_OK:243\\n\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.01 sec\n\nThe following tests FAILED:\n\t 15 - latch-security-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 15: latch-security-tests\n1/1 Test #15: latch-security-tests .............***Failed    0.01 sec\nsecurity check failed: ls_security_set_policy(&hmac_policy) == LS_OK:245\\n\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.01 sec\n\nThe following tests FAILED:\n\t 15 - latch-security-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "constant-time-equality-invert",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 17: latch-crypto-negative-tests\n1/1 Test #17: latch-crypto-negative-tests ......***Failed    0.00 sec\ncrypto negative failed: ls_xchacha20_poly1305_decrypt(key, nonce, aad, sizeof aad, cipher, opened, length, tag) == LS_OK:29\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 17 - latch-crypto-negative-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 17: latch-crypto-negative-tests\n1/1 Test #17: latch-crypto-negative-tests ......***Failed    0.00 sec\ncrypto negative failed: ls_xchacha20_poly1305_decrypt(key, nonce, aad, sizeof aad, cipher, opened, length, tag) == LS_OK:30\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 17 - latch-crypto-negative-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "aead-auth-failure-bypass",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 17: latch-crypto-negative-tests\n1/1 Test #17: latch-crypto-negative-tests ......***Failed    0.00 sec\ncrypto negative failed: ls_xchacha20_poly1305_decrypt(key, nonce, aad, sizeof aad, cipher, opened, length, tag) == LS_EAUTH:34\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 17 - latch-crypto-negative-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 17: latch-crypto-negative-tests\n1/1 Test #17: latch-crypto-negative-tests ......***Failed    0.00 sec\ncrypto negative failed: ls_xchacha20_poly1305_decrypt(key, nonce, aad, sizeof aad, cipher, opened, length, tag) == LS_EAUTH:35\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 17 - latch-crypto-negative-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "secure-storage-header-key-bypass",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 19: latch-secure-storage-tests\n1/1 Test #19: latch-secure-storage-tests .......***Failed    0.00 sec\nsecure storage failed: secure.backend.write(secure.backend.context, 100, secret, sizeof secret) == LS_OK:91\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 19 - latch-secure-storage-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 19: latch-secure-storage-tests\n1/1 Test #19: latch-secure-storage-tests .......***Failed    0.00 sec\nsecure storage failed: secure.backend.write(secure.backend.context, 100, secret, sizeof secret) == LS_OK:98\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 19 - latch-secure-storage-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "secure-storage-crc-bypass",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 19: latch-secure-storage-tests\n1/1 Test #19: latch-secure-storage-tests .......***Failed    0.00 sec\nsecure storage failed: secure.backend.write(secure.backend.context, 100, secret, sizeof secret) == LS_OK:91\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 19 - latch-secure-storage-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 19: latch-secure-storage-tests\n1/1 Test #19: latch-secure-storage-tests .......***Failed    0.00 sec\nsecure storage failed: secure.backend.write(secure.backend.context, 100, secret, sizeof secret) == LS_OK:98\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 19 - latch-secure-storage-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "flash-mirror-crc-invert",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 23: latch-flash-tests\n1/1 Test #23: latch-flash-tests ................***Failed    0.00 sec\nflash check failed: !memcmp(readback, old_value, sizeof(readback)) || !memcmp(readback, new_value, sizeof(readback)):148\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 23 - latch-flash-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 23: latch-flash-tests\n1/1 Test #23: latch-flash-tests ................***Failed    0.00 sec\nflash check failed: !memcmp(readback, old_value, sizeof(readback)) || !memcmp(readback, new_value, sizeof(readback)):153\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 23 - latch-flash-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "wear-level-crc-invert",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 21: latch-wear-level-tests\n1/1 Test #21: latch-wear-level-tests ...........***Failed    0.00 sec\nwear check failed: value == 79u:131\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 21 - latch-wear-level-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 21: latch-wear-level-tests\n1/1 Test #21: latch-wear-level-tests ...........***Failed    0.00 sec\nwear check failed: value == 79u:131\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 21 - latch-wear-level-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "memory-flash-01-check-bypass",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 23: latch-flash-tests\n1/1 Test #23: latch-flash-tests ................***Failed    0.00 sec\nflash check failed: ls_flash_mirror_init(&mirror, &raw, workspace, sizeof(workspace)) == LS_OK:96\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 23 - latch-flash-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 23: latch-flash-tests\n1/1 Test #23: latch-flash-tests ................***Failed    0.00 sec\nflash check failed: ls_flash_mirror_init(&mirror, &raw, workspace, sizeof(workspace)) == LS_OK:99\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 23 - latch-flash-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "spool-record-length-zero-allowed",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 40: latch-spool-edges-tests\n1/1 Test #40: latch-spool-edges-tests ..........***Failed    0.00 sec\nspool edges failed: ls_spool_get_stats(&stats)==LS_OK && stats.committed==0u && stats.corrupt_records==0u:101\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 40 - latch-spool-edges-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 40: latch-spool-edges-tests\n1/1 Test #40: latch-spool-edges-tests ..........***Failed    0.00 sec\nspool edges failed: ls_spool_get_stats(&stats) == LS_OK && stats.committed == 0u && stats.corrupt_records == 0u:162\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 40 - latch-spool-edges-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "spool-emergency-reserve-bypass",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 34: latch-spool-priority-tests\n1/1 Test #34: latch-spool-priority-tests .......***Failed    0.00 sec\nspool priority failed: stats.committed == normal_capacity + 1u:136\nspool priority failed: critical_reserve_survives_normal_saturation() == 0:184\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 34 - latch-spool-priority-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 34: latch-spool-priority-tests\n1/1 Test #34: latch-spool-priority-tests .......***Failed    0.00 sec\nspool priority failed: stats.committed == normal_capacity + 1u:137\nspool priority failed: critical_reserve_survives_normal_saturation() == 0:185\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 34 - latch-spool-priority-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "spool-critical-reserve-bypass",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 34: latch-spool-priority-tests\n1/1 Test #34: latch-spool-priority-tests .......***Failed    0.00 sec\nspool priority failed: stats.committed == normal_capacity:118\nspool priority failed: critical_reserve_survives_normal_saturation() == 0:184\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 34 - latch-spool-priority-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 34: latch-spool-priority-tests\n1/1 Test #34: latch-spool-priority-tests .......***Failed    0.00 sec\nspool priority failed: stats.committed == normal_capacity:119\nspool priority failed: critical_reserve_survives_normal_saturation() == 0:185\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 34 - latch-spool-priority-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "spool-data-crc-bypass",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 40: latch-spool-edges-tests\n1/1 Test #40: latch-spool-edges-tests ..........***Failed    0.00 sec\nspool edges failed: ls_spool_flush()==LS_OK:106\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 40 - latch-spool-edges-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 40: latch-spool-edges-tests\n1/1 Test #40: latch-spool-edges-tests ..........***Failed    0.00 sec\nspool edges failed: ls_spool_flush() == LS_OK:172\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 40 - latch-spool-edges-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "http-success-and-to-or",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 37: latch-defensive-paths-tests\n1/1 Test #37: latch-defensive-paths-tests ......***Failed    0.00 sec\ndefensive paths failed: ls_http_transport_send(&http, env, env_len)==LS_EAGAIN:238\ndefensive paths failed: test_network()==0:345\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 37 - latch-defensive-paths-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 37: latch-defensive-paths-tests\n1/1 Test #37: latch-defensive-paths-tests ......***Failed    0.00 sec\ndefensive paths failed: ls_http_transport_send(&http, env, env_len) == LS_EAGAIN:299\ndefensive paths failed: test_network() == 0:479\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 37 - latch-defensive-paths-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "http-retry-500-off-by-one",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 37: latch-defensive-paths-tests\n1/1 Test #37: latch-defensive-paths-tests ......***Failed    0.00 sec\ndefensive paths failed: ls_http_transport_send(&http, env, env_len)==LS_EAGAIN:238\ndefensive paths failed: test_network()==0:345\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 37 - latch-defensive-paths-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 37: latch-defensive-paths-tests\n1/1 Test #37: latch-defensive-paths-tests ......***Failed    0.00 sec\ndefensive paths failed: ls_http_transport_send(&http, env, env_len) == LS_EAGAIN:299\ndefensive paths failed: test_network() == 0:479\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 37 - latch-defensive-paths-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "mqtt-qos-range-weaken",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 37: latch-defensive-paths-tests\n1/1 Test #37: latch-defensive-paths-tests ......***Failed    0.00 sec\ndefensive paths failed: topic && payload && length && qos <= 2u && !retain:34\ndefensive paths failed: ls_mqtt_transport_send(&mqtt, env, env_len)==LS_EINVAL:250\ndefensive paths failed: test_network()==0:345\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 37 - latch-defensive-paths-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 37: latch-defensive-paths-tests\n1/1 Test #37: latch-defensive-paths-tests ......***Failed    0.00 sec\ndefensive paths failed: topic && payload && length && qos <= 2u && !retain:34\ndefensive paths failed: ls_mqtt_transport_send(&mqtt, env, env_len) == LS_EINVAL:317\ndefensive paths failed: test_network() == 0:479\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 37 - latch-defensive-paths-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "stream-ack-duplicate-reject",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 38: latch-stream-edges-tests\n1/1 Test #38: latch-stream-edges-tests .........***Failed    0.00 sec\nstream edges failed: ls_lsak_is_success(LS_LSAK_ACK_STORED):117\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 38 - latch-stream-edges-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 38: latch-stream-edges-tests\n1/1 Test #38: latch-stream-edges-tests .........***Failed    0.00 sec\nstream edges failed: ls_lsak_is_success(LS_LSAK_ACK_STORED):125\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 38 - latch-stream-edges-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "stream-crc-bypass",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 38: latch-stream-edges-tests\n1/1 Test #38: latch-stream-edges-tests .........***Failed    0.00 sec\nstream edges failed: ls_stream_frame_parse(frame, frame_length, 0u, &parsed_frame) == LS_OK:143\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 38 - latch-stream-edges-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 38: latch-stream-edges-tests\n1/1 Test #38: latch-stream-edges-tests .........***Failed    0.00 sec\nstream edges failed: ls_stream_frame_parse(frame, frame_length, 0u, &parsed_frame) == LS_OK:161\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 38 - latch-stream-edges-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "varint-overflow-check-disabled",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 37: latch-defensive-paths-tests\n1/1 Test #37: latch-defensive-paths-tests ......***Failed    0.00 sec\ndefensive paths failed: ls_varint_u32_decode((uint8_t[]){0x80,0x80,0x80,0x80,0x10}, 5, &value, &consumed) == LS_EOVERFLOW:169\ndefensive paths failed: test_compression()==0:343\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 37 - latch-defensive-paths-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 37: latch-defensive-paths-tests\n1/1 Test #37: latch-defensive-paths-tests ......***Failed    0.00 sec\ndefensive paths failed: ls_varint_u32_decode((uint8_t[]){0x80, 0x80, 0x80, 0x80, 0x10}, 5, &value, &consumed) == LS_EOVERFLOW:209\ndefensive paths failed: test_compression() == 0:477\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 37 - latch-defensive-paths-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "ota-signing-key-check-weaken",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 45: latch-ota-tests\n1/1 Test #45: latch-ota-tests ..................***Failed    0.00 sec\nota check failed: version==f->expected_version:14\nota check failed: ls_ota_stage_candidate(&backend,0u,9u,image,sizeof image,signature,sizeof signature)==LS_EINVAL:67\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 45 - latch-ota-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 45: latch-ota-tests\n1/1 Test #45: latch-ota-tests ..................***Failed    0.00 sec\nota check failed: version == f->expected_version:23\nota check failed: ls_ota_stage_candidate(&backend, 0u, 9u, image, sizeof image, signature, sizeof signature) == LS_EINVAL:146\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 45 - latch-ota-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "ota-stage-on-failure",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 45: latch-ota-tests\n1/1 Test #45: latch-ota-tests ..................***Failed    0.00 sec\nota check failed: fake.auth==1u&&fake.stage==1u&&fake.boot==1u:33\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 45 - latch-ota-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 45: latch-ota-tests\n1/1 Test #45: latch-ota-tests ..................***Failed    0.00 sec\nota check failed: fake.auth == 1u && fake.stage == 1u && fake.boot == 1u:83\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 45 - latch-ota-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "ota-update-stage-on-failure",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 45: latch-ota-tests\n1/1 Test #45: latch-ota-tests ..................***Failed    0.00 sec\nota check failed: ls_update_get_state().state==LS_UPDATE_PENDING:34\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 45 - latch-ota-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 45: latch-ota-tests\n1/1 Test #45: latch-ota-tests ..................***Failed    0.00 sec\nota check failed: ls_update_get_state().state == LS_UPDATE_PENDING:84\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 45 - latch-ota-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "ota-confirm-zero-allowed",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 45: latch-ota-tests\n1/1 Test #45: latch-ota-tests ..................***Exception: SegFault  0.00 sec\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 45 - latch-ota-tests (SEGFAULT)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 45: latch-ota-tests\n1/1 Test #45: latch-ota-tests ..................***Exception: SegFault  0.00 sec\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 45 - latch-ota-tests (SEGFAULT)\nErrors while running CTest\n"
     },
     {
       "name": "ota-rollback-zero-allowed",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 45: latch-ota-tests\n1/1 Test #45: latch-ota-tests ..................***Exception: SegFault  0.00 sec\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 45 - latch-ota-tests (SEGFAULT)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 45: latch-ota-tests\n1/1 Test #45: latch-ota-tests ..................***Exception: SegFault  0.00 sec\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 45 - latch-ota-tests (SEGFAULT)\nErrors while running CTest\n"
     },
     {
       "name": "provision-monotonic-equal-allowed",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 44: latch-auv-edges-tests\n1/1 Test #44: latch-auv-edges-tests ............***Failed    0.01 sec\nauv edge check failed: ls_provisioning_begin_rotation(2u, 1u) == LS_EINVAL:382\nauv edge check failed: test_provisioning_edges() == 0:437\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.01 sec\n\nThe following tests FAILED:\n\t 44 - latch-auv-edges-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 44: latch-auv-edges-tests\n1/1 Test #44: latch-auv-edges-tests ............***Failed    0.02 sec\nauv edge check failed: ls_provisioning_begin_rotation(2u, 1u) == LS_EINVAL:452\nauv edge check failed: test_provisioning_edges() == 0:513\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.02 sec\n\nThe following tests FAILED:\n\t 44 - latch-auv-edges-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "provision-key-zero-invert",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 44: latch-auv-edges-tests\n1/1 Test #44: latch-auv-edges-tests ............***Failed    0.01 sec\nauv edge check failed: ls_provisioning_activate(0u, 1u) == LS_EINVAL:376\nauv edge check failed: test_provisioning_edges() == 0:437\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.01 sec\n\nThe following tests FAILED:\n\t 44 - latch-auv-edges-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 44: latch-auv-edges-tests\n1/1 Test #44: latch-auv-edges-tests ............***Failed    0.02 sec\nauv edge check failed: ls_provisioning_activate(0u, 1u) == LS_EINVAL:446\nauv edge check failed: test_provisioning_edges() == 0:513\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.02 sec\n\nThe following tests FAILED:\n\t 44 - latch-auv-edges-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "provision-rotation-same-key-allowed",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 44: latch-auv-edges-tests\n1/1 Test #44: latch-auv-edges-tests ............***Failed    0.01 sec\nauv edge check failed: ls_provisioning_begin_rotation(1u, 2u) == LS_EINVAL:381\nauv edge check failed: test_provisioning_edges() == 0:437\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.01 sec\n\nThe following tests FAILED:\n\t 44 - latch-auv-edges-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 44: latch-auv-edges-tests\n1/1 Test #44: latch-auv-edges-tests ............***Failed    0.02 sec\nauv edge check failed: ls_provisioning_begin_rotation(1u, 2u) == LS_EINVAL:451\nauv edge check failed: test_provisioning_edges() == 0:513\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.02 sec\n\nThe following tests FAILED:\n\t 44 - latch-auv-edges-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "provision-commit-state-invert",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 44: latch-auv-edges-tests\n1/1 Test #44: latch-auv-edges-tests ............***Failed    0.01 sec\nauv edge check failed: ls_provisioning_commit_rotation() == LS_OK:385\nauv edge check failed: test_provisioning_edges() == 0:437\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.01 sec\n\nThe following tests FAILED:\n\t 44 - latch-auv-edges-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 44: latch-auv-edges-tests\n1/1 Test #44: latch-auv-edges-tests ............***Failed    0.02 sec\nauv edge check failed: ls_provisioning_commit_rotation() == LS_OK:455\nauv edge check failed: test_provisioning_edges() == 0:513\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.02 sec\n\nThe following tests FAILED:\n\t 44 - latch-auv-edges-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "provision-attest-limit-offbyone",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 44: latch-auv-edges-tests\n1/1 Test #44: latch-auv-edges-tests ............***Failed    0.01 sec\nauv edge check failed: ls_provisioning_attest(&element, challenge, 128u, digest, signature) == LS_OK:412\nauv edge check failed: test_provisioning_edges() == 0:437\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.01 sec\n\nThe following tests FAILED:\n\t 44 - latch-auv-edges-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 44: latch-auv-edges-tests\n1/1 Test #44: latch-auv-edges-tests ............***Failed    0.02 sec\nauv edge check failed: ls_provisioning_attest(&element, challenge, 128u, digest, signature) == LS_OK:483\nauv edge check failed: test_provisioning_edges() == 0:513\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.02 sec\n\nThe following tests FAILED:\n\t 44 - latch-auv-edges-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "supervisor-battery-direction",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 44: latch-auv-edges-tests\n1/1 Test #44: latch-auv-edges-tests ............***Failed    0.00 sec\nauv edge check failed: ls_supervisor_poll() == LS_OK:271\nauv edge check failed: test_supervisor_edges() == 0:435\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.01 sec\n\nThe following tests FAILED:\n\t 44 - latch-auv-edges-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 44: latch-auv-edges-tests\n1/1 Test #44: latch-auv-edges-tests ............***Failed    0.01 sec\nauv edge check failed: ls_supervisor_poll() == LS_OK:337\nauv edge check failed: test_supervisor_edges() == 0:511\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.01 sec\n\nThe following tests FAILED:\n\t 44 - latch-auv-edges-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "supervisor-temperature-direction",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 43: latch-auv-runtime-tests\n1/1 Test #43: latch-auv-runtime-tests ..........***Failed    0.00 sec\nAUV runtime check failed: status.active_alarms & LS_SUPERVISOR_TEMPERATURE_HIGH:238\nAUV runtime check failed: test_health_power_supervisor() == 0:331\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 43 - latch-auv-runtime-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 43: latch-auv-runtime-tests\n1/1 Test #43: latch-auv-runtime-tests ..........***Failed    0.00 sec\nAUV runtime check failed: status.active_alarms & LS_SUPERVISOR_TEMPERATURE_HIGH:252\nAUV runtime check failed: test_health_power_supervisor() == 0:356\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 43 - latch-auv-runtime-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "supervisor-watchdog-direction",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 44: latch-auv-edges-tests\n1/1 Test #44: latch-auv-edges-tests ............***Failed    0.00 sec\nauv edge check failed: ls_supervisor_poll() == LS_OK:271\nauv edge check failed: test_supervisor_edges() == 0:435\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.01 sec\n\nThe following tests FAILED:\n\t 44 - latch-auv-edges-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 44: latch-auv-edges-tests\n1/1 Test #44: latch-auv-edges-tests ............***Failed    0.01 sec\nauv edge check failed: ls_supervisor_poll() == LS_OK:337\nauv edge check failed: test_supervisor_edges() == 0:511\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.01 sec\n\nThe following tests FAILED:\n\t 44 - latch-auv-edges-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "supervisor-spool-threshold-direction",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 44: latch-auv-edges-tests\n1/1 Test #44: latch-auv-edges-tests ............***Failed    0.00 sec\nauv edge check failed: ls_supervisor_poll() == LS_OK:271\nauv edge check failed: test_supervisor_edges() == 0:435\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 44 - latch-auv-edges-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 44: latch-auv-edges-tests\n1/1 Test #44: latch-auv-edges-tests ............***Failed    0.01 sec\nauv edge check failed: ls_supervisor_poll() == LS_OK:337\nauv edge check failed: test_supervisor_edges() == 0:511\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.01 sec\n\nThe following tests FAILED:\n\t 44 - latch-auv-edges-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "stream-lsak-length-invert",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 38: latch-stream-edges-tests\n1/1 Test #38: latch-stream-edges-tests .........***Failed    0.00 sec\nstream edges failed: ls_lsak_parse(ack, sizeof ack, &parsed) == LS_OK:116\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 38 - latch-stream-edges-tests (Failed)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 38: latch-stream-edges-tests\n1/1 Test #38: latch-stream-edges-tests .........***Failed    0.00 sec\nstream edges failed: ls_lsak_parse(ack, sizeof ack, &parsed) == LS_OK:124\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.00 sec\n\nThe following tests FAILED:\n\t 38 - latch-stream-edges-tests (Failed)\nErrors while running CTest\n"
     },
     {
       "name": "secure-element-destroy-callback-invert",
       "status": "killed",
-      "detail": "Internal ctest changing into directory: <repo>/build/mutation-campaign\nTest project <repo>/build/mutation-campaign\n    Start 44: latch-auv-edges-tests\n1/1 Test #44: latch-auv-edges-tests ............***Exception: SegFault  0.01 sec\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.01 sec\n\nThe following tests FAILED:\n\t 44 - latch-auv-edges-tests (SEGFAULT)\nErrors while running CTest\n"
+      "detail": "Internal ctest changing into directory: <build>\nTest project <build>\n    Start 44: latch-auv-edges-tests\n1/1 Test #44: latch-auv-edges-tests ............***Exception: SegFault  0.02 sec\n\n\n0% tests passed, 1 tests failed out of 1\n\nTotal Test time (real) =   0.02 sec\n\nThe following tests FAILED:\n\t 44 - latch-auv-edges-tests (SEGFAULT)\nErrors while running CTest\n"
     }
   ]
 }

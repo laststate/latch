@@ -49,8 +49,20 @@ void setup() {
     delay(200);
 
     static const ls_identity_t identity = {
-        "arduino-esp32-cooperative", "esp32-board", "Latch Arduino example", NULL, NULL, NULL,
-        LS_VERSION_STRING, "arduino-example-0001", NULL, NULL, NULL, "xtensa", "arduino", NULL,
+        "arduino-esp32-cooperative",
+        "esp32-board",
+        "Latch Arduino example",
+        NULL,
+        NULL,
+        NULL,
+        LS_VERSION_STRING,
+        "arduino-example-0001",
+        NULL,
+        NULL,
+        NULL,
+        "xtensa",
+        "arduino",
+        NULL,
         NULL,
     };
     ls_memory_storage_t memory = {storage_bytes, sizeof storage_bytes};

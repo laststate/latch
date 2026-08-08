@@ -6,7 +6,8 @@ static uint32_t power_alarms(const ls_supervisor_config_t *config) {
     if (!ls_runtime.power_count) {
         return 0u;
     }
-    size_t index = (ls_runtime.power_next + LS_POWER_SAMPLE_CAPACITY - 1u) % LS_POWER_SAMPLE_CAPACITY;
+    size_t index =
+        (ls_runtime.power_next + LS_POWER_SAMPLE_CAPACITY - 1u) % LS_POWER_SAMPLE_CAPACITY;
     const ls_power_sample_t *sample = &ls_runtime.power_samples[index];
     uint32_t alarms = 0u;
     if (config->minimum_vdd_mv && sample->vdd_mv < config->minimum_vdd_mv) {

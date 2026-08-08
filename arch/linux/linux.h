@@ -90,8 +90,7 @@ typedef struct {
 /* Installs an alternate signal stack for the calling thread.  Every thread
  * that can receive a handled fatal signal must register its own stack before
  * it does work that can fault.  This function is normal-runtime only. */
-ls_result_t ls_linux_signal_register_alt_stack(void *alternate_stack,
-                                               size_t alternate_stack_size);
+ls_result_t ls_linux_signal_register_alt_stack(void *alternate_stack, size_t alternate_stack_size);
 
 /* Configures the process-wide crash descriptor and the calling thread's
  * alternate stack.  The descriptor must be a nonblocking pipe/FIFO write end

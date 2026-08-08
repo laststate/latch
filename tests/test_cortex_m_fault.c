@@ -77,8 +77,9 @@ static int test_extended_fpu_frame(void) {
 
 static int test_invalid_frames_are_not_decoded(void) {
     uint32_t stack[64] = {0};
-    CHECK(ls_cortex_m_decode_exception_frame(stack, NULL, &(ls_cortex_m_exception_frame_t){0}) == LS_EINVAL);
-    ls_cortex_m_saved_t null_frame_saved = {.exc_return=0xfffffff9u};
+    CHECK(ls_cortex_m_decode_exception_frame(stack, NULL, &(ls_cortex_m_exception_frame_t){0}) ==
+          LS_EINVAL);
+    ls_cortex_m_saved_t null_frame_saved = {.exc_return = 0xfffffff9u};
     CHECK(ls_cortex_m_decode_exception_frame(stack, &null_frame_saved, NULL) == LS_EINVAL);
     CHECK(ls_cortex_m_stack_bounds_set(NULL, NULL, NULL, NULL) == LS_OK);
     CHECK(ls_cortex_m_stack_bounds_set(stack, NULL, NULL, NULL) == LS_EINVAL);
@@ -99,7 +100,8 @@ static int test_invalid_frames_are_not_decoded(void) {
 
     saved.msp = (uint32_t)(uintptr_t)((uint8_t *)&stack[8] + 1u);
     saved.exc_return = 0xfffffff9u;
-    CHECK(ls_cortex_m_decode_exception_frame((const uint32_t *)(uintptr_t)saved.msp, &saved, &frame) == LS_ECORRUPT);
+    CHECK(ls_cortex_m_decode_exception_frame((const uint32_t *)(uintptr_t)saved.msp, &saved,
+                                             &frame) == LS_ECORRUPT);
     saved.msp = (uint32_t)(uintptr_t)(stack + 64);
     CHECK(ls_cortex_m_decode_exception_frame(stack + 64, &saved, &frame) == LS_ECORRUPT);
     saved.msp = (uint32_t)(uintptr_t)&stack[8];

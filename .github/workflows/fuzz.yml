@@ -33,10 +33,10 @@ jobs:
           else
             echo "FUZZ_SECONDS=120" >> "$GITHUB_ENV"
           fi
-      - run: build/fuzz-lep corpus/lep -artifact_prefix=artifacts/ -max_total_time=${FUZZ_SECONDS} -timeout=5
-      - run: build/fuzz-compression corpus/compression -artifact_prefix=artifacts/ -max_total_time=${FUZZ_SECONDS} -timeout=5
-      - run: build/fuzz-aead corpus/aead -artifact_prefix=artifacts/ -max_total_time=${FUZZ_SECONDS} -timeout=5
-      - run: build/fuzz-stream corpus/stream -artifact_prefix=artifacts/ -max_total_time=${FUZZ_SECONDS} -timeout=5
+      - run: build/fuzz-lep corpus/lep -artifact_prefix=artifacts/ -max_total_time="${FUZZ_SECONDS}" -timeout=5
+      - run: build/fuzz-compression corpus/compression -artifact_prefix=artifacts/ -max_total_time="${FUZZ_SECONDS}" -timeout=5
+      - run: build/fuzz-aead corpus/aead -artifact_prefix=artifacts/ -max_total_time="${FUZZ_SECONDS}" -timeout=5
+      - run: build/fuzz-stream corpus/stream -artifact_prefix=artifacts/ -max_total_time="${FUZZ_SECONDS}" -timeout=5
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: always()
         with:
