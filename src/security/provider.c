@@ -75,23 +75,7 @@ ls_result_t ls_security_set_crypto_provider(const ls_crypto_provider_t *provider
         return kat;
     ls_runtime.crypto_provider = *provider;
     ls_runtime.has_crypto_provider = true;
-    /* KAT runs once at install time. Periodic validation is intentionally
-     * disabled by default — it adds CPU overhead on every crypto call.
-     * Security-critical deployments can implement their own periodic KAT
-     * by calling ls_security_verify_crypto_provider() at startup or via
-     * a watchdog timer. */
     return LS_OK;
-}
-
-/* Verify the crypto provider is still functioning correctly. This is
- * intentionally a separate function so that periodic KAT can be
- * implemented by the application without incurring overhead on every
- * crypto operation. Returns LS_OK if the provider passes, LS_EAUTH if
- * it fails. */
-ls_result_t ls_security_verify_crypto_provider(void) {
-    if (!ls_runtime.has_crypto_provider)
-        return LS_EAUTH;
-    return provider_known_answer_test(&ls_runtime.crypto_provider);
 }
 
 void ls_security_clear_crypto_provider(void) {

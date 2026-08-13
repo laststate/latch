@@ -27,10 +27,6 @@ typedef struct {
     uint8_t frozen_inv;
     uint8_t profile;
     uint8_t profile_inv;
-    /* Counts how many times the sequence has wrapped from UINT32_MAX to 1.
-     * Useful for diagnostics when the blackbox has been running for a very
-     * long time (billions of records). */
-    uint32_t sequence_wraparound_count;
     ls_blackbox_retained_record_t records[LS_BLACKBOX_CAPACITY];
 } ls_blackbox_retained_t;
 
@@ -212,15 +208,7 @@ ls_result_t ls_blackbox_record(const ls_blackbox_record_t *record) {
         metadata_store_u32(&retained_blackbox.overwritten_records,
                            &retained_blackbox.overwritten_records_inv, overwritten);
     }
-    /* Sequence wraps from UINT32_MAX to 1. After ~4 billion records, the
-     * wraparound could confuse diagnostics. The total_records counter
-     * (which also wraps at UINT32_MAX) helps detect this, but for
-     * deployments expecting very long lifespans, consider resetting the
-     * blackbox via ls_blackbox_clear() periodically. */
     uint32_t next = sequence == UINT32_MAX ? 1u : sequence + 1u;
-    if (sequence == UINT32_MAX && next == 1u) {
-        retained_blackbox.sequence_wraparound_count++;
-    }
     metadata_store_u32(&retained_blackbox.next_sequence, &retained_blackbox.next_sequence_inv,
                        next);
     ls_leave_critical();

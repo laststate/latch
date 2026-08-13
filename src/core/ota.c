@@ -43,12 +43,8 @@ ls_result_t ls_ota_stage_candidate(const ls_ota_backend_t *backend, uint32_t ver
         }
     }
     if (result == LS_OK) {
-        /* Only mark the previous firmware as released when we have an
-         * identity. A NULL firmware_version would hash to zero and
-         * produce a misleading release record. */
-        if (ls_runtime.config.identity) {
-            ls_release_mark_pending(ls_runtime.config.identity->firmware_version);
-        }
+        ls_release_mark_pending(
+            ls_runtime.config.identity ? ls_runtime.config.identity->firmware_version : 0);
         ls_reset_mark_expected(true);
         (void)ls_blackbox_record_values(LS_BLACKBOX_STATE, 0x0a01u, LS_BLACKBOX_IMPORTANT,
                                         (int32_t)version_counter, (int32_t)signing_key_id,
