@@ -94,6 +94,10 @@ ls_transport_backend_t *ls_transport_select(ls_priority_t priority, size_t event
     }
     ls_leave_critical();
 
+    /* Select the transport with the highest score. If multiple transports
+     * have the same score (e.g., same priority value), the first one
+     * registered wins. Applications should ensure unique priority values
+     * or explicitly order transports if deterministic selection matters. */
     ls_transport_backend_t *best = 0;
     int64_t best_score = INT64_MIN;
     for (size_t index = 0; index < transport_count; ++index) {

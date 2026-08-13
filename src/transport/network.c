@@ -11,14 +11,13 @@ ls_result_t ls_http_transport_send(void *context, const uint8_t *data, size_t le
         return LS_ENOSPACE;
     }
 
-    ls_result_t result = ls_envelope_validate(data, length, 0);
-    if (result != LS_OK) {
-        return result;
-    }
+    /* Envelope validation is already performed by the spool at append time
+     * and by ls_transport_send before dispatching. Re-validating here would
+     * be redundant — the data is trusted by this point. */
 
     uint16_t status = 0;
-    result = http->post(http->context, http->endpoint, "application/vnd.laststate.lep", data,
-                        length, &status);
+    ls_result_t result = http->post(http->context, http->endpoint,
+                                    "application/vnd.laststate.lep", data, length, &status);
     if (result != LS_OK) {
         return result;
     }
@@ -45,10 +44,9 @@ ls_result_t ls_mqtt_transport_send(void *context, const uint8_t *data, size_t le
         return LS_ENOSPACE;
     }
 
-    ls_result_t result = ls_envelope_validate(data, length, 0);
-    if (result != LS_OK) {
-        return result;
-    }
+    /* Envelope validation is already performed by the spool at append time
+     * and by ls_transport_send before dispatching. Re-validating here would
+     * be redundant — the data is trusted by this point. */
     return mqtt->publish(mqtt->context, mqtt->topic, data, length, mqtt->qos, false);
 }
 

@@ -988,7 +988,7 @@ static void write_header(uint8_t header[LS_LEP_HEADER_SIZE], uint8_t type, uint8
 }
 
 ls_result_t ls_envelope_encode(const ls_event_t *event, uint8_t *out, size_t capacity,
-                               size_t *length) {
+                               uint32_t sequence, size_t *length) {
     bool secured = ls_runtime.security_key_length != 0u;
     bool aead = secured && ls_runtime.security_policy.algorithm == LS_SECURITY_XCHACHA20_POLY1305;
     size_t metadata_size = aead ? LS_ENVELOPE_SECURITY_METADATA_SIZE : 0u;
@@ -997,8 +997,6 @@ ls_result_t ls_envelope_encode(const ls_event_t *event, uint8_t *out, size_t cap
         capacity < LS_LEP_HEADER_SIZE + metadata_size + 4u + authentication_size) {
         return LS_EINVAL;
     }
-
-    uint32_t sequence = ++ls_runtime.sequence;
     ls_writer_t payload = {
         out + LS_LEP_HEADER_SIZE + metadata_size,
         capacity - LS_LEP_HEADER_SIZE - metadata_size - 4u - authentication_size,

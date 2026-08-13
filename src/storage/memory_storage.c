@@ -67,6 +67,12 @@ ls_result_t ls_storage_program(ls_storage_backend_t *storage, size_t offset, con
         return LS_OK;
     }
 
+    /* This function implements flash-style "program" semantics: bits can
+     * only transition from 1 to 0, never from 0 to 1. If a write fails
+     * mid-operation, earlier units are already committed and cannot be
+     * rolled back — the caller is responsible for re-erasing the region
+     * and retrying. The LS_EIO check inside the loop catches attempts to
+     * set bits that are already zero, which would corrupt data. */
     ls_result_t injected = ls_fault_injection_hit("storage.program.before");
     if (injected != LS_OK) {
         return injected;
