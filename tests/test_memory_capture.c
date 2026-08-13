@@ -60,7 +60,7 @@ static int encode_for_mode(ls_redaction_mode_t mode, bool redact, bool safe, vis
                         .capture_level = LS_CAPTURE_SELECTIVE};
     uint8_t out[LS_MAX_EVENT_SIZE];
     size_t length = 0u;
-    CHECK(ls_envelope_encode(&event, out, sizeof out, &length) == LS_OK);
+    CHECK(ls_envelope_encode(&event, out, sizeof out, 1u, &length) == LS_OK);
     CHECK(ls_envelope_validate(out, length, info) == LS_OK);
     memset(state, 0, sizeof *state);
     CHECK(ls_envelope_visit(out, length, visit, state) == LS_OK);
@@ -115,7 +115,7 @@ int main(void) {
                             .capture_level = LS_CAPTURE_STACK};
         uint8_t out[LS_MAX_EVENT_SIZE];
         size_t length = 0u;
-        CHECK(ls_envelope_encode(&event, out, sizeof out, &length) == LS_OK);
+        CHECK(ls_envelope_encode(&event, out, sizeof out, 1u, &length) == LS_OK);
         memset(&state, 0, sizeof state);
         CHECK(ls_envelope_visit(out, length, visit, &state) == LS_OK);
         CHECK(state.stack_fields == 1u);

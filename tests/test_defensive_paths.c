@@ -263,7 +263,7 @@ static int make_envelope(uint8_t *out, size_t capacity, size_t *length) {
                     .message = "test",
                     .timestamp_ms = 1u,
                     .capture_level = LS_CAPTURE_METADATA};
-    return ls_envelope_encode(&e, out, capacity, length) == LS_OK ? 0 : 1;
+    return ls_envelope_encode(&e, out, capacity, 1u, length) == LS_OK ? 0 : 1;
 }
 
 static int test_network(void) {

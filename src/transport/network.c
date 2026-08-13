@@ -16,8 +16,8 @@ ls_result_t ls_http_transport_send(void *context, const uint8_t *data, size_t le
      * be redundant — the data is trusted by this point. */
 
     uint16_t status = 0;
-    ls_result_t result = http->post(http->context, http->endpoint,
-                                    "application/vnd.laststate.lep", data, length, &status);
+    ls_result_t result = http->post(http->context, http->endpoint, "application/vnd.laststate.lep",
+                                    data, length, &status);
     if (result != LS_OK) {
         return result;
     }
