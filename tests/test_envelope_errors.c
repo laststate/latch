@@ -110,8 +110,8 @@ int main(void) {
           LS_EINVAL);
     CHECK(ls_envelope_encode(&encode_event, invalid_out, sizeof invalid_out, 1u, NULL) ==
           LS_EINVAL);
-    CHECK(ls_envelope_encode(&encode_event, invalid_out, LS_LEP_HEADER_SIZE, 1u,
-                             &invalid_length) == LS_EINVAL);
+    CHECK(ls_envelope_encode(&encode_event, invalid_out, LS_LEP_HEADER_SIZE, 1u, &invalid_length) ==
+          LS_EINVAL);
     ls_capture_message("x", LS_SEVERITY_ERROR);
     CHECK(ls_flush() == LS_OK && captured_length > 28);
     CHECK(ls_envelope_validate(0, 0, 0) == LS_EINVAL);
