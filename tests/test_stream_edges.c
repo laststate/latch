@@ -39,7 +39,7 @@ static int make_envelope(uint8_t *out, size_t capacity, size_t *length) {
                         .severity = LS_SEVERITY_WARNING,
                         .message = "edge",
                         .capture_level = LS_CAPTURE_METADATA};
-    return ls_envelope_encode(&event, out, capacity, length) == LS_OK ? 0 : 1;
+    return ls_envelope_encode(&event, out, capacity, 1u, length) == LS_OK ? 0 : 1;
 }
 
 int main(void) {

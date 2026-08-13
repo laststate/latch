@@ -16,7 +16,7 @@ static int sweep_event(ls_event_t *event) {
     bool saw_space = false, saw_ok = false, saw_truncated = false;
     for (size_t capacity = LS_LEP_HEADER_SIZE + 4u; capacity <= sizeof out; ++capacity) {
         size_t length = 0u;
-        ls_result_t result = ls_envelope_encode(event, out, capacity, &length);
+        ls_result_t result = ls_envelope_encode(event, out, capacity, 1u, &length);
         if (result == LS_ENOSPACE) {
             saw_space = true;
             continue;

@@ -185,7 +185,7 @@ ls_result_t ls_writer_u32(ls_writer_t *writer, uint32_t value);
 ls_result_t ls_writer_u64(ls_writer_t *writer, uint64_t value);
 ls_result_t ls_writer_tlv(ls_writer_t *writer, uint16_t type, const void *value, uint16_t length);
 ls_result_t ls_envelope_encode(const ls_event_t *event, uint8_t *out, size_t capacity,
-                               size_t *length);
+                               uint32_t sequence, size_t *length);
 ls_result_t ls_spool_init(void);
 ls_result_t ls_spool_append(const uint8_t *data, size_t length, ls_priority_t priority);
 ls_result_t ls_spool_flush(void);
