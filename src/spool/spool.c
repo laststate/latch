@@ -92,6 +92,10 @@ size_t ls_storage_required_size(void) {
 
 static bool usable(void) {
     size_t size = ls_spool_storage_size();
+    /* Sync is optional: storage backends without a sync callback will
+     * silently skip the fsync step. Platforms that require durable writes
+     * after power loss must provide a sync callback and ensure it actually
+     * flushes to the underlying media. */
     return size && ls_runtime.storage && ls_runtime.storage->read && ls_runtime.storage->write &&
            ls_runtime.storage->capacity >= size;
 }

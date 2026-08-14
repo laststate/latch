@@ -128,13 +128,18 @@ ls_result_t ls_capture_event(const ls_event_t *event) {
         return LS_EAGAIN;
     }
     ls_runtime.capturing = true;
+    /* Increment the sequence inside the critical section to guarantee
+     * uniqueness even if ls_capture_event is called from multiple threads.
+     * The sequence is then passed to ls_envelope_encode, which no longer
+     * increments it internally. */
+    uint32_t sequence = ++ls_runtime.sequence;
     ls_leave_critical();
     ls_event_t filtered = *event;
     ls_result_t result = LS_OK;
     if (event->type == LS_EVENT_CRASH)
         ls_blackbox_freeze();
     if (ls_policy_apply(&filtered)) {
-        result = ls_envelope_encode(&filtered, encoded, sizeof encoded, &length);
+        result = ls_envelope_encode(&filtered, encoded, sizeof encoded, sequence, &length);
         if (result == LS_OK)
             result = ls_spool_append(encoded, length, filtered.priority);
     }

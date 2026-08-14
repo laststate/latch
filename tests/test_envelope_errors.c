@@ -104,11 +104,13 @@ int main(void) {
                                .capture_level = LS_CAPTURE_METADATA};
     size_t invalid_length = 0u;
     uint8_t invalid_out[LS_MAX_EVENT_SIZE];
-    CHECK(ls_envelope_encode(NULL, invalid_out, sizeof invalid_out, &invalid_length) == LS_EINVAL);
-    CHECK(ls_envelope_encode(&encode_event, NULL, sizeof invalid_out, &invalid_length) ==
+    CHECK(ls_envelope_encode(NULL, invalid_out, sizeof invalid_out, 1u, &invalid_length) ==
           LS_EINVAL);
-    CHECK(ls_envelope_encode(&encode_event, invalid_out, sizeof invalid_out, NULL) == LS_EINVAL);
-    CHECK(ls_envelope_encode(&encode_event, invalid_out, LS_LEP_HEADER_SIZE, &invalid_length) ==
+    CHECK(ls_envelope_encode(&encode_event, NULL, sizeof invalid_out, 1u, &invalid_length) ==
+          LS_EINVAL);
+    CHECK(ls_envelope_encode(&encode_event, invalid_out, sizeof invalid_out, 1u, NULL) ==
+          LS_EINVAL);
+    CHECK(ls_envelope_encode(&encode_event, invalid_out, LS_LEP_HEADER_SIZE, 1u, &invalid_length) ==
           LS_EINVAL);
     ls_capture_message("x", LS_SEVERITY_ERROR);
     CHECK(ls_flush() == LS_OK && captured_length > 28);

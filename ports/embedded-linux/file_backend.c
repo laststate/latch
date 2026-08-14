@@ -344,6 +344,13 @@ ls_result_t ls_file_transport_send(void *context, const uint8_t *data, size_t le
     name[11] = 't';
     name[12] = '\0';
 
+    /* Open the directory and create the file in two steps. O_NOFOLLOW
+     * prevents symlink attacks, and O_TRUNC ensures we overwrite any
+     * existing file. A TOCTOU window exists between opening the directory
+     * and creating the file — an attacker could theoretically create a
+     * file with the same name in that window. This is acceptable for a
+     * host-side debugging tool (not a security boundary), but production
+     * transports should use atomic rename or O_EXCL patterns instead. */
     int directory =
         open_retry(transport->directory, O_RDONLY | O_DIRECTORY | O_CLOEXEC | O_NOFOLLOW, 0);
     if (directory < 0) {
