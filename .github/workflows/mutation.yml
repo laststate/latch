@@ -15,13 +15,39 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - run: sudo apt-get update && sudo apt-get install -y ninja-build
+      - name: Install ninja-build
+        shell: bash
+        run: |
+          set -euo pipefail
+          opts=(-o Acquire::Retries=5 -o Acquire::http::Timeout=60 -o Acquire::https::Timeout=60)
+          for attempt in 1 2 3; do
+            if timeout 90 sudo apt-get update "${opts[@]}" && timeout 240 sudo apt-get install -y "${opts[@]}" ninja-build; then
+              exit 0
+            fi
+            echo "apt attempt ${attempt}/3 failed, retrying in 15s..." >&2
+            sleep 15
+          done
+          echo "apt install failed after 3 attempts" >&2
+          exit 1
       - run: python tools/mutation_smoke.py --build build/mutation-smoke
   critical-campaign:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - run: sudo apt-get update && sudo apt-get install -y ninja-build
+      - name: Install ninja-build
+        shell: bash
+        run: |
+          set -euo pipefail
+          opts=(-o Acquire::Retries=5 -o Acquire::http::Timeout=60 -o Acquire::https::Timeout=60)
+          for attempt in 1 2 3; do
+            if timeout 90 sudo apt-get update "${opts[@]}" && timeout 240 sudo apt-get install -y "${opts[@]}" ninja-build; then
+              exit 0
+            fi
+            echo "apt attempt ${attempt}/3 failed, retrying in 15s..." >&2
+            sleep 15
+          done
+          echo "apt install failed after 3 attempts" >&2
+          exit 1
       - run: python tools/mutation_campaign.py --build build/mutation-campaign --minimum-score 85 --report artifacts/mutation-report.json
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: always()
