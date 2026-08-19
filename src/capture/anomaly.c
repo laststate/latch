@@ -25,6 +25,8 @@
 #include "laststate/config.h"
 #include "laststate/breadcrumb.h"
 #include "laststate/envelope.h"
+#include <inttypes.h>
+#include <stdio.h>
 #include <string.h>
 
 // Anomaly thresholds (configurable via build flags)
@@ -82,7 +84,7 @@ bool anomaly_check_voltage(uint32_t voltage_uv) {
 
     if (voltage_uv < ANOMALY_VOLTAGE_UV_MIN || voltage_uv > ANOMALY_VOLTAGE_UV_MAX) {
         char msg[64];
-        snprintf(msg, sizeof(msg), "ANOMALY:VOLTAGE:%u", voltage_uv);
+        snprintf(msg, sizeof(msg), "ANOMALY:VOLTAGE:%" PRIu32, voltage_uv);
         ls_breadcrumb(msg);
         return true;
     }

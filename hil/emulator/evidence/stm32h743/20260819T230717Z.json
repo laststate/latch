@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "result": "pass",
+  "execution": "Renode",
+  "chip": "stm32h743",
+  "family": "ListB",
+  "mcu": "Cortex-M7: STM32H743 (DTCM at 536870912)",
+  "arch": "cortex-m",
+  "scenario": "USAGEFAULT",
+  "fault_source": "firmware UDF instruction",
+  "firmware": "C:\\Users\\USER\\LastState\\latch\\build\\emulator\\latch-renode-stm32h743.elf",
+  "firmware_sha256": "acbdce1f5a544972ed2da63e3a01771f4b02df5e7c834b18c5c07561c838396f",
+  "linker": "C:\\Users\\USER\\LastState\\latch\\hil\\emulator\\evidence\\stm32h743\\stm32h743.ld",
+  "linker_sha256": "693039c5df566119a48df4fa84b2af51e9f72a56d66a290d64444f074bf1364c",
+  "marker_address": "0x20001000",
+  "observed_at": "2026-08-19T23:07:17.137119+00:00",
+  "duration_s": 7.5,
+  "renode_log": "C:\\Users\\USER\\AppData\\Local\\Temp\\latch-stm32h743-renode.log",
+  "renode_log_sha256": "ae4934a121ccb2f8c25295fbc9445595c6f51deef3196fdf7ec28c1825825914",
+  "robot_output": "C:\\Users\\USER\\LastState\\latch\\robot_output.xml",
+  "robot_output_sha256": "718f4392a7b06686b651d3d7788d547349818bcb285a8639ac2bc23956e49b3d",
+  "caveat": "This validates Renode's board model, vector table, toolchain path and fault entry for this architecture; it is not physical-board qualification and does not validate silicon errata, reset registers, flash timing, power loss, or a vendor bootloader."
+}

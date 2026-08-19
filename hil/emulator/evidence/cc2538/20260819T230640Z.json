@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "result": "pass",
+  "execution": "Renode",
+  "chip": "cc2538",
+  "family": "ListA",
+  "mcu": "Cortex-M3: TI CC2538 (flash mapped at 0 in model)",
+  "arch": "cortex-m",
+  "scenario": "USAGEFAULT",
+  "fault_source": "firmware UDF instruction",
+  "firmware": "C:\\Users\\USER\\LastState\\latch\\build\\emulator\\latch-renode-cc2538.elf",
+  "firmware_sha256": "d523945431f4af9b1a461637e17bf0575fa549d5c798091ff48663efbf877df6",
+  "linker": "C:\\Users\\USER\\LastState\\latch\\hil\\emulator\\evidence\\cc2538\\cc2538.ld",
+  "linker_sha256": "f33324089ba302a03677cd2aa4df9e05a7d6eda10e95eff5b17af1e08e88ba4b",
+  "marker_address": "0x20001000",
+  "observed_at": "2026-08-19T23:06:40.778475+00:00",
+  "duration_s": 6.99,
+  "renode_log": "C:\\Users\\USER\\AppData\\Local\\Temp\\latch-cc2538-renode.log",
+  "renode_log_sha256": "b4588a7c8fc72d8233b141b9775bf5c65cb9d405cd06f35b5e96c1d57209d560",
+  "robot_output": "C:\\Users\\USER\\LastState\\latch\\robot_output.xml",
+  "robot_output_sha256": "c3d54af97dfdb00b6ddca5d2e778355c49ebf93964c570d8aba8dd65574f5d95",
+  "caveat": "This validates Renode's board model, vector table, toolchain path and fault entry for this architecture; it is not physical-board qualification and does not validate silicon errata, reset registers, flash timing, power loss, or a vendor bootloader."
+}

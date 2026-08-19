@@ -21,6 +21,7 @@
 
 #include "laststate/dna.h"
 #include "laststate/config.h"
+#include <math.h>
 #include <string.h>
 
 // DNA capture configuration

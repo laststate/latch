@@ -1,0 +1,3 @@
+# SPDX-License-Identifier: Apache-2.0
+# Build artifacts from run-qemu.ps1 (flash image, logs) are not evidence.
+evidence/build/

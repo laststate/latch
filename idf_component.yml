@@ -1,4 +1,4 @@
-version: "1.0.0"
+version: "1.0.0-rc.2"
 description: "Heap-free embedded error evidence capture with durable LEP envelopes."
 url: "https://github.com/laststate/latch"
 repository: "https://github.com/laststate/latch.git"
