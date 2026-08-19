@@ -28,13 +28,13 @@
 #include <string.h>
 
 // Anomaly thresholds (configurable via build flags)
-#define ANOMALY_BATTERY_MV_MIN  2800
-#define ANOMALY_BATTERY_MV_MAX  4200
-#define ANOMALY_TEMP_C_MIN      -20
-#define ANOMALY_TEMP_C_MAX      85
-#define ANOMALY_VOLTAGE_UV_MIN  1800000
-#define ANOMALY_VOLTAGE_UV_MAX  3600000
-#define ANOMALY_CURRENT_MA_MAX  500
+#define ANOMALY_BATTERY_MV_MIN 2800
+#define ANOMALY_BATTERY_MV_MAX 4200
+#define ANOMALY_TEMP_C_MIN -20
+#define ANOMALY_TEMP_C_MAX 85
+#define ANOMALY_VOLTAGE_UV_MIN 1800000
+#define ANOMALY_VOLTAGE_UV_MAX 3600000
+#define ANOMALY_CURRENT_MA_MAX 500
 
 static bool anomaly_enabled = false;
 
@@ -49,7 +49,8 @@ void anomaly_init(void) {
 
 // Check battery voltage anomaly
 bool anomaly_check_battery(uint16_t voltage_mv) {
-    if (!anomaly_enabled) return false;
+    if (!anomaly_enabled)
+        return false;
 
     if (voltage_mv < ANOMALY_BATTERY_MV_MIN || voltage_mv > ANOMALY_BATTERY_MV_MAX) {
         char msg[64];
@@ -62,7 +63,8 @@ bool anomaly_check_battery(uint16_t voltage_mv) {
 
 // Check temperature anomaly
 bool anomaly_check_temperature(int16_t temp_c) {
-    if (!anomaly_enabled) return false;
+    if (!anomaly_enabled)
+        return false;
 
     if (temp_c < ANOMALY_TEMP_C_MIN || temp_c > ANOMALY_TEMP_C_MAX) {
         char msg[64];
@@ -75,7 +77,8 @@ bool anomaly_check_temperature(int16_t temp_c) {
 
 // Check voltage anomaly
 bool anomaly_check_voltage(uint32_t voltage_uv) {
-    if (!anomaly_enabled) return false;
+    if (!anomaly_enabled)
+        return false;
 
     if (voltage_uv < ANOMALY_VOLTAGE_UV_MIN || voltage_uv > ANOMALY_VOLTAGE_UV_MAX) {
         char msg[64];
@@ -88,7 +91,8 @@ bool anomaly_check_voltage(uint32_t voltage_uv) {
 
 // Check current anomaly
 bool anomaly_check_current(uint16_t current_ma) {
-    if (!anomaly_enabled) return false;
+    if (!anomaly_enabled)
+        return false;
 
     if (current_ma > ANOMALY_CURRENT_MA_MAX) {
         char msg[64];

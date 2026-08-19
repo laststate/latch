@@ -65,13 +65,8 @@ void Default_Handler(void) {
     }
 }
 
-__attribute__((section(".vectors"), used))
-const uintptr_t vectors[] = {
-    (uintptr_t)&__stack_top__,
-    (uintptr_t)Reset_Handler,
-    (uintptr_t)Default_Handler,
-    (uintptr_t)HardFault_Handler,
-    (uintptr_t)Default_Handler,
-    (uintptr_t)Default_Handler,
+__attribute__((section(".vectors"), used)) const uintptr_t vectors[] = {
+    (uintptr_t)&__stack_top__,     (uintptr_t)Reset_Handler,   (uintptr_t)Default_Handler,
+    (uintptr_t)HardFault_Handler,  (uintptr_t)Default_Handler, (uintptr_t)Default_Handler,
     (uintptr_t)UsageFault_Handler,
 };

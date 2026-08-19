@@ -77,7 +77,8 @@ dna_capture_result_t dna_capture(void) {
 
 // Record a boot time sample
 static void dna_record_boot_time(uint32_t boot_time_ms) {
-    if (dna_config.boot_sample_count <= 0) return;
+    if (dna_config.boot_sample_count <= 0)
+        return;
 
     dna_config.boot_samples[dna_config.sample_index] = boot_time_ms;
     dna_config.sample_index++;
@@ -89,8 +90,8 @@ static void dna_record_boot_time(uint32_t boot_time_ms) {
 }
 
 // Compute mean and standard deviation of boot times
-void dna_compute_boot_stats(const uint32_t *samples, uint16_t count,
-                            float *mean_ms, float *stddev_ms) {
+void dna_compute_boot_stats(const uint32_t *samples, uint16_t count, float *mean_ms,
+                            float *stddev_ms) {
     if (count == 0) {
         *mean_ms = 0;
         *stddev_ms = 0;

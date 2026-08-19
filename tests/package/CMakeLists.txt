@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(latch-package-consumer LANGUAGES C CXX)
 enable_testing()
-find_package(laststate-latch 0.2 REQUIRED CONFIG)
+find_package(laststate-latch 1.0 REQUIRED CONFIG)
 add_executable(c-consumer main.c)
 target_link_libraries(c-consumer PRIVATE laststate::latch)
 add_test(NAME latch-package-c-consumer COMMAND c-consumer)

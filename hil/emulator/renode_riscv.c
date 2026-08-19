@@ -34,10 +34,9 @@ void trap_handler(void) {
 void _start(void) __attribute__((naked, section(".start"), noreturn));
 
 void _start(void) {
-    __asm volatile(
-        "la sp, _stack_top\n"
-        "la t0, trap_handler\n"
-        "csrw mtvec, t0\n"
-        ".word 0xffffffff\n"
-        "1: j 1b");
+    __asm volatile("la sp, _stack_top\n"
+                   "la t0, trap_handler\n"
+                   "csrw mtvec, t0\n"
+                   ".word 0xffffffff\n"
+                   "1: j 1b");
 }
