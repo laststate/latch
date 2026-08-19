@@ -1,6 +1,8 @@
 /build/
 /build-*/
+/build-*.log
 **/target/
+rust/target/
 **/.pio/
 **/sdkconfig.*
 !**/sdkconfig.defaults
@@ -14,3 +16,12 @@ __pycache__/
 /_CPack_Packages/
 /laststate-latch-*.zip
 /laststate-latch-*.tar.gz
+.tools/
+
+# Renode / Robot Framework artifacts
+/logs/
+/snapshots/
+/log.html
+/report.html
+/robot_output.xml
+/profiler-*/

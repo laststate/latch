@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/core/blackbox.c
+//
+// Blackbox / flight recorder implementation. Bounded ring in .noinit
+// memory with drop-on-overflow, freeze/thaw for fault windows,
+// and an anomaly-aware profile switch.
+//
+// Heap-free, bounded, deterministic.
+
 #include "internal.h"
 #include "laststate/blackbox.h"
 #include "laststate/noinit.h"

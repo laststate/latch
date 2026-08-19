@@ -1,0 +1,4 @@
+using sysbus
+mach create "latch-imxrt1064"
+machine LoadPlatformDescription "C:/Program Files/Renode/platforms/boards/mimxrt1064_evk.repl"
+sysbus.cpu PerformanceInMips 64

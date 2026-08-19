@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/core/provisioning.c
+//
+// Provisioning implementation. Issues the initial device identity
+// and key handles; one-shot at manufacturing time and idempotent
+// across re-provisioning attempts.
+//
+// Heap-free, bounded, deterministic.
+
 #include "internal.h"
 #include "laststate/provisioning.h"
 

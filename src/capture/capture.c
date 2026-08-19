@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/capture/capture.c
+//
+// Crash capture implementation. Serializes the fault context, CPU
+// registers, and dump regions into the minimal retained snapshot
+// that survives a CPU reset.
+//
+// Heap-free, bounded, deterministic.
+
 #include "../core/internal.h"
 #include "laststate/noinit.h"
 

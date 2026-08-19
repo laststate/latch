@@ -1,6 +1,6 @@
 # Roadmap
 
-Latch is a pre-1.0 public preview. The portable evidence pipeline is implemented and host-tested; the next phase is to make evaluation easy and turn platform claims into reproducible hardware evidence.
+Latch 1.0.0 is the first **stable** release. The portable evidence pipeline is implemented and host-tested, and one configuration (ESP32) is physically HIL-qualified with 23 additional targets emulator-tested under Renode. Latch is **not** yet an LTS line; the remaining qualification and review gates are tracked in `docs/known-limitations.md`. The next phase is to turn more platform claims into reproducible physical hardware evidence.
 
 This roadmap is directional rather than a promise of dates. Issues and release notes are the source of truth for committed work.
 

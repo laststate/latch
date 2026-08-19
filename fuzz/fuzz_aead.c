@@ -1,3 +1,12 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// fuzz/fuzz_aead.c
+//
+// AEAD fuzz target. ChaCha20-Poly1305 seal/unseal with corpus
+// inputs.
+//
+// Heap-free, bounded, deterministic.
+
 #include <stddef.h>
 #include <stdint.h>
 #include "laststate/security.h"

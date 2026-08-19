@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/transport/network.c
+//
+// Network transport adapter glue. Drives the port-supplied TLS
+// socket through Latch's authenticated spool; owns retry, back-off,
+// and framing.
+//
+// Heap-free, bounded, deterministic.
+
 #include "../core/internal.h"
 #include "laststate/envelope.h"
 #include "laststate/network_transport.h"

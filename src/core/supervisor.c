@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/core/supervisor.c
+//
+// Supervisor / watchdog implementation. Owns the watchdog feed,
+// lockup detection, and the reset reason recorded on the next
+// boot. Designed to be ticked from a low-priority task.
+//
+// Heap-free, bounded, deterministic.
+
 #include "internal.h"
 #include "laststate/supervisor.h"
 #include "laststate/blackbox.h"

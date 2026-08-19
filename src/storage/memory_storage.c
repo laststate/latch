@@ -1,3 +1,12 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/storage/memory_storage.c
+//
+// In-memory storage adapter. The backing store used by host tests
+// to exercise the real storage code paths without touching flash.
+//
+// Heap-free, bounded, deterministic.
+
 #include "../core/internal.h"
 
 static ls_result_t memory_bounds(const ls_memory_storage_t *memory, size_t offset, size_t length) {

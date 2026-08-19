@@ -1,3 +1,12 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// tests/test_latch.c
+//
+// Main Latch integration test. Exercises the full runtime init,
+// capture, storage, and transport path end-to-end.
+//
+// Heap-free, bounded, deterministic.
+
 #include <stdio.h>
 #include <string.h>
 #include "laststate/latch.h"

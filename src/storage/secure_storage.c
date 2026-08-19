@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/storage/secure_storage.c
+//
+// Authenticated secure storage implementation. AEAD-protected,
+// versioned, and power-loss-safe; rejects a record whose nonce
+// or MAC fails validation.
+//
+// Heap-free, bounded, deterministic.
+
 #include "../core/internal.h"
 #include "laststate/secure_storage.h"
 #define SECURE_STORAGE_MAGIC 0x5353534cu

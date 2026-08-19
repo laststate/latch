@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/core/fingerprint.c
+//
+// Fingerprint hashing implementation. Mixes MCU ID, build ID, and
+// DNA samples into a stable identifier used by the Relay to
+// de-duplicate records from the same physical device.
+//
+// Heap-free, bounded, deterministic.
+
 #include "internal.h"
 #include "laststate/fingerprint.h"
 

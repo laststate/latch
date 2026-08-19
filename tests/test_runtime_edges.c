@@ -1,3 +1,12 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// tests/test_runtime_edges.c
+//
+// Runtime edge-case tests. Double init, null config, version
+// mismatch, and subsystem coupling.
+//
+// Heap-free, bounded, deterministic.
+
 #include <stdio.h>
 #include "laststate/latch.h"
 #include "../src/core/internal.h"

@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/envelope/compression.c
+//
+// Compression codec implementation. Heap-free LZ-style encode and
+// decode used to shrink envelopes and dump regions before
+// authenticated storage or transport.
+//
+// Heap-free, bounded, deterministic.
+
 #include "laststate/compression.h"
 ls_result_t ls_varint_u32_encode(uint32_t value, uint8_t *output, size_t capacity,
                                  size_t *written) {

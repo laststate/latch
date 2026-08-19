@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/health.h
+//
+// Device health API. Aggregates environment samples, anomaly events,
+// and boot counters into a single health snapshot the LEP envelope
+// can carry alongside a fault.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_HEALTH_H
 #define LASTSTATE_HEALTH_H
 

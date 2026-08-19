@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/config.h
+//
+// Build-time configuration for Latch. Every knob may be overridden by
+// the build system; defaults target a heap-free, deterministic
+// embedded runtime.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_CONFIG_H
 #define LASTSTATE_CONFIG_H
 

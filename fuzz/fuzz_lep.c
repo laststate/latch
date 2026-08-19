@@ -1,3 +1,11 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// fuzz/fuzz_lep.c
+//
+// LEP fuzz target. Feeds corpus data into the envelope parser.
+//
+// Heap-free, bounded, deterministic.
+
 #include <stddef.h>
 #include <stdint.h>
 #include "laststate/latch.h"

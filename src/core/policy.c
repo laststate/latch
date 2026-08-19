@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/core/policy.c
+//
+// Runtime policy implementation. Centralizes retention, sampling,
+// and transport knobs so a deployment can change behavior at
+// boot without recompiling the runtime.
+//
+// Heap-free, bounded, deterministic.
+
 #include "internal.h"
 static ls_policy_record_t *find_policy(uint32_t hash, bool create) {
     for (size_t i = 0; i < ls_runtime.policy_count; i++)

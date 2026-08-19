@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/fault_injection.h
+//
+// Fault-injection hooks used by host tests to exercise the crash
+// capture path deterministically without a real hardware fault.
+// Compiled out in release unless LS_ENABLE_FAULT_INJECTION is on.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_FAULT_INJECTION_H
 #define LASTSTATE_FAULT_INJECTION_H
 

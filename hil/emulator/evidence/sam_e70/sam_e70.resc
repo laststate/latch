@@ -1,0 +1,4 @@
+using sysbus
+mach create "latch-sam_e70"
+machine LoadPlatformDescription "C:/Program Files/Renode/platforms/cpus/sam_e70.repl"
+sysbus.cpu PerformanceInMips 64

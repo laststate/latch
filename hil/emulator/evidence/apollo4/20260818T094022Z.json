@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "result": "pass",
+  "execution": "Renode",
+  "chip": "apollo4",
+  "family": "ListA",
+  "mcu": "Cortex-M4F: Ambiq Apollo4 (MRAM at 0, shared SRAM at 268828672)",
+  "arch": "cortex-m",
+  "scenario": "USAGEFAULT",
+  "fault_source": "firmware UDF instruction",
+  "firmware": "C:\\Users\\USER\\LastState\\latch\\build\\emulator\\latch-renode-apollo4.elf",
+  "firmware_sha256": "88a268bfc2234c6c318f9b669b63718b370234d96e176ad8e712bd6ef7b863a3",
+  "linker": "C:\\Users\\USER\\LastState\\latch\\hil\\emulator\\evidence\\apollo4\\apollo4.ld",
+  "linker_sha256": "bb8820c57cb00f40e0dacb414e6d680ae7339acdbe94f17965a952d49514f85a",
+  "marker_address": "0x10061000",
+  "observed_at": "2026-08-18T09:40:22.700784+00:00",
+  "duration_s": 5.4,
+  "renode_log": "C:\\Users\\USER\\AppData\\Local\\Temp\\latch-apollo4-renode.log",
+  "renode_log_sha256": "84e4f5db140b5de9b1e8dacad9fddd1bd55d7cbee760bacdc50aee5a6418989b",
+  "robot_output": "C:\\Users\\USER\\LastState\\latch\\robot_output.xml",
+  "robot_output_sha256": "843d74b3956a0911d381b445a4a4fb8884e722241fe40313db24d5afd4020d82",
+  "caveat": "This validates Renode's board model, vector table, toolchain path and fault entry for this architecture; it is not physical-board qualification and does not validate silicon errata, reset registers, flash timing, power loss, or a vendor bootloader."
+}

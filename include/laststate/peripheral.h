@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/peripheral.h
+//
+// Peripheral fault hooks. Lets a port translate peripheral errors
+// (bus, sensor, radio) into Latch events without Latch having to
+// know any vendor-specific driver.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_PERIPHERAL_H
 #define LASTSTATE_PERIPHERAL_H
 

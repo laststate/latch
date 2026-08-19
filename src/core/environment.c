@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/core/environment.c
+//
+// Environment sampling implementation. Stores the most recent
+// battery, temperature, and voltage readings in a small static
+// struct that health and anomaly read without locking.
+//
+// Heap-free, bounded, deterministic.
+
 #include "internal.h"
 #include "laststate/environment.h"
 

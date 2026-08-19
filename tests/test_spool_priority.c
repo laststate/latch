@@ -1,3 +1,12 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// tests/test_spool_priority.c
+//
+// Spool priority tests. Errors are retained; healthy entries drop
+// first when capacity is exceeded.
+//
+// Heap-free, bounded, deterministic.
+
 #include <stdio.h>
 #include <string.h>
 

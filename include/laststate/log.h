@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/log.h
+//
+// Diagnostic log API. Append-only level/message records that are
+// bundled into the next envelope when a fault occurs; never used
+// for control flow.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_LOG_H
 #define LASTSTATE_LOG_H
 

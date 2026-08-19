@@ -1,0 +1,4 @@
+using sysbus
+mach create "latch-cc2538"
+machine LoadPlatformDescription "C:/Program Files/Renode/platforms/cpus/cc2538.repl"
+sysbus.cpu PerformanceInMips 64

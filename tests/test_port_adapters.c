@@ -1,3 +1,12 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// tests/test_port_adapters.c
+//
+// Port adapter tests. Validates port-supplied hooks conform to
+// contracts.
+//
+// Heap-free, bounded, deterministic.
+
 #include <stdio.h>
 
 #include "laststate/latch.h"

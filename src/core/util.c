@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/core/util.c
+//
+// Small portable utilities shared across src/. CRC32, bounded
+// string helpers, and integer-safe math — all heap-free and
+// safe to call from fault context.
+//
+// Heap-free, bounded, deterministic.
+
 #include "internal.h"
 
 /* MSVC emits this marker for any translation unit exposing a float API, even

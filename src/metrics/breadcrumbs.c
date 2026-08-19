@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/metrics/breadcrumbs.c
+//
+// Breadcrumb ring implementation. Bounded, lock-free single-producer
+// ring with drop-oldest, drop-newest, and keep-errors policies;
+// appended to the next envelope on demand.
+//
+// Heap-free, bounded, deterministic.
+
 #include "../core/internal.h"
 
 void ls_breadcrumb(const char *message) {

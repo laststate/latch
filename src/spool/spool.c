@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/spool/spool.c
+//
+// Bounded LEP spool implementation. Holds authenticated envelopes
+// awaiting transport, drops healthy entries first under pressure,
+// and survives a partial commit without exposing plaintext.
+//
+// Heap-free, bounded, deterministic.
+
 #include "../core/internal.h"
 
 #include "laststate/envelope.h"

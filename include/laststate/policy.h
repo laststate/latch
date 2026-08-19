@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/policy.h
+//
+// Runtime policy API. Centralizes retention, sampling, and
+// transport behavior knobs that a deployment can adjust without
+// recompiling the runtime.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_POLICY_H
 #define LASTSTATE_POLICY_H
 #include <stdbool.h>

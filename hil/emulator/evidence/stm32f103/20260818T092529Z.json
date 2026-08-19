@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "result": "fail",
+  "execution": "Renode",
+  "chip": "stm32f103",
+  "family": "ListA",
+  "mcu": "Cortex-M3: STM32F103",
+  "arch": "cortex-m",
+  "scenario": "USAGEFAULT",
+  "fault_source": "firmware UDF instruction",
+  "firmware": "C:\\Users\\USER\\LastState\\latch\\build\\emulator\\latch-renode-stm32f103.elf",
+  "firmware_sha256": "dd1c718a351ed80f16893441f69482f00ac368c9ba2c9e4b5e7f046f78a0a715",
+  "linker": "C:\\Users\\USER\\LastState\\latch\\hil\\emulator\\evidence\\stm32f103\\stm32f103.ld",
+  "linker_sha256": "0a7b6fd82072d57b72664a8309d52550d6237c1d214221a39fa1212ec8230ee4",
+  "marker_address": "0x20001000",
+  "observed_at": "2026-08-18T09:25:29.796163+00:00",
+  "duration_s": 12.05,
+  "renode_log": "C:\\Users\\USER\\AppData\\Local\\Temp\\latch-stm32f103-renode.log",
+  "renode_log_sha256": "766065f54abcd2dfe7238ba3b1654c533298d3e2d6fcef50cd8155b9df66ed38",
+  "robot_output": "C:\\Users\\USER\\LastState\\latch\\robot_output.xml",
+  "robot_output_sha256": "eefdb64de04a9fa80807ff054d46caf641533bfcded93c13cab335bbda6038a6",
+  "caveat": "This validates Renode's board model, vector table, toolchain path and fault entry for this architecture; it is not physical-board qualification and does not validate silicon errata, reset registers, flash timing, power loss, or a vendor bootloader."
+}

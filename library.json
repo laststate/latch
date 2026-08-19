@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/platformio/platformio-core/develop/platformio/assets/schema/library.json",
   "name": "LastState Latch",
-  "version": "0.5.0",
+  "version": "1.0.0",
   "description": "Heap-free embedded crash evidence capture that survives reboot and queues durable LEP events for delivery.",
   "keywords": [
     "crash-reporting",

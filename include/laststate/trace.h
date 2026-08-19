@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/trace.h
+//
+// Lightweight execution trace API. A bounded event ring used to
+// reconstruct the path leading to a fault without the cost of a
+// full debugger trace.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_TRACE_H
 #define LASTSTATE_TRACE_H
 

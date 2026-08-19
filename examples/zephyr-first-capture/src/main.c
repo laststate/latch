@@ -1,3 +1,12 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// examples/zephyr-first-capture/src/main.c
+//
+// Zephyr first-capture example. Minimal app demonstrating
+// ls_init(), fault trigger, and envelope retrieval.
+//
+// Heap-free, bounded, deterministic.
+
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
 #if defined(CONFIG_ARCH_POSIX)

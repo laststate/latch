@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "result": "pass",
+  "execution": "Renode",
+  "chip": "ra6m5",
+  "family": "ListB",
+  "mcu": "Cortex-M33: Renesas RA6M5",
+  "arch": "cortex-m",
+  "scenario": "USAGEFAULT",
+  "fault_source": "firmware UDF instruction",
+  "firmware": "C:\\Users\\USER\\LastState\\latch\\build\\emulator\\latch-renode-ra6m5.elf",
+  "firmware_sha256": "0d82c96a731fefe493ffafebb8c9f2c8a503a4e9212be2b4ea8aa852accb6a1a",
+  "linker": "C:\\Users\\USER\\LastState\\latch\\hil\\emulator\\evidence\\ra6m5\\ra6m5.ld",
+  "linker_sha256": "c51e7f388d258364a30484fcdbae85783d884cb05cecbd30d379318ae9e0e9d6",
+  "marker_address": "0x20001000",
+  "observed_at": "2026-08-18T09:41:53.517760+00:00",
+  "duration_s": 5.32,
+  "renode_log": "C:\\Users\\USER\\AppData\\Local\\Temp\\latch-ra6m5-renode.log",
+  "renode_log_sha256": "99d7f646fa4c76e8fff41eaaf8ef789ebfb66db934e43cd0ee423306565823b6",
+  "robot_output": "C:\\Users\\USER\\LastState\\latch\\robot_output.xml",
+  "robot_output_sha256": "5eabda2849980de21f088e281ccae9dae49fb9519ca6fe2f52240acc5694a477",
+  "caveat": "This validates Renode's board model, vector table, toolchain path and fault entry for this architecture; it is not physical-board qualification and does not validate silicon errata, reset registers, flash timing, power loss, or a vendor bootloader."
+}

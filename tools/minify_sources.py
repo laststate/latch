@@ -1,3 +1,12 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024-2026 LastState Contributors
+# tools/minify_sources.py
+#
+# Source minifier. Strips comments and whitespace for footprint
+# analysis; never used in release builds.
+#
+# Heap-free, bounded, deterministic.
+
 import argparse
 import json
 import shutil

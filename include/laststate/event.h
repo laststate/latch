@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/event.h
+//
+// Core Latch types — result codes, priorities, severities, event
+// kinds, architecture IDs, fault kinds, reset reasons, and the
+// register/dump layouts that travel inside LEP frames.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_EVENT_H
 #define LASTSTATE_EVENT_H
 

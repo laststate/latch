@@ -1,3 +1,12 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// fuzz/fuzz_stream.c
+//
+// Stream transport fuzz target. Exercises framing and AEAD.
+// Corpus driven.
+//
+// Heap-free, bounded, deterministic.
+
 #include <stddef.h>
 #include <stdint.h>
 #include "laststate/latch.h"

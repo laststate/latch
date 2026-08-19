@@ -1,3 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024-2026 LastState Contributors
+# tools/run_clang_tidy.py
+#
+# clang-tidy runner. Config-driven static analysis for CI.
+#
+# Heap-free, bounded, deterministic.
+
 #!/usr/bin/env python3
 """Run clang-tidy over every production translation unit in compile_commands."""
 from __future__ import annotations

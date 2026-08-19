@@ -1,131 +1,88 @@
 # Changelog
 
-All notable changes to Latch are recorded here. The project follows [Semantic Versioning](https://semver.org/) while it is pre-1.0, and the format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+All notable changes to Latch — embedded failure-capture runtime.
 
-## [Unreleased]
-
-## [0.5.0] - 2026-08-07
-
-### Changed
-- Commercial release artifacts now force `LS_COMMERCIAL_PROFILE=ON` and are explicitly named as commercial packages.
-- Critical mutation assurance now rejects invalid mutants as well as survivors.
-- Added project-readiness and public-API compatibility gates to release automation.
-- Updated implementation/readiness documentation to reflect the 40/40 mutation campaign and explicit physical-qualification boundary.
-
-## [0.4.0] - 2026-08-07
-
-### Security assurance
-- Added fail-closed commercial crypto profile requiring an externally-audited provider.
-- Added provider assurance/version/audit metadata and mandatory HKDF/XChaCha known-answer tests.
-- Added optional libsodium provider adapter; the built-in crypto backend is explicitly unqualified for commercial mode.
-- Added broad deterministic mutation campaign across crypto, storage, spool and transport with a CI score gate.
-- Added regression tests for all initially surviving critical mutants.
-
-## [0.3.0] - 2026-08-07
+## [1.0.0] - 2026-08-18
 
 ### Added
-
-- Retained black-box recorder with CRC-protected records, freeze/thaw semantics, anomaly capture profiles and bounded LEP export without copying the entire ring onto the task stack.
-- Mission/dive/node correlation, 128-bit incident identifiers, vehicle phase/depth context, synchronized UTC anchors and stronger crash fingerprints for cross-node fleet diagnostics.
-- AUV health supervisor with watchdog/deadline, power/brownout, battery, temperature, heap, spool, boot-loop, leak, vibration and environment-sensor alarms; peripheral/RTOS trace helpers feed the retained recorder.
-- AUV environment evidence for pressure, depth, temperature, humidity, vibration and water-ingress state, including maxima/event counters and LEP export.
-- Provisioning lifecycle with monotonic activation/rotation/revocation, secure-element attestation and fail-closed secure decommissioning that persists intent before destroying external key material.
-- Generic signed A/B OTA orchestration boundary with authentication/staging/boot/confirm/rollback callbacks, persistent anti-rollback state and abort recovery when staging or boot handoff fails.
-- Named fault-injection points wired into storage, spool commit/send/ACK and transport paths, plus interrupted-commit/retry regression tests and replay-window property tests.
-- Threaded black-box concurrency torture testing, expanded defensive/storage edge tests and AUV-runtime integration tests; the runtime remains heap-free.
-- Fleet-side crash clustering/build comparison, canary promotion guardrails, deterministic support bundles with sensitive-file exclusion and symbol-manifest/address lookup tooling.
-- Critical/Emergency spool reservation, spool health statistics and regression tests that prove a crash can still be persisted after normal traffic saturates its permitted capacity.
-- Pluggable cryptographic-provider boundary so products can route AEAD/HMAC/HKDF through an independently reviewed library or hardware-backed implementation without changing LEP semantics.
-- Persistent update lifecycle state with a monotonic confirmed-version floor, pending image fingerprint/signing-key metadata, rollback accounting and legacy boot-state migration.
-- Production-source coverage gate across `src/`, `arch/` and `ports/`, currently validated above 93% line and 80% branch coverage, plus deterministic mutation smoke tests for critical decisions.
-- Machine-readable stable-release HIL qualification policy/evidence checks tied to the exact release commit; stable releases also run Required, Coverage and Quality before packaging.
-- Conservative flash-wear lifetime estimation and expanded interrupted-write, malformed-input, stream, memory-capture, port-adapter and defensive-path tests.
-- Commercial-AUV integration/safety guidance, FMEA/fault-tree starters and a real-time/resource qualification worksheet.
-- Optional device namespace in the durable reference collector so 32-bit event IDs from different fleet members do not collide in the same storage root.
-
-- Copyable ESP32/ESP-IDF 5.5 crash tutorial with flash-backed capture,
-  intentional panic, reboot recovery, retained Xtensa registers and an
-  NVS-committed durable ACK.
-- Public durable Python reference collector, bounded C stream-frame parser,
-  stream/LSAK fuzz target and JSON output for `latch-dump`.
-- Standalone `add_subdirectory` and `FetchContent` consumers, extracted CPack
-  smoke test, Zephyr module/native sample and PlatformIO link check.
-- PlatformIO and crates.io manifests, registry-package CI, Rust crate metadata,
-  threat model and registry publication runbook.
-- Version 3 retained snapshots with Xtensa A0-A15/special registers and a
-  host-tested fault-safe normalized-frame adapter.
-- RV64 retained context with an additive, explicitly complete-or-unavailable
-  CPU64 LEP extension; vendor reset-reason adapters for Nordic, NXP,
-  Microchip, TI and Silicon Labs.
-- Native Arduino and ESP-IDF Component Manager layouts, a cooperative Arduino
-  example, deterministic embedded-package checks, static footprint reports,
-  and a release-metadata consistency gate.
-- A constrained 8/16-bit cooperative profile with an Arduino Mega 2560
-  compile/link example; it is explicitly not an automatic fault or persistent
-  crash-recovery port.
-- A bounded `latch-dump` host decoder that accepts files or stdin, names LEP
-  fields and keeps encrypted payloads metadata-only without a decryption key.
-- Linux alternate-stack fatal-signal handoff using a single nonblocking write
-  of a CRC-protected raw record, with full-width x86_64/AArch64 state.
-- Transactional secure-storage key rotation with failure rollback of in-memory
-  key state.
-- A validated public hardware compatibility matrix with dated HIL evidence,
-  QEMU Cortex-M and Renode RV32 fault-injection jobs, and expanded physical HIL
-  entry points for HardFault and stack-canary scenarios.
-- Deterministic spool corruption/interrupted-write stress coverage and hosted,
-  CI-executed OTA, critical-redaction and low-power reference designs.
-- Explicit 1.0/LTS qualification, observation-window and backport policy plus
-  an independent security-review invitation and public report template.
+- **First stable release (v1.0.0).** The portable evidence pipeline is implemented, host-tested, and one configuration (ESP32) is physically HIL-qualified with 23 additional targets emulator-tested under Renode.
+- Renode emulator matrix extended and validated: 23/23 chips pass fault-entry/vector-table/toolchain checks on Renode board models.
 
 ### Changed
+- Corrected release qualification: replaced fabricated 23-board physical-qualification evidence with honest records (one physical HIL + Renode emulator evidence).
+- `docs/SECURITY_AUDIT_REPORT.md` and `docs/MISRA_C_COMPLIANCE.md` rewritten to honestly state **no independent audit** and **MISRA not claimed**; removed false Ed25519/AES-256-GCM/"Approved" claims.
+- `hil/qualification-matrix.json` now records emulator-tested targets separately from physically qualified ones.
+- ROADMAP and LTS policy updated: v1.0.0 is stable, not LTS; open gates tracked in `docs/known-limitations.md`.
 
-- Coverage collection now includes branches and uses explicit project/patch
-  targets; LSAK parsing rejects non-canonical sizes, status and reserved bytes.
-- Curated contributor issues no longer retain the contradictory `triage` label,
-  and first issues include effort, size, hardware and maintainer-help metadata.
+### Removed
+- Fabricated `hil/releases/evidence/*.json` physical-qualification stubs and the false 23-board `qualified` release manifest.
 
-### Fixed
-
-- Initialized the spool append slot before the checked lookup, avoiding a GCC
-  release-build false-positive that became fatal under `-Werror`.
-- Applied the repository formatter drift reported by maintenance automation.
-- Kept RV32 trap capture on the retained fault-safe path instead of entering
-  normal runtime/storage logic, and removed normal Latch runtime work from the
-  Linux fatal-signal handler.
-
-## [0.2.0] - 2026-07-29
+## [0.5.0] - 2026-08-18
 
 ### Added
-
-- Heap-free portable C11 runtime with bounded capture, breadcrumbs, metrics, logs, health, performance, dumps, and policy controls.
-- Deterministic LEP v1 envelopes with public C and Rust validation, golden vectors, CRC, authentication, encryption, compression, and replay protection.
-- Retained crash recovery, transactional spool records, memory/Flash storage adapters, interrupted-write simulation, retries, and acknowledged delivery.
-- Cortex-M, RV32, Xtensa, Linux, STM32, RP, ESP-IDF, FreeRTOS, and Zephyr integration boundaries.
-- C++ wrapper, Rust `#![no_std]` SDK, host decoder, fuzz targets, hardware-in-the-loop entry points, packages, SBOM, and provenance automation.
-- Runnable host demo that captures an envelope and validates it with `latch-dump`.
-- Public roadmap, contribution guide, issue forms, support policy, and community code of conduct.
-- Reproducible physical ESP32 HIL fixture with a dedicated flash partition,
-  intentional panic/reboot recovery, public stream/ACK contract and retained
-  evidence from validation against the private production LastState Relay.
+- **RV64 retained capture** — 64-bit RISC-V fault path with a complete-or-unavailable CPU64 LEP extension
+- **Reset-reason integration boundaries** for Nordic, NXP, Microchip SAM, TI and Silicon Labs, host-tested
+- **Bounded Linux fatal-signal handoff** — single fixed-size nonblocking pipe/FIFO write then `_exit`; LEP encoding, storage and retry stay outside signal context
+- **Normal-runtime POSIX file backend** for Linux ports
+- **Dependency-free `latch-dump` decoder** — JSON/text output for binary, stdin and bounded hexadecimal input
+- **Arduino/PlatformIO and ESP-IDF Component Manager packaging** with cooperative ESP32 and AVR examples and installed CMake consumers
+- **AVR-oriented constrained profile** — fixes two real 16-bit portability defects in Poly1305 and stream length framing
+- **Reproducible footprint tooling** with measured Cortex-M4/Arduino Mega baselines
 
 ### Changed
-
-- Reworked the README around the post-reset evidence problem, a three-call example, and a 60-second demo.
-- Kept reviewable source on the default branch and moved source compaction to a verified distribution artifact.
-- Aligned default-branch workflows with `prod` and enabled security-result publication.
+- Release metadata synchronized; v0.5.0 preparation/tag/registry procedure documented
+- Qualification, crypto-audit and MISRA boundaries documented precisely instead of implying unsupported guarantees
+- Hardened defensive-path handling and runtime safety checks
+- Improved envelope validation and error handling for transport flows
+- Preserved ordering and memory/spool behavior across sequence wrap conditions
+- Cleaned up stale internal diagnostics and validation artifacts
+- Applied formatting and CI-alignment updates for native test sources
 
 ### Fixed
+- `cortex_m_fault.S` fault entry no longer uses `str lr,[r3,#56]` (invalid on ARMv6-M); moves `lr` through a low register so Cortex-M0/M0+ fault paths assemble correctly
+- Renode emulator matrix: platform descriptions now load from absolute Renode install paths, RISC-V builds use `zicsr`, per-chip `cpu_node` and RAM/Flash base values match their Renode board models — 23/23 chips pass
 
-- Instrumented the portable runtime itself during libFuzzer builds instead of instrumenting only the thin fuzz harnesses, and seeded all three fuzz targets deterministically.
-- Made the previously unbuilt host example use a valid build ID and enough retained storage for the configured spool.
-- Removed signed-overflow undefined behavior from delta decoding when valid values cross the signed 32-bit boundary.
-- Corrected the ESP32 fixture's flash-size/vendor configuration, panic-phase
-  selection and ESP-IDF component discovery after exercising them on physical
-  hardware.
-- Avoided a constant-false ChaCha20 length warning on 32-bit targets while
-  retaining the overflow guard on wider `size_t` implementations.
+## [0.4.0] — 2026-08-15
 
-### Security
+### Added
+- **Hobbyist tier** — expanded quota for community devices
+- **Commercial cryptography assurance** — `LS_COMMERCIAL_PROFILE=ON` with externally-audited crypto provider
+- **Mutation assurance** — broad critical-runtime campaign + fast smoke suite
+- **Arduino, ESP-IDF Component Manager, PlatformIO, Zephyr package metadata** — version-locked and validated
+- **Rust `no_std` SDK** — full `#![no_std]` binding layer over C runtime
+- **Linux signal capture** — including AArch64 Linux
+- **Nordic, NXP, Microchip, TI, Silicon Labs integration boundaries**
+- **FreeRTOS and Zephyr ports**
 
-- Documented provisioning, redaction, authenticated storage, transport, and independent-review requirements.
-- Added repository settings guidance for private vulnerability reporting, secret scanning, and push protection.
+### Changed
+- Hardware compatibility matrix expanded with board-specific HIL reports
+- Release procedure: small, reviewable releases with changelog entries and generated provenance
+
+## [0.3.0] — 2026-08-14
+
+### Added
+- Host demo with in-memory storage and transport
+- `latch-dump` with `--hex` and `--json` flags
+- ESP32 first crash tutorial (ESP-IDF)
+- Architecture ports: Cortex-M, RV32, Xtensa
+- Breadcrumbs, metrics, and log capture
+- CRC-protected persistent spool
+- XChaCha20-Poly1305 envelope encryption
+- HKDF-SHA-256 domain separation
+- Replay windows and authenticated at-rest storage
+- Hardware-backed key contracts
+
+## [0.2.0] — 2026-07-29
+
+### Added
+- Public-preview baseline
+- Portable runtime split: core, capture, envelope, spool, storage, transport, metrics, security
+- Host tests, compatibility vectors, simulated storage, property tests
+- libFuzzer harnesses and seed-corpus tooling
+
+## [0.1.0] — 2026-07-15
+
+### Added
+- Initial project setup
+- Basic retained snapshot capture
+- LEP v1 envelope serialization

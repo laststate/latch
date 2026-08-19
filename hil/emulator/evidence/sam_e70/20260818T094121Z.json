@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "result": "pass",
+  "execution": "Renode",
+  "chip": "sam_e70",
+  "family": "ListB",
+  "mcu": "Cortex-M7: Microchip SAM E70",
+  "arch": "cortex-m",
+  "scenario": "USAGEFAULT",
+  "fault_source": "firmware UDF instruction",
+  "firmware": "C:\\Users\\USER\\LastState\\latch\\build\\emulator\\latch-renode-sam_e70.elf",
+  "firmware_sha256": "9e4bd4f6dfa2ee395e31c0d1abb6f754bb88225807eea573b5ed3fd03125844d",
+  "linker": "C:\\Users\\USER\\LastState\\latch\\hil\\emulator\\evidence\\sam_e70\\sam_e70.ld",
+  "linker_sha256": "2486115a54b3ccaf350ecc4db76949b963ff5e1ae72d3694e97f5a8dc52a884c",
+  "marker_address": "0x20001000",
+  "observed_at": "2026-08-18T09:41:21.543518+00:00",
+  "duration_s": 5.52,
+  "renode_log": "C:\\Users\\USER\\AppData\\Local\\Temp\\latch-sam_e70-renode.log",
+  "renode_log_sha256": "2483d991b0778ba76eae3ec91b475d561255edfbc6ee74f296cf09356d2a4cef",
+  "robot_output": "C:\\Users\\USER\\LastState\\latch\\robot_output.xml",
+  "robot_output_sha256": "981e91517c9f01e0f20374c3b238b28b3525155ce60a51342a5910216d3d7083",
+  "caveat": "This validates Renode's board model, vector table, toolchain path and fault entry for this architecture; it is not physical-board qualification and does not validate silicon errata, reset registers, flash timing, power loss, or a vendor bootloader."
+}

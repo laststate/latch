@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "result": "pass",
+  "execution": "Renode",
+  "chip": "opentitan",
+  "family": "ListA",
+  "mcu": "RV32IMAC: OpenTitan Earl Grey (Ibex, ROM at 32768, main RAM at 268435456)",
+  "arch": "riscv32",
+  "scenario": "USAGEFAULT",
+  "fault_source": "illegal instruction trap",
+  "firmware": "C:\\Users\\USER\\LastState\\latch\\build\\emulator\\latch-renode-opentitan.elf",
+  "firmware_sha256": "e083ec47ba2032ece239ef89601b92fa5259ec0693c47f7929b2606400d0367a",
+  "linker": "C:\\Users\\USER\\LastState\\latch\\hil\\emulator\\evidence\\opentitan\\opentitan.ld",
+  "linker_sha256": "bee7a3f647a80466050afdbbf146d3d7b78bb285573f1ae7477fd856d88d3eab",
+  "marker_address": "0x10001000",
+  "observed_at": "2026-08-18T09:38:20.911797+00:00",
+  "duration_s": 5.95,
+  "renode_log": "C:\\Users\\USER\\AppData\\Local\\Temp\\latch-opentitan-renode.log",
+  "renode_log_sha256": "07a527877b193b90c0c1dc7adce9efa281bd2b42a0e5c9563343b094417826ac",
+  "robot_output": "C:\\Users\\USER\\LastState\\latch\\robot_output.xml",
+  "robot_output_sha256": "40e06378babca617b212856c19eb5e695bbbabde3ef1c8a3b0284ea34f29f6d2",
+  "caveat": "This validates Renode's board model, vector table, toolchain path and fault entry for this architecture; it is not physical-board qualification and does not validate silicon errata, reset registers, flash timing, power loss, or a vendor bootloader."
+}

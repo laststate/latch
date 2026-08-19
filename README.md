@@ -81,7 +81,7 @@ ASCII whitespace is accepted between hexadecimal digits. Decoded input is limite
 build/host-debug/latch-dump --json --hex tests/vectors/lep-v1-basic.hex
 ```
 
-The documented top-level keys and TLV order are stable for the 0.x line;
+The documented top-level keys and TLV order are stable from the 1.0 line;
 consumers must ignore additional JSON keys. `value_hex` is always lowercase,
 two characters per byte, and malformed input emits no partial JSON document.
 For pipes and scripted collection, use `-` as the input path:
@@ -143,7 +143,7 @@ include(FetchContent)
 FetchContent_Declare(
   latch
   GIT_REPOSITORY https://github.com/laststate/latch.git
-  GIT_TAG v0.5.0
+  GIT_TAG v1.0.0
 )
 FetchContent_MakeAvailable(latch)
 target_link_libraries(firmware PRIVATE laststate::latch)

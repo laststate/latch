@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "result": "pass",
+  "execution": "Renode",
+  "chip": "efr32mg12",
+  "family": "ListA",
+  "mcu": "Cortex-M4F: Silicon Labs EFR32MG12",
+  "arch": "cortex-m",
+  "scenario": "USAGEFAULT",
+  "fault_source": "firmware UDF instruction",
+  "firmware": "C:\\Users\\USER\\LastState\\latch\\build\\emulator\\latch-renode-efr32mg12.elf",
+  "firmware_sha256": "3f5435df398afc3a713e5a5805e3e4da1fe39f169c76b5e1bdc393d78446fe72",
+  "linker": "C:\\Users\\USER\\LastState\\latch\\hil\\emulator\\evidence\\efr32mg12\\efr32mg12.ld",
+  "linker_sha256": "2486115a54b3ccaf350ecc4db76949b963ff5e1ae72d3694e97f5a8dc52a884c",
+  "marker_address": "0x20001000",
+  "observed_at": "2026-08-18T09:31:33.857591+00:00",
+  "duration_s": 5.32,
+  "renode_log": "C:\\Users\\USER\\AppData\\Local\\Temp\\latch-efr32mg12-renode.log",
+  "renode_log_sha256": "dabbdba02f9844b681d6efc6baa2939e45888c93a3382e9aa2162a98b4a215bc",
+  "robot_output": "C:\\Users\\USER\\LastState\\latch\\robot_output.xml",
+  "robot_output_sha256": "08d8b152d272bb264270f59fbf29094a42c59bbede363b303f4411b629178199",
+  "caveat": "This validates Renode's board model, vector table, toolchain path and fault entry for this architecture; it is not physical-board qualification and does not validate silicon errata, reset registers, flash timing, power loss, or a vendor bootloader."
+}

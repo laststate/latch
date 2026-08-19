@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/security/secure_element.c
+//
+// Secure-element adapter glue. Forwards every key, AEAD, and
+// random call to the port when a hardware element is present;
+// returns ENOTSUP otherwise.
+//
+// Heap-free, bounded, deterministic.
+
 #include "laststate/secure_element.h"
 ls_result_t ls_secure_element_validate(const ls_secure_element_t *element) {
     return element && element->random && element->sign_sha256 && element->read_certificate

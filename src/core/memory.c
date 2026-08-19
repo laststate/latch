@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/core/memory.c
+//
+// Memory-region helpers. Owns the .noinit bookkeeping and exposes
+// region metadata to the capture and storage layers without
+// leaking the layout to the public surface.
+//
+// Heap-free, bounded, deterministic.
+
 #include "internal.h"
 
 ls_result_t ls_dump_region_register(const char *name, const void *address, size_t length,

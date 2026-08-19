@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/core/ota.c
+//
+// OTA implementation. Tracks the pending release, confirms the
+// new image on successful boot, and triggers rollback when boot
+// loop detection fires.
+//
+// Heap-free, bounded, deterministic.
+
 #include "internal.h"
 #include "laststate/ota.h"
 #include "laststate/blackbox.h"

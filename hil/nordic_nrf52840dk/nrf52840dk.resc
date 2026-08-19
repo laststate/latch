@@ -1,0 +1,4 @@
+using sysbus
+mach create "latch-nrf52840dk"
+machine LoadPlatformDescription @platforms/boards/nrf52840dk_nrf52840.repl
+cpu PerformanceInMips 64

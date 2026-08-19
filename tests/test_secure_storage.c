@@ -1,3 +1,12 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// tests/test_secure_storage.c
+//
+// Authenticated storage tests. AEAD seal/unseal, nonce replay
+// protection, and power-loss atomicity.
+//
+// Heap-free, bounded, deterministic.
+
 #include <stdio.h>
 #include <string.h>
 #include "laststate/latch.h"

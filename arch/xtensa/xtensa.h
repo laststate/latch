@@ -1,3 +1,12 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// arch/xtensa/xtensa.h
+//
+// Xtensa architecture port header. Register definitions and
+// fault frame layout for Xtensa cores.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_XTENSA_H
 #define LASTSTATE_XTENSA_H
 #include <stdint.h>

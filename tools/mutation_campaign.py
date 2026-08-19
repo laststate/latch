@@ -1,3 +1,12 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024-2026 LastState Contributors
+# tools/mutation_campaign.py
+#
+# Mutation testing campaign. Full mutant generation and kill
+# rate reporting.
+#
+# Heap-free, bounded, deterministic.
+
 #!/usr/bin/env python3
 """Deterministic broad mutation campaign for Latch critical runtime paths.
 

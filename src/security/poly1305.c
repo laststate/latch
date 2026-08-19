@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/security/poly1305.c
+//
+// Poly1305 MAC implementation. Constant-time and allocation-free;
+// reused by AEAD and by the secure-element adapter when no
+// hardware primitive is available.
+//
+// Heap-free, bounded, deterministic.
+
 #include "../core/internal.h"
 #include "crypto_internal.h"
 #include "laststate/security.h"

@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/envelope.h
+//
+// LEP envelope API. Wraps a captured fault with identity, build,
+// severity, and flags; this is the unit that gets authenticated,
+// stored, and shipped to the Relay.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_ENVELOPE_H
 #define LASTSTATE_ENVELOPE_H
 

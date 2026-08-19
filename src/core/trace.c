@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/core/trace.c
+//
+// Execution trace implementation. Bounded event ring used to
+// reconstruct the path leading to a fault without the cost of a
+// full debugger trace.
+//
+// Heap-free, bounded, deterministic.
+
 #include "internal.h"
 #include "laststate/trace.h"
 #include "laststate/blackbox.h"

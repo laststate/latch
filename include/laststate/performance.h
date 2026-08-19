@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/performance.h
+//
+// Performance counters API. Cycle and timing measurements that feed
+// health and anomaly; safe to call from fault context but only
+// with portable back-ends.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_PERFORMANCE_H
 #define LASTSTATE_PERFORMANCE_H
 

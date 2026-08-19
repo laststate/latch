@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// arch/cortex-m/cortex_m_fault.S
+//
+// Latch runtime source. Part of the heap-free, deterministic,
+// embedded failure-capture runtime that ships fault state over LEP
+// to the Relay.
+//
+// Heap-free, bounded, deterministic.
+
 .syntax unified
 .thumb
 
@@ -67,7 +77,8 @@ ls_cortex_m_fault_first_entry:
   mrs r0, faultmask
   str r0, [r3, #52]
 #endif
-  str lr, [r3, #56]
+  mov r0, lr
+  str r0, [r3, #56]
   str r2, [r3, #60]
 
 #if defined(__ARM_ARCH_6M__) || defined(__ARM_ARCH_8M_BASE__)

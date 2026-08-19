@@ -1,3 +1,12 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// tests/test_boot.c
+//
+// Boot and reset-reason tests. Expected/unexpected reset detection
+// and safe-mode gating.
+//
+// Heap-free, bounded, deterministic.
+
 #include <stdio.h>
 #include "laststate/latch.h"
 #define CHECK(condition)                                                                           \

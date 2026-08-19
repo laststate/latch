@@ -1,0 +1,4 @@
+using sysbus
+mach create "latch-efr32mg12"
+machine LoadPlatformDescription "C:/Program Files/Renode/platforms/boards/sltb004a.repl"
+sysbus.cpu PerformanceInMips 64

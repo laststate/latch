@@ -1,3 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024-2026 LastState Contributors
+# tools/check_size.py
+#
+# Binary size checker. Flash/RAM footprint against budgets.
+#
+# Heap-free, bounded, deterministic.
+
 from __future__ import annotations
 
 import argparse

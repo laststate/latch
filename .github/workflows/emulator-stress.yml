@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'tests/emulator/**'
+      - 'hil/nordic_nrf52840dk/**'
       - '.github/workflows/emulator-stress.yml'
       - 'arch/**'
       - 'src/capture/**'
@@ -68,3 +69,34 @@ jobs:
             --requirement build/renode/tests/requirements.txt
       - name: Inject RV32 illegal-instruction trap
         run: build/renode/renode-test tests/emulator/rv32_fault.robot
+
+  nrf52840-renode:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - run: sudo apt-get update && sudo apt-get install -y gcc-arm-none-eabi
+      - name: Build Nordic nRF52840DK fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build/emulator
+          arm-none-eabi-gcc hil/nordic_nrf52840dk/nrf52840_hil.c \
+            -mcpu=cortex-m4 -mthumb -Os -ffreestanding -fno-builtin -nostdlib \
+            -Wl,--gc-sections,-T,hil/nordic_nrf52840dk/nrf52840.ld \
+            -o build/emulator/latch-renode-nrf52840.elf
+      - name: Install pinned Renode 1.16.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          archive=build/renode.tar.gz
+          curl --fail --location --retry 3 \
+            https://github.com/renode/renode/releases/download/v1.16.1/renode-1.16.1.linux-portable.tar.gz \
+            --output "$archive"
+          echo '1a532d4b5b82de0dd154970c401e0c7b0e498d17304b2cecc007e306c8f9617c  build/renode.tar.gz' | sha256sum --check
+          mkdir -p build/renode
+          tar -xzf "$archive" -C build/renode --strip-components=1
+          python -m pip install --disable-pip-version-check \
+            --requirement build/renode/tests/requirements.txt
+      - name: Verify Nordic nRF52840DK UsageFault path
+        run: build/renode/renode-test hil/nordic_nrf52840dk/nrf52840dk.robot

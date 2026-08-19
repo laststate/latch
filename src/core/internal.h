@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/core/internal.h
+//
+// Internal runtime header shared by src/. Not installed; declares
+// the runtime singleton, internal macros, and prototypes used
+// across capture, envelope, storage, and transport.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LS_INTERNAL_H
 #define LS_INTERNAL_H
 

@@ -1,0 +1,8 @@
+# Keep release manifests and evidence tracked
+*
+!.gitignore
+!README.md
+!*.example
+!v*.json
+!evidence/
+!evidence/*.json

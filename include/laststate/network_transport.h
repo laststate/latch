@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/network_transport.h
+//
+// Network transport adapter contract. The integration point between
+// Latch's authenticated spool and a port-supplied TLS-capable
+// socket; the port implements it, Latch owns retry policy.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_NETWORK_TRANSPORT_H
 #define LASTSTATE_NETWORK_TRANSPORT_H
 #include <stddef.h>

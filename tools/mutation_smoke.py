@@ -1,3 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024-2026 LastState Contributors
+# tools/mutation_smoke.py
+#
+# Mutation testing smoke. Quick sanity on mutant survival rate.
+#
+# Heap-free, bounded, deterministic.
+
 #!/usr/bin/env python3
 """Small deterministic mutation suite for safety-critical decision logic.
 

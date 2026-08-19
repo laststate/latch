@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/transport/stream.c
+//
+// Stream transport adapter glue. Byte-oriented counterpart to the
+// network path; the same framing, AEAD, and retry policy, just
+// over a port-supplied read/write interface.
+//
+// Heap-free, bounded, deterministic.
+
 #include "../core/internal.h"
 #include "laststate/envelope.h"
 #include "laststate/stream_transport.h"

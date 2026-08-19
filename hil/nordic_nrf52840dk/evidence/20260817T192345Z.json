@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "result": "pass",
+  "execution": "Renode",
+  "board": "Nordic nRF52840 DK",
+  "mcu": "nRF52840 / Cortex-M4F",
+  "scenario": "usagefault",
+  "fault_source": "firmware UDF instruction",
+  "firmware": "C:\\Users\\USER\\LastState\\latch\\build\\emulator\\latch-renode-nrf52840.elf",
+  "firmware_sha256": "a425b77aafe1a2ca0d5930c8b752fcf1e78ddef61f6a5552d68971b598975544",
+  "observed_at": "2026-08-17T22:23:45.6638526Z",
+  "markers": [
+    "HIL:ARMED:USAGEFAULT",
+    "HIL:PASS:USAGEFAULT"
+  ],
+  "renode_log": "C:\\Users\\USER\\AppData\\Local\\Temp\\latch-nrf52840-renode-43782d863d144652b718cc10bbb5a735.log",
+  "renode_log_sha256": "f4a0c4f2880833732c3f82b35ec33af83bb643c913e8f498cdaa69d95e0777a0",
+  "robot_output": "C:\\Users\\USER\\LastState\\latch\\robot_output.xml",
+  "robot_output_sha256": "9893a68d2a1b3802ac2e862a55148e79511613f1f0256c785f9f72d13842940d",
+  "report_html": "C:\\Users\\USER\\LastState\\latch\\report.html",
+  "log_html": "C:\\Users\\USER\\LastState\\latch\\log.html",
+  "caveat": "This validates Renode's nRF52840 model, vector table, UART0/EasyDMA, and UsageFault path; it is not physical-board qualification and does not claim HardFault generation."
+}

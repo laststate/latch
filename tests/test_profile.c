@@ -1,3 +1,11 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// tests/test_profile.c
+//
+// Profile tests. Memory footprint, cycle counts, stack usage.
+//
+// Heap-free, bounded, deterministic.
+
 #include "laststate/latch.h"
 int main(void) {
     ls_identity_t identity = {

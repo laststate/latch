@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "result": "pass",
+  "execution": "Renode",
+  "chip": "max32652",
+  "family": "ListA",
+  "mcu": "Cortex-M4F: Maxim MAX32650/MAX32652",
+  "arch": "cortex-m",
+  "scenario": "USAGEFAULT",
+  "fault_source": "firmware UDF instruction",
+  "firmware": "C:\\Users\\USER\\LastState\\latch\\build\\emulator\\latch-renode-max32652.elf",
+  "firmware_sha256": "1b584fddc8f549ee55afe3b6362b09ce97e354e4c9948c8f1f710879e73f849e",
+  "linker": "C:\\Users\\USER\\LastState\\latch\\hil\\emulator\\evidence\\max32652\\max32652.ld",
+  "linker_sha256": "08a8e4825690d7489858d8d11a8b2d051bb57dcc8245449df3f08ec7b3d93c11",
+  "marker_address": "0x20001000",
+  "observed_at": "2026-08-18T09:31:21.116516+00:00",
+  "duration_s": 6.9,
+  "renode_log": "C:\\Users\\USER\\AppData\\Local\\Temp\\latch-max32652-renode.log",
+  "renode_log_sha256": "93f609aba84e90287b47ee2e8178ecc2f6f1a605664b876a3ffe3c9fd46a8afc",
+  "robot_output": "C:\\Users\\USER\\LastState\\latch\\robot_output.xml",
+  "robot_output_sha256": "b5548c4ee0eee7e459d12f559be4c1c2b04a8dee06968de7a6da000ea6dfd7de",
+  "caveat": "This validates Renode's board model, vector table, toolchain path and fault entry for this architecture; it is not physical-board qualification and does not validate silicon errata, reset registers, flash timing, power loss, or a vendor bootloader."
+}

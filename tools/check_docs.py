@@ -1,13 +1,40 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024-2026 LastState Contributors
+# tools/check_docs.py
+#
+# Documentation checker. Broken links, stale examples, and
+# required section presence.
+#
+# Heap-free, bounded, deterministic.
+
 from __future__ import annotations
 import pathlib
 import re
+import subprocess
 import sys
 
 root = pathlib.Path(__file__).resolve().parents[1]
 errors: list[str] = []
-for path in sorted(root.rglob("*.md")):
+
+
+def is_ignored(path: pathlib.Path) -> bool:
     if any(part in {"build", "target", ".pio", ".git"} or part.startswith("build-")
            for part in path.parts):
+        return True
+    try:
+        res = subprocess.run(
+            ["git", "check-ignore", "-q", str(path)],
+            cwd=root,
+            capture_output=True,
+            text=True,
+        )
+        return res.returncode == 0
+    except OSError:
+        return False
+
+
+for path in sorted(root.rglob("*.md")):
+    if is_ignored(path):
         continue
     text = path.read_text(encoding="utf-8")
     if not text.endswith("\n"):

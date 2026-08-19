@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/storage/flash_mirror.c
+//
+// Flash-backed mirror storage. Two-bank write/erase so a power
+// loss can never leave a partially committed record visible to
+// the reader.
+//
+// Heap-free, bounded, deterministic.
+
 #include "../core/internal.h"
 
 #include "laststate/flash_storage.h"

@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/selftest.h
+//
+// Power-on self-test API. A short, deterministic suite that runs
+// before Latch is marked healthy; its result is part of every
+// envelope's identity block.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_SELFTEST_H
 #define LASTSTATE_SELFTEST_H
 

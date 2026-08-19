@@ -13,3 +13,4 @@ directory.
   scenario, raw observation, and decoded result. Redact secrets and endpoints.
 - A successful host or simulator test is not HIL evidence; a one-board result
   is not qualification for another board, linker script, or SDK version.
+- Do not fake any evidence of HIL.

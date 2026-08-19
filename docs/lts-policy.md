@@ -1,8 +1,9 @@
 # Long-term support policy
 
-Latch does not currently publish an LTS line. The following gates define when
-the project may leave `0.x` and call a release LTS; passing ordinary CI alone
-is insufficient.
+Latch 1.0.0 is the first **stable** release but is **not** an LTS line. The
+following gates define when a release may be called LTS. A stable `1.x` release may
+ship before LTS eligibility; it must still be honest about unmet gates (see
+`docs/known-limitations.md`). Passing ordinary CI alone is insufficient for LTS.
 
 ## Eligibility for 1.0 LTS
 
@@ -27,7 +28,9 @@ All of these conditions must be satisfied and linked from the release notes:
 4. Release artifacts, SBOM, provenance, package metadata, downgrade behavior,
    migration notes, and every claimed HIL record pass the release checklist.
 
-Until all four gates pass, versions remain `0.x` and are not described as LTS.
+Until all four gates pass, a release is **stable, not LTS**. The project may
+ship stable `1.x` releases; they must not be described as LTS and must disclose the
+open gates.
 
 ## Stable branches and support window
 

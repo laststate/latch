@@ -1,3 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024-2026 LastState Contributors
+# tests/test_embedded_packaging.py
+#
+# Embedded packaging tests. CPack, archive layout, manifest.
+#
+# Heap-free, bounded, deterministic.
+
 #!/usr/bin/env python3
 """Validate packaging metadata and source-layout shims for embedded IDEs."""
 

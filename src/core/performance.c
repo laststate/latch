@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/core/performance.c
+//
+// Performance counters implementation. Cycle and timing
+// measurements backed by the port-supplied counter hooks; safe to
+// call from fault context.
+//
+// Heap-free, bounded, deterministic.
+
 #include "internal.h"
 ls_result_t ls_span_begin(uint16_t id) {
 #if LS_ENABLE_PERFORMANCE

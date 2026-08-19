@@ -1,0 +1,5 @@
+using sysbus
+mach create "latch-sam4s"
+machine LoadPlatformDescription "C:/Program Files/Renode/platforms/boards/sam4s_xplained.repl"
+sysbus.cpu VectorTableOffset 0x400000
+sysbus.cpu PerformanceInMips 64

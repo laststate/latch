@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/metrics/metrics.c
+//
+// Runtime metrics implementation. Counters, gauges, and histograms
+// published by the application; serialized into the next envelope
+// on demand or on fault.
+//
+// Heap-free, bounded, deterministic.
+
 #include "../core/internal.h"
 
 static ls_metric_record_t *find_metric(const char *name) {

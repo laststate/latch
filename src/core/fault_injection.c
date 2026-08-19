@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/core/fault_injection.c
+//
+// Fault-injection implementation. Bounded table of synthetic fault
+// triggers consulted by host tests; compiled out in release
+// unless LS_ENABLE_FAULT_INJECTION is set.
+//
+// Heap-free, bounded, deterministic.
+
 #include "internal.h"
 #include "laststate/fault_injection.h"
 

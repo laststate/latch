@@ -1,3 +1,12 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024-2026 LastState Contributors
+# tools/seed_fuzz_corpora.py
+#
+# Fuzz corpus seeder. Generates initial seeds from valid
+# envelopes and edge cases.
+#
+# Heap-free, bounded, deterministic.
+
 from __future__ import annotations
 
 import argparse

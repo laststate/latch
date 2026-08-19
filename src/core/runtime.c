@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/core/runtime.c
+//
+// Runtime singleton and ls_init(). Owns the global ls_runtime_t,
+// validates the supplied config, and wires every subsystem up
+// before the first user-visible API call returns.
+//
+// Heap-free, bounded, deterministic.
+
 #include "internal.h"
 
 ls_runtime_t ls_runtime;

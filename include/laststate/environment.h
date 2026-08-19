@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/environment.h
+//
+// Runtime environment sampling API (battery, temperature, supply
+// voltage). Feeds health, anomaly, and DNA modules with the
+// on-device telemetry they consume.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_ENVIRONMENT_H
 #define LASTSTATE_ENVIRONMENT_H
 

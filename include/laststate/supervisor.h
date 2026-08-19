@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/supervisor.h
+//
+// Supervisor / watchdog API. Owns the watchdog feed, lockup
+// detection, and the reset reason reported on the next boot.
+// Designed to be ticked from a low-priority task.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_SUPERVISOR_H
 #define LASTSTATE_SUPERVISOR_H
 

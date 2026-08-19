@@ -1,0 +1,5 @@
+using sysbus
+mach create "latch-imxrt700"
+machine LoadPlatformDescription "C:/Program Files/Renode/platforms/cpus/mimxrt798s.repl"
+sysbus.cpu0 VectorTableOffset 0x20000000
+sysbus.cpu0 PerformanceInMips 64

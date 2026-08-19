@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/core/peripheral.c
+//
+// Peripheral fault hooks implementation. Translates port-reported
+// bus, sensor, and radio errors into Latch events without any
+// vendor-specific knowledge in the runtime itself.
+//
+// Heap-free, bounded, deterministic.
+
 #include "internal.h"
 void ls_peripheral_fault(const ls_peripheral_fault_t *fault) {
     if (!fault)

@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/transport/transport.c
+//
+// Transport façade implementation. Selects between the stream and
+// network adapters based on the configured policy and surfaces a
+// single API to the rest of the runtime.
+//
+// Heap-free, bounded, deterministic.
+
 #include "../core/internal.h"
 
 static ls_transport_backend_t *busy_transports[LS_MAX_TRANSPORTS];

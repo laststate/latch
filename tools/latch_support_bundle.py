@@ -1,3 +1,12 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024-2026 LastState Contributors
+# tools/latch_support_bundle.py
+#
+# Support bundle generator. Collects logs, config, and state for
+# field debugging.
+#
+# Heap-free, bounded, deterministic.
+
 #!/usr/bin/env python3
 """Create a deterministic support bundle with hashes and conservative secret filtering."""
 from __future__ import annotations

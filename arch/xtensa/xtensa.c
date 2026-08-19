@@ -1,3 +1,12 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// arch/xtensa/xtensa.c
+//
+// Xtensa architecture port. Register save/restore, fault frame
+// layout, and port-specific hooks.
+//
+// Heap-free, bounded, deterministic.
+
 #include "xtensa.h"
 #include "laststate/latch.h"
 static bool frame_to_context(const ls_xtensa_frame_t *frame, ls_arch_context_t *context) {

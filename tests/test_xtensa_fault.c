@@ -1,3 +1,11 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// tests/test_xtensa_fault.c
+//
+// Xtensa fault capture tests. Register layout and dump.
+//
+// Heap-free, bounded, deterministic.
+
 #include <stdio.h>
 #include <stddef.h>
 #include "xtensa.h"

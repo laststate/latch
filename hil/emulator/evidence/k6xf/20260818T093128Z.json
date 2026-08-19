@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "result": "pass",
+  "execution": "Renode",
+  "chip": "k6xf",
+  "family": "ListA",
+  "mcu": "Cortex-M4F: NXP Kinetis K6xF",
+  "arch": "cortex-m",
+  "scenario": "USAGEFAULT",
+  "fault_source": "firmware UDF instruction",
+  "firmware": "C:\\Users\\USER\\LastState\\latch\\build\\emulator\\latch-renode-k6xf.elf",
+  "firmware_sha256": "5eb2df239977f915562745b354e9513d9f9afd9ec2adecf8ae8f4f87af0a59ec",
+  "linker": "C:\\Users\\USER\\LastState\\latch\\hil\\emulator\\evidence\\k6xf\\k6xf.ld",
+  "linker_sha256": "d4b9de310272707433b0cdda005c6691c03e2701a1902fcc273dbd311043f8ab",
+  "marker_address": "0x20001000",
+  "observed_at": "2026-08-18T09:31:28.524897+00:00",
+  "duration_s": 7.39,
+  "renode_log": "C:\\Users\\USER\\AppData\\Local\\Temp\\latch-k6xf-renode.log",
+  "renode_log_sha256": "c6dba98f3702975f89fd0b00e37bb5b225e9b290da2d7e2f3694d935737226c2",
+  "robot_output": "C:\\Users\\USER\\LastState\\latch\\robot_output.xml",
+  "robot_output_sha256": "be9c330bc25357e7ea611e4bfa62da5fdb6dad29f4c955fe0787b40ed7ff4ead",
+  "caveat": "This validates Renode's board model, vector table, toolchain path and fault entry for this architecture; it is not physical-board qualification and does not validate silicon errata, reset registers, flash timing, power loss, or a vendor bootloader."
+}

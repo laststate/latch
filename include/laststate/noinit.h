@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/noinit.h
+//
+// Cross-toolchain noinit attribute macro. The single source of
+// truth for declaring .noinit storage so the capture path works
+// the same way on every supported compiler.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_NOINIT_H
 #define LASTSTATE_NOINIT_H
 #if defined(__APPLE__)

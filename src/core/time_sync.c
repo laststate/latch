@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/core/time_sync.c
+//
+// Time synchronization implementation. Pulls monotonic and wall
+// clock time from the port-supplied hooks and exposes them to
+// every layer that stamps a LEP record.
+//
+// Heap-free, bounded, deterministic.
+
 #include "internal.h"
 #include "laststate/time_sync.h"
 

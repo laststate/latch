@@ -1,3 +1,12 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// examples/esp32-first-crash/main/main.c
+//
+// ESP32 first-crash example. FreeRTOS port with crash capture
+// and LEP envelope output.
+//
+// Heap-free, bounded, deterministic.
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>

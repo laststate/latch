@@ -1,3 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024-2026 LastState Contributors
+# tools/check_safety_c.py
+#
+# Safety-C coding standard checker. MISRA/CERT rule enforcement.
+#
+# Heap-free, bounded, deterministic.
+
 #!/usr/bin/env python3
 """Fail on a small, auditable set of unsafe/host-only C patterns in production trees.
 

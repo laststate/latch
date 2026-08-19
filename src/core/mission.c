@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/core/mission.c
+//
+// Mission / lifetime context implementation. Holds the current run
+// label, firmware slot, and campaign identifier so the envelope
+// identity block can carry deployment context.
+//
+// Heap-free, bounded, deterministic.
+
 #include "internal.h"
 #include "laststate/mission.h"
 #include "laststate/blackbox.h"

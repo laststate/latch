@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/storage.h
+//
+// Non-secure storage API. Used by blackbox and health for diagnostic
+// data that does not need authentication; shares the wear-level
+// layer with the secure path.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_STORAGE_H
 #define LASTSTATE_STORAGE_H
 

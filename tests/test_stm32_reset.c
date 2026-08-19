@@ -1,3 +1,11 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// tests/test_stm32_reset.c
+//
+// STM32 reset reason tests. Maps vendor codes to Latch enums.
+//
+// Heap-free, bounded, deterministic.
+
 #include <stdio.h>
 #include "stm32_reset.h"
 #define CHECK(x)                                                                                   \

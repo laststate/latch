@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/blackbox.h
+//
+// Retained flight/mission recorder. Captures bounded recent events
+// across power cycles using .noinit memory; diagnostic only and
+// must never be used as a safety-control state store.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_BLACKBOX_H
 #define LASTSTATE_BLACKBOX_H
 
