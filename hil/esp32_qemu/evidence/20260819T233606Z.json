@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "result": "pass",
+  "execution": "QEMU-Espressif",
+  "chip": "esp32",
+  "family": "Xtensa",
+  "mcu": "ESP32 (LX6)",
+  "arch": "xtensa",
+  "scenario": "panic-reboot-recovery-durable-ack",
+  "fault_source": "fixture abort() during capture-before-panic",
+  "firmware": "C:\\Users\\USER\\LastState\\latch\\hil\\esp32_qemu\\..\\esp32_relay\\.pio\\build\\esp32dev\\firmware.bin",
+  "firmware_sha256": "6740ff14f3601806d2bac3b1dade490ea31b8a7a659c663f8dbc4eb07aaf87e7",
+  "flash_image": "C:\\Users\\USER\\LastState\\latch\\hil\\esp32_qemu\\evidence\\build\\flash_image.bin",
+  "flash_image_sha256": "3333fb4dc9151a3d6172b8eee9c2ee1b183325b2a211f8449b0690a6cbf0fc15",
+  "qemu": "C:\\Users\\USER\\LastState\\latch\\.tools\\qemu\\qemu\\bin\\qemu-system-xtensa.exe",
+  "qemu_version": "QEMU emulator version 9.2.2 (esp_develop_9.2.2_20260417)",
+  "observed_at": "2026-08-19T23:36:06.0831701Z",
+  "duration_s": 90.0,
+  "uart_log": "C:\\Users\\USER\\LastState\\latch\\hil\\esp32_qemu\\evidence\\build\\qemu-uart.log",
+  "uart_log_sha256": "68cba0fbbf1586161900b67a2fa0e3ff0feab01157c1c9a213afc35032aa5f52",
+  "responder_log": "C:\\Users\\USER\\LastState\\latch\\hil\\esp32_qemu\\evidence\\build\\responder.log",
+  "responder_log_sha256": "86a74f3efafc39138f1020b6c133f547cd815267a9127e329cc4af16cb922726",
+  "acks": 2,
+  "markers": {
+    "phase0_capture": true,
+    "panic_path": true,
+    "reset_reason_decode": true,
+    "phase1_recovery": true,
+    "durable_ack": true
+  },
+  "caveat": "QEMU (Espressif fork) is an emulator, not physical silicon. It validates the ESP32 SoC model, the Xtensa abort/panic path, ESP-IDF reset-reason decode, mirrored-flash persistence across reboot, boot recovery and the stream-transport durable-ack (lsak-v1) contract. It does not validate silicon errata, analog supplies, real flash timing, RF, or physical reset registers."
+}

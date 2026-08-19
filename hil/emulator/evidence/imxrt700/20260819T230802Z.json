@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "result": "pass",
+  "execution": "Renode",
+  "chip": "imxrt700",
+  "family": "ListB",
+  "mcu": "Cortex-M33: NXP i.MX RT700 (SRAM_CPU0 global alias at 536870912, shared at 542638080)",
+  "arch": "cortex-m",
+  "scenario": "USAGEFAULT",
+  "fault_source": "firmware UDF instruction",
+  "firmware": "C:\\Users\\USER\\LastState\\latch\\build\\emulator\\latch-renode-imxrt700.elf",
+  "firmware_sha256": "da7447ba70a630103462fa99199b90bb2df28061d148e9c4b63b8acf60c2aba6",
+  "linker": "C:\\Users\\USER\\LastState\\latch\\hil\\emulator\\evidence\\imxrt700\\imxrt700.ld",
+  "linker_sha256": "20b29a74f738f9f5a15dca37b4f8431d704435dd64c538affb488eeac6d97aee",
+  "marker_address": "0x20581000",
+  "observed_at": "2026-08-19T23:08:02.817804+00:00",
+  "duration_s": 8.5,
+  "renode_log": "C:\\Users\\USER\\AppData\\Local\\Temp\\latch-imxrt700-renode.log",
+  "renode_log_sha256": "01db626f41bcbcc7650d17ca2f51da5f11bcb91be80144245d022e0a2609259a",
+  "robot_output": "C:\\Users\\USER\\LastState\\latch\\robot_output.xml",
+  "robot_output_sha256": "5c4edba1e27f863cfe0a5d779b39d691019d1bc1e93024041d5d4b0bd3e1a3c7",
+  "caveat": "This validates Renode's board model, vector table, toolchain path and fault entry for this architecture; it is not physical-board qualification and does not validate silicon errata, reset registers, flash timing, power loss, or a vendor bootloader."
+}

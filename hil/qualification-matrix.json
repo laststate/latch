@@ -38,13 +38,14 @@
     { "platform": "RA6M5", "mcu": "R7FA6M5BH", "board": "Renesas EK-RA6M5", "toolchain": "Renode + Arm GNU Toolchain 14.2", "arch": "cortex-m", "evidence": "emulator/evidence/ra6m5/", "note": "Renode emulator evidence; not physical HIL." },
     { "platform": "OpenTitan", "mcu": "Ibex", "board": "OpenTitan Earl Grey", "toolchain": "Renode + RISC-V GNU Toolchain 14.2", "arch": "riscv32", "evidence": "emulator/evidence/opentitan/", "note": "Renode emulator evidence; not physical HIL." },
     { "platform": "VEGA", "mcu": "RI5CY", "board": "VEGAboard", "toolchain": "Renode + RISC-V GNU Toolchain 14.2", "arch": "riscv32", "evidence": "emulator/evidence/vegaboard/", "note": "Renode emulator evidence; not physical HIL." },
-    { "platform": "Kendryte", "mcu": "K210", "board": "Sipeed MAIX Bit", "toolchain": "Renode + RISC-V GNU Toolchain 14.2", "arch": "riscv64", "evidence": "emulator/evidence/k210/", "note": "Renode emulator evidence; not physical HIL." }
+    { "platform": "Kendryte", "mcu": "K210", "board": "Sipeed MAIX Bit", "toolchain": "Renode + RISC-V GNU Toolchain 14.2", "arch": "riscv64", "evidence": "emulator/evidence/k210/", "note": "Renode emulator evidence; not physical HIL." },
+    { "platform": "ESP32", "mcu": "ESP32 LX6", "board": "ESP32 DevKit (QEMU Espressif fork)", "toolchain": "ESP-IDF 5.5.0 + QEMU esp_develop 9.2.2 (xtensa)", "arch": "xtensa", "evidence": "esp32_qemu/evidence/", "note": "QEMU emulator evidence covering panic path, reset-reason decode, flash persistence, reboot recovery and durable-ack; not physical HIL." }
   ],
   "summary": {
     "total_platforms": 1,
     "qualified": 1,
     "compile_tested": 0,
-    "emulator_tested": 23,
+    "emulator_tested": 24,
     "host_tested": 0,
     "not_qualified": 0,
     "in_validation": 0

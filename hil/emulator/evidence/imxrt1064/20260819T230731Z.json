@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "result": "pass",
+  "execution": "Renode",
+  "chip": "imxrt1064",
+  "family": "ListB",
+  "mcu": "Cortex-M7: NXP i.MX RT1064 (ITCM at 0, DTCM at 536870912)",
+  "arch": "cortex-m",
+  "scenario": "USAGEFAULT",
+  "fault_source": "firmware UDF instruction",
+  "firmware": "C:\\Users\\USER\\LastState\\latch\\build\\emulator\\latch-renode-imxrt1064.elf",
+  "firmware_sha256": "fa75c5a0cec83675440899060cf111be3d58065671b009e42ad4be300a24c486",
+  "linker": "C:\\Users\\USER\\LastState\\latch\\hil\\emulator\\evidence\\imxrt1064\\imxrt1064.ld",
+  "linker_sha256": "0e2ade6b36783d6449ddfea38aa138682e23ce3b14b84d168a0d69090268c76c",
+  "marker_address": "0x20001000",
+  "observed_at": "2026-08-19T23:07:31.308268+00:00",
+  "duration_s": 6.9,
+  "renode_log": "C:\\Users\\USER\\AppData\\Local\\Temp\\latch-imxrt1064-renode.log",
+  "renode_log_sha256": "fd3a48e7cd4cfe0309d37aab4c3d3bc34c761d20a8ee69774fe304e31cfb8b39",
+  "robot_output": "C:\\Users\\USER\\LastState\\latch\\robot_output.xml",
+  "robot_output_sha256": "0a10711a2a2239e01b01e0ab3e740596182a976edab3d36135c66e0f39a43c75",
+  "caveat": "This validates Renode's board model, vector table, toolchain path and fault entry for this architecture; it is not physical-board qualification and does not validate silicon errata, reset registers, flash timing, power loss, or a vendor bootloader."
+}

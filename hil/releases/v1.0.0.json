@@ -3,7 +3,7 @@
   "release": "v1.0.0",
   "commit": "2f0c76383dd25848c4ce864ebca200b876165874",
   "generated_at": "2026-08-19",
-  "note": "Release qualification record. A board may be called 'qualified' only after accepted physical HIL (see hil/AGENTS.md). v1.0.0 records one physically qualified configuration (ESP32) and Renode emulator evidence for 23 additional targets. Emulator evidence validates architecture/toolchain/fault-entry paths on Renode board models; it is explicitly NOT physical-board qualification. The stable release gate (tools/check_release_qualification.py) requires physical scenarios hardfault, watchdog, brownout, stack-canary, flash and reset-registers with machine-readable JSON evidence; these remain open and must be completed before the v1.0.0 tag is created. The 'commit' field must be updated to the final v1.0.0 tag commit at release time.",
+  "note": "Release qualification record. A board may be called 'qualified' only after accepted physical HIL (see hil/AGENTS.md). v1.0.0 records one physically qualified configuration (ESP32) and emulator evidence for 24 additional targets (23 Renode, 1 QEMU Espressif/xtensa). Emulator evidence validates architecture/toolchain/fault-entry, panic, reboot-recovery and durable-ack paths on emulated SoC models; it is explicitly NOT physical-board qualification. The stable release gate (tools/check_release_qualification.py) requires physical scenarios hardfault, watchdog, brownout, stack-canary, flash and reset-registers with machine-readable JSON evidence; these remain open and must be completed before the v1.0.0 tag is created. The 'commit' field must be updated to the final v1.0.0 tag commit at release time.",
   "targets": [
     {
       "platform": "ESP32",
@@ -46,6 +46,7 @@
     { "platform": "RA6M5", "mcu": "R7FA6M5BH", "board": "Renesas EK-RA6M5", "toolchain": "Renode + Arm GNU Toolchain 14.2", "evidence": "emulator/evidence/ra6m5/" },
     { "platform": "OpenTitan", "mcu": "Ibex", "board": "OpenTitan Earl Grey", "toolchain": "Renode + RISC-V GNU Toolchain 14.2", "evidence": "emulator/evidence/opentitan/" },
     { "platform": "VEGA", "mcu": "RI5CY", "board": "VEGAboard", "toolchain": "Renode + RISC-V GNU Toolchain 14.2", "evidence": "emulator/evidence/vegaboard/" },
-    { "platform": "Kendryte", "mcu": "K210", "board": "Sipeed MAIX Bit", "toolchain": "Renode + RISC-V GNU Toolchain 14.2", "evidence": "emulator/evidence/k210/" }
+    { "platform": "Kendryte", "mcu": "K210", "board": "Sipeed MAIX Bit", "toolchain": "Renode + RISC-V GNU Toolchain 14.2", "evidence": "emulator/evidence/k210/" },
+    { "platform": "ESP32", "mcu": "ESP32 LX6", "board": "ESP32 DevKit (QEMU Espressif fork)", "toolchain": "ESP-IDF 5.5.0 + QEMU esp_develop 9.2.2 (xtensa)", "evidence": "esp32_qemu/evidence/" }
   ]
 }

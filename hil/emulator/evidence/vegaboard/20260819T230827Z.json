@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "result": "pass",
+  "execution": "Renode",
+  "chip": "vegaboard",
+  "family": "ListA",
+  "mcu": "RV32IMC: PULP RI5CY on Vega board",
+  "arch": "riscv32",
+  "scenario": "USAGEFAULT",
+  "fault_source": "illegal instruction trap",
+  "firmware": "C:\\Users\\USER\\LastState\\latch\\build\\emulator\\latch-renode-vegaboard.elf",
+  "firmware_sha256": "25f8f6eeda65680c46975d50e42609a98c422ba8d2700d0758a30abd6130c4bf",
+  "linker": "C:\\Users\\USER\\LastState\\latch\\hil\\emulator\\evidence\\vegaboard\\vegaboard.ld",
+  "linker_sha256": "a25397d59b90bc7b622e641ae8ba505b50a83fe37b3625ddeba508d813e5b868",
+  "marker_address": "0x20001000",
+  "observed_at": "2026-08-19T23:08:27.167333+00:00",
+  "duration_s": 6.62,
+  "renode_log": "C:\\Users\\USER\\AppData\\Local\\Temp\\latch-vegaboard-renode.log",
+  "renode_log_sha256": "b87f9e4e2b8a967fd4fc0a978fde6bb7989ffed0c3703cb340f9e253e4a8353a",
+  "robot_output": "C:\\Users\\USER\\LastState\\latch\\robot_output.xml",
+  "robot_output_sha256": "d21d1edfc0f91e6ce02f08a10510130a16bc529703b36d3d0cd343d05be2dc7b",
+  "caveat": "This validates Renode's board model, vector table, toolchain path and fault entry for this architecture; it is not physical-board qualification and does not validate silicon errata, reset registers, flash timing, power loss, or a vendor bootloader."
+}
