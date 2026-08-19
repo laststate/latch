@@ -24,9 +24,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          opts="-o Acquire::Retries=5 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30"
+          opts=(-o Acquire::Retries=5 -o Acquire::http::Timeout=60 -o Acquire::https::Timeout=60)
           for attempt in 1 2 3; do
-            if timeout 90 sudo apt-get update $opts && timeout 240 sudo apt-get install -y $opts gcc-arm-none-eabi qemu-system-arm; then
+            if timeout 90 sudo apt-get update "${opts[@]}" && timeout 240 sudo apt-get install -y "${opts[@]}" gcc-arm-none-eabi qemu-system-arm; then
               exit 0
             fi
             echo "apt attempt ${attempt}/3 failed, retrying in 15s..." >&2
@@ -61,9 +61,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          opts="-o Acquire::Retries=5 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30"
+          opts=(-o Acquire::Retries=5 -o Acquire::http::Timeout=60 -o Acquire::https::Timeout=60)
           for attempt in 1 2 3; do
-            if timeout 90 sudo apt-get update $opts && timeout 240 sudo apt-get install -y $opts gcc-riscv64-unknown-elf; then
+            if timeout 90 sudo apt-get update "${opts[@]}" && timeout 240 sudo apt-get install -y "${opts[@]}" gcc-riscv64-unknown-elf; then
               exit 0
             fi
             echo "apt attempt ${attempt}/3 failed, retrying in 15s..." >&2
@@ -105,9 +105,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          opts="-o Acquire::Retries=5 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30"
+          opts=(-o Acquire::Retries=5 -o Acquire::http::Timeout=60 -o Acquire::https::Timeout=60)
           for attempt in 1 2 3; do
-            if timeout 90 sudo apt-get update $opts && timeout 240 sudo apt-get install -y $opts gcc-arm-none-eabi; then
+            if timeout 90 sudo apt-get update "${opts[@]}" && timeout 240 sudo apt-get install -y "${opts[@]}" gcc-arm-none-eabi; then
               exit 0
             fi
             echo "apt attempt ${attempt}/3 failed, retrying in 15s..." >&2
