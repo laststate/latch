@@ -20,7 +20,7 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - run: sudo apt-get update && sudo apt-get install -y gcc-arm-none-eabi qemu-system-arm
+      - run: sudo apt-get update -o Acquire::Retries=5 -o Acquire::http::Timeout=30 && sudo apt-get install -y -o Acquire::Retries=5 -o Acquire::http::Timeout=30 gcc-arm-none-eabi qemu-system-arm
       - name: Build and inject Cortex-M faults
         shell: bash
         run: |
@@ -44,7 +44,7 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
           python-version: '3.12'
-      - run: sudo apt-get update && sudo apt-get install -y gcc-riscv64-unknown-elf
+      - run: sudo apt-get update -o Acquire::Retries=5 -o Acquire::http::Timeout=30 && sudo apt-get install -y -o Acquire::Retries=5 -o Acquire::http::Timeout=30 gcc-riscv64-unknown-elf
       - name: Build RV32 trap fixture
         shell: bash
         run: |
@@ -75,7 +75,7 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - run: sudo apt-get update && sudo apt-get install -y gcc-arm-none-eabi
+      - run: sudo apt-get update -o Acquire::Retries=5 -o Acquire::http::Timeout=30 && sudo apt-get install -y -o Acquire::Retries=5 -o Acquire::http::Timeout=30 gcc-arm-none-eabi
       - name: Build Nordic nRF52840DK fixture
         shell: bash
         run: |
