@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/ota.h
+//
+// Firmware-update / OTA API. Tracks pending releases, confirms
+// successful boot on the new image, and triggers rollback when
+// boot_loop detection fires.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_OTA_H
 #define LASTSTATE_OTA_H
 

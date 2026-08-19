@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/storage_sim.h
+//
+// Host simulator storage adapter. Lets the unit tests exercise the
+// real spool/storage code paths on a deterministic in-memory
+// backing without touching flash.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_STORAGE_SIM_H
 #define LASTSTATE_STORAGE_SIM_H
 #include <stdbool.h>

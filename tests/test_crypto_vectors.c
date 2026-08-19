@@ -1,3 +1,12 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// tests/test_crypto_vectors.c
+//
+// Cryptographic test vectors. Validates ChaCha20, Poly1305, and
+// AEAD against known-answer tests.
+//
+// Heap-free, bounded, deterministic.
+
 #include <stdio.h>
 #include <string.h>
 #include "laststate/security.h"

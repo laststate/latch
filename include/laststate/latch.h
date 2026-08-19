@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/latch.h
+//
+// Umbrella public header. Includes every stable LastState entry
+// point so a one-line #include gives a downstream project the
+// full public surface.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_LATCH_H
 #define LASTSTATE_LATCH_H
 

@@ -1,3 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024-2026 LastState Contributors
+# tools/measure_footprint.py
+#
+# Footprint measurement. Parses ELF/map for RAM/flash breakdown.
+#
+# Heap-free, bounded, deterministic.
+
 #!/usr/bin/env python3
 """Produce reproducible, target-agnostic size reports for Latch artifacts.
 

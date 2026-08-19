@@ -1,3 +1,12 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024-2026 LastState Contributors
+# tools/check_project_readiness.py
+#
+# Project readiness gate. CI green, coverage, docs, and release
+# artifacts all present.
+#
+# Heap-free, bounded, deterministic.
+
 #!/usr/bin/env python3
 from pathlib import Path
 import json,re,sys

@@ -1,3 +1,12 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024-2026 LastState Contributors
+# tools/latch_fleet_report.py
+#
+# Fleet report generator. Aggregates device health, versions,
+# and anomaly trends.
+#
+# Heap-free, bounded, deterministic.
+
 #!/usr/bin/env python3
 """Summarize a Latch SQLite fleet index and compare firmware crash signatures."""
 from __future__ import annotations

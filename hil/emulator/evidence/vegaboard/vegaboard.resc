@@ -1,0 +1,4 @@
+using sysbus
+mach create "latch-vegaboard"
+machine LoadPlatformDescription "C:/Program Files/Renode/platforms/boards/vegaboard_ri5cy.repl"
+sysbus.cpu PerformanceInMips 64

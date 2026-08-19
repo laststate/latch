@@ -1,3 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024-2026 LastState Contributors
+# tools/test_minify_sources.py
+#
+# Minifier test. Round-trip validation of stripped sources.
+#
+# Heap-free, bounded, deterministic.
+
 import importlib.util
 import unittest
 from pathlib import Path

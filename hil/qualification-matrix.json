@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-02",
+  "generated_at": "2026-08-18",
   "platforms": [
     {
       "platform": "ESP32",
@@ -12,67 +12,41 @@
       "status": "qualified-limited",
       "last_hil": "2026-07-29",
       "evidence": "esp32_relay/EVIDENCE.md",
-      "notes": "Normal-runtime capture before an intentional panic, reboot recovery, UART stream and durable ACK are qualified. Automatic Xtensa panic-frame capture is not qualified."
-    },
-    {
-      "platform": "STM32",
-      "mcu": "STM32F4xx",
-      "board": "Product-selected board",
-      "toolchain": "Arm GNU Toolchain (CI cross-build)",
-      "fault_handler": "emulator-tested",
-      "flash_backend": "integration-required",
-      "status": "in-validation",
-      "last_hil": null,
-      "evidence": null,
-      "notes": "Cortex-M fault entry and STM32 reset mapping are tested independently. Board vectors, linker placement and flash geometry still require HIL."
-    },
-    {
-      "platform": "RP2040",
-      "mcu": "RP2040",
-      "board": "Raspberry Pi Pico family",
-      "toolchain": "Pico SDK (consumer-owned)",
-      "fault_handler": "host-tested",
-      "flash_backend": "not-supplied",
-      "status": "not-qualified",
-      "last_hil": null,
-      "evidence": null,
-      "notes": "The generic Cortex-M path and reset adapter exist; no physical flash/reboot qualification is recorded."
-    },
-    {
-      "platform": "Nordic",
-      "mcu": "nRF52840",
-      "board": "nRF52840 DK",
-      "toolchain": "Zephyr SDK (CI build)",
-      "fault_handler": "host-tested",
-      "flash_backend": "integration-required",
-      "status": "compile-tested",
-      "last_hil": null,
-      "evidence": null,
-      "notes": "Zephyr BLE integration is compiled in CI and RESETREAS mapping is host-tested; this is not a physical-board result."
-    },
-    {
-      "platform": "RISC-V",
-      "mcu": "RV32IMAC",
-      "board": "SiFive FE310 model",
-      "toolchain": "riscv64-unknown-elf GCC + Renode 1.16.1",
-      "fault_handler": "emulator-tested",
-      "flash_backend": "not-tested",
-      "status": "emulator-tested",
-      "last_hil": null,
-      "evidence": null,
-      "notes": "Nightly emulation injects an illegal-instruction trap. Renode evidence is not hardware qualification."
-    },
-    {
-      "platform": "Linux",
-      "mcu": "x86_64",
-      "board": "GitHub-hosted runner",
-      "toolchain": "GCC and Clang",
-      "fault_handler": "host-tested",
-      "flash_backend": "host-tested",
-      "status": "host-tested",
-      "last_hil": null,
-      "evidence": null,
-      "notes": "Fork/signal/pipe and file-backend tests run on Linux hosts. This does not establish filesystem power-loss guarantees for a product."
+      "notes": "Only physical HIL evidence accepted in this repository: capture before an intentional panic, reboot recovery, UART stream, and durable ACK. The automatic Xtensa panic-frame path remains unqualified."
     }
-  ]
+  ],
+  "emulator_tested": [
+    { "platform": "STM32", "mcu": "STM32F407VG", "board": "STM32F4-Discovery", "toolchain": "Renode + Arm GNU Toolchain 14.2", "arch": "cortex-m", "evidence": "emulator/evidence/stm32f407/", "note": "Renode emulator evidence; not physical HIL." },
+    { "platform": "SAM4S", "mcu": "SAM4S16C", "board": "SAM4S Xplained", "toolchain": "Renode + Arm GNU Toolchain 14.2", "arch": "cortex-m", "evidence": "emulator/evidence/sam4s/", "note": "Renode emulator evidence; not physical HIL." },
+    { "platform": "Apollo4", "mcu": "Apollo4", "board": "Ambiq Apollo4 EVB", "toolchain": "Renode + Arm GNU Toolchain 14.2", "arch": "cortex-m", "evidence": "emulator/evidence/apollo4/", "note": "Renode emulator evidence; not physical HIL." },
+    { "platform": "MAX32652", "mcu": "MAX32652", "board": "MAX32652 EVKIT", "toolchain": "Renode + Arm GNU Toolchain 14.2", "arch": "cortex-m", "evidence": "emulator/evidence/max32652/", "note": "Renode emulator evidence; not physical HIL." },
+    { "platform": "K6xF", "mcu": "MK66FN2M0VMD18", "board": "NXP FRDM-K66F", "toolchain": "Renode + Arm GNU Toolchain 14.2", "arch": "cortex-m", "evidence": "emulator/evidence/k6xf/", "note": "Renode emulator evidence; not physical HIL." },
+    { "platform": "EFR32MG12", "mcu": "EFR32MG12P", "board": "Silicon Labs SLTB004A", "toolchain": "Renode + Arm GNU Toolchain 14.2", "arch": "cortex-m", "evidence": "emulator/evidence/efr32mg12/", "note": "Renode emulator evidence; not physical HIL." },
+    { "platform": "STM32", "mcu": "STM32F103RB", "board": "STM32 Nucleo-F103RB", "toolchain": "Renode + Arm GNU Toolchain 14.2", "arch": "cortex-m", "evidence": "emulator/evidence/stm32f103/", "note": "Renode emulator evidence; not physical HIL." },
+    { "platform": "CC2538", "mcu": "CC2538SF53", "board": "TI CC2538DK", "toolchain": "Renode + Arm GNU Toolchain 14.2", "arch": "cortex-m", "evidence": "emulator/evidence/cc2538/", "note": "Renode emulator evidence; not physical HIL." },
+    { "platform": "STM32", "mcu": "STM32F072RB", "board": "STM32F072B Discovery", "toolchain": "Renode + Arm GNU Toolchain 14.2", "arch": "cortex-m", "evidence": "emulator/evidence/stm32f072/", "note": "Renode emulator evidence; not physical HIL." },
+    { "platform": "ATSAMD21", "mcu": "ATSAMD21J18A", "board": "Microchip SAM D21 Xplained", "toolchain": "Renode + Arm GNU Toolchain 14.2", "arch": "cortex-m", "evidence": "emulator/evidence/atsamd21/", "note": "Renode emulator evidence; not physical HIL." },
+    { "platform": "S32K118", "mcu": "S32K118", "board": "NXP S32K118EVB", "toolchain": "Renode + Arm GNU Toolchain 14.2", "arch": "cortex-m", "evidence": "emulator/evidence/s32k118/", "note": "Renode emulator evidence; not physical HIL." },
+    { "platform": "STM32", "mcu": "STM32F746NG", "board": "STM32F746G Discovery", "toolchain": "Renode + Arm GNU Toolchain 14.2", "arch": "cortex-m", "evidence": "emulator/evidence/stm32f746/", "note": "Renode emulator evidence; not physical HIL." },
+    { "platform": "STM32", "mcu": "STM32H743ZI", "board": "STM32 Nucleo-H743ZI", "toolchain": "Renode + Arm GNU Toolchain 14.2", "arch": "cortex-m", "evidence": "emulator/evidence/stm32h743/", "note": "Renode emulator evidence; not physical HIL." },
+    { "platform": "SAME70", "mcu": "SAME70Q21", "board": "Microchip SAM E70 Xplained", "toolchain": "Renode + Arm GNU Toolchain 14.2", "arch": "cortex-m", "evidence": "emulator/evidence/sam_e70/", "note": "Renode emulator evidence; not physical HIL." },
+    { "platform": "i.MX RT", "mcu": "MIMXRT1064", "board": "NXP MIMXRT1064-EVK", "toolchain": "Renode + Arm GNU Toolchain 14.2", "arch": "cortex-m", "evidence": "emulator/evidence/imxrt1064/", "note": "Renode emulator evidence; not physical HIL." },
+    { "platform": "STM32", "mcu": "STM32L552ZE", "board": "STM32 Nucleo-L552ZE", "toolchain": "Renode + Arm GNU Toolchain 14.2", "arch": "cortex-m", "evidence": "emulator/evidence/stm32l552/", "note": "Renode emulator evidence; not physical HIL." },
+    { "platform": "STM32", "mcu": "STM32WBA52CG", "board": "STM32 Nucleo-WBA52CG", "toolchain": "Renode + Arm GNU Toolchain 14.2", "arch": "cortex-m", "evidence": "emulator/evidence/stm32wba52/", "note": "Renode emulator evidence; not physical HIL." },
+    { "platform": "i.MX RT", "mcu": "MIMXRT595", "board": "NXP MIMXRT595-EVK", "toolchain": "Renode + Arm GNU Toolchain 14.2", "arch": "cortex-m", "evidence": "emulator/evidence/imxrt500/", "note": "Renode emulator evidence; not physical HIL." },
+    { "platform": "i.MX RT", "mcu": "MIMXRT798S", "board": "NXP MIMXRT700-EVK", "toolchain": "Renode + Arm GNU Toolchain 14.2", "arch": "cortex-m", "evidence": "emulator/evidence/imxrt700/", "note": "Renode emulator evidence; not physical HIL." },
+    { "platform": "RA6M5", "mcu": "R7FA6M5BH", "board": "Renesas EK-RA6M5", "toolchain": "Renode + Arm GNU Toolchain 14.2", "arch": "cortex-m", "evidence": "emulator/evidence/ra6m5/", "note": "Renode emulator evidence; not physical HIL." },
+    { "platform": "OpenTitan", "mcu": "Ibex", "board": "OpenTitan Earl Grey", "toolchain": "Renode + RISC-V GNU Toolchain 14.2", "arch": "riscv32", "evidence": "emulator/evidence/opentitan/", "note": "Renode emulator evidence; not physical HIL." },
+    { "platform": "VEGA", "mcu": "RI5CY", "board": "VEGAboard", "toolchain": "Renode + RISC-V GNU Toolchain 14.2", "arch": "riscv32", "evidence": "emulator/evidence/vegaboard/", "note": "Renode emulator evidence; not physical HIL." },
+    { "platform": "Kendryte", "mcu": "K210", "board": "Sipeed MAIX Bit", "toolchain": "Renode + RISC-V GNU Toolchain 14.2", "arch": "riscv64", "evidence": "emulator/evidence/k210/", "note": "Renode emulator evidence; not physical HIL." }
+  ],
+  "summary": {
+    "total_platforms": 1,
+    "qualified": 1,
+    "compile_tested": 0,
+    "emulator_tested": 23,
+    "host_tested": 0,
+    "not_qualified": 0,
+    "in_validation": 0
+  }
 }

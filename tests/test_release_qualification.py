@@ -1,3 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024-2026 LastState Contributors
+# tests/test_release_qualification.py
+#
+# Release qualification tests. HIL matrix validation.
+#
+# Heap-free, bounded, deterministic.
+
 #!/usr/bin/env python3
 from __future__ import annotations
 

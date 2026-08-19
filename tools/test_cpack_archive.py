@@ -1,3 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024-2026 LastState Contributors
+# tools/test_cpack_archive.py
+#
+# CPack archive test. Validates package layout and contents.
+#
+# Heap-free, bounded, deterministic.
+
 #!/usr/bin/env python3
 """Extract a CPack archive and build a clean external C/C++ consumer."""
 

@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/secure_storage.h
+//
+// Authenticated, replay-protected storage API. Wraps the spool
+// path with AEAD, versioned nonces, and atomic power-loss-safe
+// commits so a partial write never replaces a good record.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_SECURE_STORAGE_H
 #define LASTSTATE_SECURE_STORAGE_H
 #include <stddef.h>

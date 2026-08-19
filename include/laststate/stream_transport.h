@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/stream_transport.h
+//
+// Stream transport adapter contract. The byte-oriented counterpart
+// to network_transport; Latch owns framing, AEAD, and retry, the
+// port owns read/write.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_STREAM_TRANSPORT_H
 #define LASTSTATE_STREAM_TRANSPORT_H
 #include <stddef.h>

@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/identity.h
+//
+// Device identity API. Owns the long-lived device ID, key handles,
+// and certificate material used by secure storage and transport.
+// Tied to provisioning.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_IDENTITY_H
 #define LASTSTATE_IDENTITY_H
 

@@ -1,3 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024-2026 LastState Contributors
+# tools/generate_sbom.py
+#
+# SBOM generator. SPDX/JSON output for supply-chain transparency.
+#
+# Heap-free, bounded, deterministic.
+
 from __future__ import annotations
 
 import argparse

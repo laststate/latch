@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/flash_storage.h
+//
+// Flash-backed storage API for Latch. Wraps the wear-level and
+// mirror layers behind a single put/get/copy interface used by
+// both secure and non-secure spool paths.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_FLASH_STORAGE_H
 #define LASTSTATE_FLASH_STORAGE_H
 

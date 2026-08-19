@@ -1,3 +1,12 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// tests/test_power_loss.c
+//
+// Power-loss simulation tests. Flash mirror and secure storage
+// atomicity under simulated power cuts.
+//
+// Heap-free, bounded, deterministic.
+
 #include <stdio.h>
 #include <string.h>
 

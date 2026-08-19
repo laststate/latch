@@ -1,3 +1,12 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/security/sha256.c
+//
+// SHA-256 implementation. Constant-time, allocation-free, used by
+// the AEAD construction and by the build-id / fingerprint paths.
+//
+// Heap-free, bounded, deterministic.
+
 #include "../core/internal.h"
 #include "laststate/security.h"
 typedef struct {

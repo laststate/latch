@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/envelope/lep.c
+//
+// LEP envelope codec implementation. Serializes and parses every
+// field of the LEP v1 wire format; the authoritative reference
+// for what a record looks like on the wire.
+//
+// Heap-free, bounded, deterministic.
+
 #include "../core/internal.h"
 #include "laststate/envelope.h"
 

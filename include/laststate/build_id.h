@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/build_id.h
+//
+// Build identity API. Exposes the compile-time build ID, git SHA,
+// and a validator used to confirm a serialized record was produced
+// by the expected firmware revision.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_BUILD_ID_H
 #define LASTSTATE_BUILD_ID_H
 

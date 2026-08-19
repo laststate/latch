@@ -1,0 +1,4 @@
+using sysbus
+mach create "latch-atsamd21"
+machine LoadPlatformDescription "C:/Program Files/Renode/platforms/cpus/atsamd21j17d-aft.repl"
+sysbus.cpu0 PerformanceInMips 64

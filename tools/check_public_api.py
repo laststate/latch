@@ -1,3 +1,12 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024-2026 LastState Contributors
+# tools/check_public_api.py
+#
+# Public API surface checker. Detects accidental exports and
+# ABI breaks.
+#
+# Heap-free, bounded, deterministic.
+
 #!/usr/bin/env python3
 from pathlib import Path
 import json,subprocess,sys,tempfile

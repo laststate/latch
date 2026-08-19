@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/storage/wear_level.c
+//
+// Wear-leveling implementation. Spreads writes across the flash
+// region and exposes the put/get/copy primitives the spool and
+// secure storage layers build on.
+//
+// Heap-free, bounded, deterministic.
+
 #include "../core/internal.h"
 
 #include "laststate/flash_storage.h"

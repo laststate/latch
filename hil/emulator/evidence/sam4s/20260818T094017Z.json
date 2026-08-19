@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "result": "pass",
+  "execution": "Renode",
+  "chip": "sam4s",
+  "family": "ListA",
+  "mcu": "Cortex-M4: Microchip SAM4S",
+  "arch": "cortex-m",
+  "scenario": "USAGEFAULT",
+  "fault_source": "firmware UDF instruction",
+  "firmware": "C:\\Users\\USER\\LastState\\latch\\build\\emulator\\latch-renode-sam4s.elf",
+  "firmware_sha256": "4703b1176884681f938d7877b1cc021a7af728e692c8f2fb3ccda2e5025c6b23",
+  "linker": "C:\\Users\\USER\\LastState\\latch\\hil\\emulator\\evidence\\sam4s\\sam4s.ld",
+  "linker_sha256": "47c5f4826cb956b474b81349417001bc39e629066a478c2cade6ab5e9f983305",
+  "marker_address": "0x20001000",
+  "observed_at": "2026-08-18T09:40:17.281418+00:00",
+  "duration_s": 5.23,
+  "renode_log": "C:\\Users\\USER\\AppData\\Local\\Temp\\latch-sam4s-renode.log",
+  "renode_log_sha256": "add8d3a5499d2c1615ecd0335a15c6caa138a875bfef29c4104f492d1271b0c6",
+  "robot_output": "C:\\Users\\USER\\LastState\\latch\\robot_output.xml",
+  "robot_output_sha256": "af90465c5623072140138fd6fea7c75330e439bd0145d0dde5560d5aafb5c39b",
+  "caveat": "This validates Renode's board model, vector table, toolchain path and fault entry for this architecture; it is not physical-board qualification and does not validate silicon errata, reset registers, flash timing, power loss, or a vendor bootloader."
+}

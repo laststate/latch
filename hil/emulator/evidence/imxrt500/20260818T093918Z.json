@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "result": "pass",
+  "execution": "Renode",
+  "chip": "imxrt500",
+  "family": "ListB",
+  "mcu": "Cortex-M33: NXP i.MX RT500 (code in SRAM0 at 0, SRAM1 at 536870912)",
+  "arch": "cortex-m",
+  "scenario": "USAGEFAULT",
+  "fault_source": "firmware UDF instruction",
+  "firmware": "C:\\Users\\USER\\LastState\\latch\\build\\emulator\\latch-renode-imxrt500.elf",
+  "firmware_sha256": "fa581ffe03074cdac3bfb85c69eb141619477bec10aefcc51c972148e7deb4f9",
+  "linker": "C:\\Users\\USER\\LastState\\latch\\hil\\emulator\\evidence\\imxrt500\\imxrt500.ld",
+  "linker_sha256": "340f99e0929aeb96f19be1cb507a65629d4da1506a885335132d4de605e24bc9",
+  "marker_address": "0x20001000",
+  "observed_at": "2026-08-18T09:39:18.145823+00:00",
+  "duration_s": 5.23,
+  "renode_log": "C:\\Users\\USER\\AppData\\Local\\Temp\\latch-imxrt500-renode.log",
+  "renode_log_sha256": "818f4ea4b98dfe7f56c8820853768f5fd4b43ba00798e387b437f8aa9ab95545",
+  "robot_output": "C:\\Users\\USER\\LastState\\latch\\robot_output.xml",
+  "robot_output_sha256": "eac9d1bbb0fc5b726edb363f6ace96a1575ac663eb31ae0c54fcb01115bae39a",
+  "caveat": "This validates Renode's board model, vector table, toolchain path and fault entry for this architecture; it is not physical-board qualification and does not validate silicon errata, reset registers, flash timing, power loss, or a vendor bootloader."
+}

@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// arch/riscv/riscv.c
+//
+// Latch runtime source. Part of the heap-free, deterministic,
+// embedded failure-capture runtime that ships fault state over LEP
+// to the Relay.
+//
+// Heap-free, bounded, deterministic.
+
 #include "riscv.h"
 #include "laststate/latch.h"
 #include "laststate/noinit.h"

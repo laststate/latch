@@ -1,3 +1,12 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// examples/reference-designs/low-power-deep-sleep/main.c
+//
+// Low-power deep-sleep reference. Demonstrates supervisor tick
+// and wake-on-fault.
+//
+// Heap-free, bounded, deterministic.
+
 #include <stdio.h>
 #include <string.h>
 

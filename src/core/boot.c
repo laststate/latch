@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/core/boot.c
+//
+// Boot, reset-reason, and safe-mode implementation. Detects the
+// reset cause, decides whether the previous reset was expected,
+// and arms safe-mode when the boot loop threshold trips.
+//
+// Heap-free, bounded, deterministic.
+
 #include "internal.h"
 #define LS_BOOT_MAGIC 0x544F4F42u
 #define LS_BOOT_VERSION 3u

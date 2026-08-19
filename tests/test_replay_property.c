@@ -1,3 +1,12 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// tests/test_replay_property.c
+//
+// Replay property tests. Serialized envelopes round-trip through
+// storage and transport without data loss.
+//
+// Heap-free, bounded, deterministic.
+
 #include <stdint.h>
 #include <stdio.h>
 #include "laststate/latch.h"

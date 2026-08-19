@@ -1,6 +1,6 @@
 # CMake FetchContent consumer
 
-This example downloads the immutable `v0.5.0` release and exposes the same
+This example downloads the immutable `v1.0.0` release and exposes the same
 `laststate::latch` target as an installed or vendored build:
 
 ```sh

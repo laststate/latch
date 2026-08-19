@@ -1,3 +1,12 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// tests/test_update.c
+//
+// Update metadata tests. Changelog encoding and identity block
+// correlation.
+//
+// Heap-free, bounded, deterministic.
+
 #include <stdio.h>
 #include <string.h>
 

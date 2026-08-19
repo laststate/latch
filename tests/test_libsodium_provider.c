@@ -1,3 +1,12 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// tests/test_libsodium_provider.c
+//
+// libsodium provider interop tests. Validates Sodium-backed
+// crypto against in-tree implementation.
+//
+// Heap-free, bounded, deterministic.
+
 #include <stdio.h>
 #include <string.h>
 #include "laststate/latch.h"

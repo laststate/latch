@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/security/aead.c
+//
+// Authenticated encryption with associated data. Wires the chosen
+// AEAD construction (ChaCha20-Poly1305 by default) into the
+// secure storage and transport paths.
+//
+// Heap-free, bounded, deterministic.
+
 #include "../core/internal.h"
 #include "crypto_internal.h"
 #include "laststate/security.h"

@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/capture.h
+//
+// Crash-capture API for Latch. Records fault context, CPU registers,
+// and dump regions into a minimal retained snapshot that survives
+// a CPU reset, ready for serialization on next boot.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_CAPTURE_H
 #define LASTSTATE_CAPTURE_H
 

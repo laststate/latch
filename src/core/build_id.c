@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/core/build_id.c
+//
+// Build identity implementation. Surfaces the compile-time build ID
+// and git SHA, and validates an incoming string against the
+// expected value before the rest of the runtime trusts it.
+//
+// Heap-free, bounded, deterministic.
+
 #include "internal.h"
 const char *ls_build_id(void) {
     return LS_BUILD_ID;

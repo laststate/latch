@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/core/selftest.c
+//
+// Power-on self-test implementation. Deterministic checks of the
+// crypto provider, storage layer, and identity block that run
+// before ls_init() marks the runtime healthy.
+//
+// Heap-free, bounded, deterministic.
+
 #include "internal.h"
 #include "laststate/selftest.h"
 #include "laststate/blackbox.h"

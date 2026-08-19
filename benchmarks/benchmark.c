@@ -1,3 +1,12 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// benchmarks/benchmark.c
+//
+// Microbenchmarks. Cycle counts for capture, envelope, crypto,
+// storage, and transport hot paths.
+//
+// Heap-free, bounded, deterministic.
+
 #include <stdio.h>
 #include <string.h>
 #include <time.h>

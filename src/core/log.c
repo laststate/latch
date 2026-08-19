@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/core/log.c
+//
+// Diagnostic log implementation. Append-only level/message records
+// that are bundled into the next envelope when a fault occurs;
+// never used for control flow.
+//
+// Heap-free, bounded, deterministic.
+
 #include "internal.h"
 void ls_log_set_stream(ls_log_stream_fn callback, void *context) {
     ls_runtime.log_stream = callback;

@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/security/crypto_internal.h
+//
+// Internal cryptography header shared by src/security/. Not
+// installed; declares the in-tree primitives and the provider
+// dispatch table used at runtime.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LS_CRYPTO_INTERNAL_H
 #define LS_CRYPTO_INTERNAL_H
 #include <stddef.h>

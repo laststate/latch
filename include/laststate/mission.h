@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/mission.h
+//
+// Mission / lifetime context API. Lets the device label the current
+// run (firmware slot, campaign, experiment ID) so an off-line
+// operator can correlate records to a deployment.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_MISSION_H
 #define LASTSTATE_MISSION_H
 

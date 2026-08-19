@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "result": "pass",
+  "execution": "Renode",
+  "chip": "atsamd21",
+  "family": "ListB",
+  "mcu": "Cortex-M0+: Microchip ATSAMD21",
+  "arch": "cortex-m",
+  "scenario": "USAGEFAULT",
+  "fault_source": "firmware UDF instruction",
+  "firmware": "C:\\Users\\USER\\LastState\\latch\\build\\emulator\\latch-renode-atsamd21.elf",
+  "firmware_sha256": "4eb290e69dccfc44c154e56221d9a614ffdca23ebcfa5b9ccfb4666fab1f7106",
+  "linker": "C:\\Users\\USER\\LastState\\latch\\hil\\emulator\\evidence\\atsamd21\\atsamd21.ld",
+  "linker_sha256": "fbc7eb7fc06f6b3d7ddb1d4c43f69a9d257be5ba5cf0f25b52b75737d2fe4b0c",
+  "marker_address": "0x20001000",
+  "observed_at": "2026-08-18T09:40:59.360970+00:00",
+  "duration_s": 5.14,
+  "renode_log": "C:\\Users\\USER\\AppData\\Local\\Temp\\latch-atsamd21-renode.log",
+  "renode_log_sha256": "ac001c95193d7bf206ef3817e0a40d34d7d0bf1b7ba2244c2768d031552f50c4",
+  "robot_output": "C:\\Users\\USER\\LastState\\latch\\robot_output.xml",
+  "robot_output_sha256": "502c30ba87c562f1b6239e023dea45cf9d552fab678ba7979167baa9a06b60ad",
+  "caveat": "This validates Renode's board model, vector table, toolchain path and fault entry for this architecture; it is not physical-board qualification and does not validate silicon errata, reset registers, flash timing, power loss, or a vendor bootloader."
+}

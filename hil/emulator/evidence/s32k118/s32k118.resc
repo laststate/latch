@@ -1,0 +1,4 @@
+using sysbus
+mach create "latch-s32k118"
+machine LoadPlatformDescription "C:/Program Files/Renode/platforms/cpus/s32k118.repl"
+sysbus.cpu PerformanceInMips 64

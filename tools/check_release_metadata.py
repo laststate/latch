@@ -1,3 +1,12 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024-2026 LastState Contributors
+# tools/check_release_metadata.py
+#
+# Release metadata validator. SBOM, version, changelog, and
+# provenance checks.
+#
+# Heap-free, bounded, deterministic.
+
 #!/usr/bin/env python3
 """Verify that every publishable Latch package names one release version.
 

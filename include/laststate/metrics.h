@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/metrics.h
+//
+// Runtime metrics API. Counters, gauges, and histograms published
+// by the application and shipped with the next envelope on demand
+// or on fault.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_METRICS_H
 #define LASTSTATE_METRICS_H
 

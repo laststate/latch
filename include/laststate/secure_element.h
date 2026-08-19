@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/secure_element.h
+//
+// Secure-element adapter contract. The port supplies a small
+// interface for key injection, AEAD, and true-random; Latch never
+// embeds a fallback PRNG for cryptographic use.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_SECURE_ELEMENT_H
 #define LASTSTATE_SECURE_ELEMENT_H
 #include <stddef.h>

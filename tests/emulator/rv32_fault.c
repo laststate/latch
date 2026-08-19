@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// tests/emulator/rv32_fault.c
+//
+// Latch runtime source. Part of the heap-free, deterministic,
+// embedded failure-capture runtime that ships fault state over LEP
+// to the Relay.
+//
+// Heap-free, bounded, deterministic.
+
 #include <stdint.h>
 
 #define UART0_BASE UINT32_C(0x10013000)

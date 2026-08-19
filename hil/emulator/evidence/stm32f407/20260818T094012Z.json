@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "result": "pass",
+  "execution": "Renode",
+  "chip": "stm32f407",
+  "family": "ListA",
+  "mcu": "Cortex-M4: STM32F407VG",
+  "arch": "cortex-m",
+  "scenario": "USAGEFAULT",
+  "fault_source": "firmware UDF instruction",
+  "firmware": "C:\\Users\\USER\\LastState\\latch\\build\\emulator\\latch-renode-stm32f407.elf",
+  "firmware_sha256": "ff1d918953f96048c3b5f32d3ac76d9db26e6642be41c67533b113152dedfded",
+  "linker": "C:\\Users\\USER\\LastState\\latch\\hil\\emulator\\evidence\\stm32f407\\stm32f407.ld",
+  "linker_sha256": "217c797f3931fa54fdb98697680234e17258991046206f6bea58fe659f59a015",
+  "marker_address": "0x20001000",
+  "observed_at": "2026-08-18T09:40:12.030043+00:00",
+  "duration_s": 5.37,
+  "renode_log": "C:\\Users\\USER\\AppData\\Local\\Temp\\latch-stm32f407-renode.log",
+  "renode_log_sha256": "c2fdb1b4a666aff564a39ca83925e035666476d1a7911890c2f272b3b687ccb1",
+  "robot_output": "C:\\Users\\USER\\LastState\\latch\\robot_output.xml",
+  "robot_output_sha256": "d409e5a55ac3e2bff4ba1842ca903d709d93a99e4c3063b85c14611adaa38fd0",
+  "caveat": "This validates Renode's board model, vector table, toolchain path and fault entry for this architecture; it is not physical-board qualification and does not validate silicon errata, reset registers, flash timing, power loss, or a vendor bootloader."
+}

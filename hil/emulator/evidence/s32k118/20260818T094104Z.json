@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "result": "pass",
+  "execution": "Renode",
+  "chip": "s32k118",
+  "family": "ListB",
+  "mcu": "Cortex-M0+: NXP S32K118",
+  "arch": "cortex-m",
+  "scenario": "USAGEFAULT",
+  "fault_source": "firmware UDF instruction",
+  "firmware": "C:\\Users\\USER\\LastState\\latch\\build\\emulator\\latch-renode-s32k118.elf",
+  "firmware_sha256": "3cf08234790803a314019a6d1eba3c6bb1718e81949f4dc2fcde68fae1a35e54",
+  "linker": "C:\\Users\\USER\\LastState\\latch\\hil\\emulator\\evidence\\s32k118\\s32k118.ld",
+  "linker_sha256": "ce69bd40842ac90766e7f1f1b2488d617bc0d47c4adb73b347062e3b1f851efc",
+  "marker_address": "0x20001000",
+  "observed_at": "2026-08-18T09:41:04.729839+00:00",
+  "duration_s": 5.35,
+  "renode_log": "C:\\Users\\USER\\AppData\\Local\\Temp\\latch-s32k118-renode.log",
+  "renode_log_sha256": "31397234748949891634170de27d1953cb45b0d74f265918ae23c278885dcf5e",
+  "robot_output": "C:\\Users\\USER\\LastState\\latch\\robot_output.xml",
+  "robot_output_sha256": "1231d3359973f10dd0efd23ee4917a39b8604bf34be9b8fe8118db220fc2c7f0",
+  "caveat": "This validates Renode's board model, vector table, toolchain path and fault entry for this architecture; it is not physical-board qualification and does not validate silicon errata, reset registers, flash timing, power loss, or a vendor bootloader."
+}

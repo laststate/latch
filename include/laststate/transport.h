@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/transport.h
+//
+// Transport façade. Re-exports the stream and network adapters
+// under one header so callers depend on a single interface that
+// the port chooses to satisfy.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_TRANSPORT_H
 #define LASTSTATE_TRANSPORT_H
 

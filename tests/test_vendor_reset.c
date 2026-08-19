@@ -1,3 +1,11 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// tests/test_vendor_reset.c
+//
+// Vendor-specific reset tests. STM32, ESP32, Zephyr port hooks.
+//
+// Heap-free, bounded, deterministic.
+
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>

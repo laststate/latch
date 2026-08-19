@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "result": "pass",
+  "execution": "Renode",
+  "chip": "k210",
+  "family": "ListB",
+  "mcu": "RV64IMAC: Kendryte K210 (6 MiB SRAM at 2147483648)",
+  "arch": "riscv64",
+  "scenario": "USAGEFAULT",
+  "fault_source": "illegal instruction trap",
+  "firmware": "C:\\Users\\USER\\LastState\\latch\\build\\emulator\\latch-renode-k210.elf",
+  "firmware_sha256": "e949232d2db67a1b237d8a4754bcd285c2591917801eef9963f2a89786eed8ca",
+  "linker": "C:\\Users\\USER\\LastState\\latch\\hil\\emulator\\evidence\\k210\\k210.ld",
+  "linker_sha256": "3de581c8dfada8d575b4c47a284999848599818b371c34c1dca138c1d8711161",
+  "marker_address": "0x80001000",
+  "observed_at": "2026-08-18T09:42:09.448326+00:00",
+  "duration_s": 5.2,
+  "renode_log": "C:\\Users\\USER\\AppData\\Local\\Temp\\latch-k210-renode.log",
+  "renode_log_sha256": "dd4747564433d80b5f2154ff85659700962f1c999d3656140d4002aeae33e8b5",
+  "robot_output": "C:\\Users\\USER\\LastState\\latch\\robot_output.xml",
+  "robot_output_sha256": "1838131bc75d9dd2cc0328e8ac0060001423eb9c7575dc4dd89221da56e05107",
+  "caveat": "This validates Renode's board model, vector table, toolchain path and fault entry for this architecture; it is not physical-board qualification and does not validate silicon errata, reset registers, flash timing, power loss, or a vendor bootloader."
+}

@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/memory.h
+//
+// Memory-region and noinit helpers. Lets a port mark the retained
+// region Latch uses across resets and expose it to the capture
+// path without leaking layout to the public surface.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_MEMORY_H
 #define LASTSTATE_MEMORY_H
 

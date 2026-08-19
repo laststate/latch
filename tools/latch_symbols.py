@@ -1,3 +1,12 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024-2026 LastState Contributors
+# tools/latch_symbols.py
+#
+# Symbol extractor. Public/private classification for ABI
+# tracking.
+#
+# Heap-free, bounded, deterministic.
+
 #!/usr/bin/env python3
 """Create and query a compact symbol manifest for exact Latch firmware builds."""
 from __future__ import annotations

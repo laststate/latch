@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/provisioning.h
+//
+// Provisioning API. Issues the initial device identity, key handles,
+// and Relay endpoint configuration that every other layer depends
+// on. One-shot at manufacturing time.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_PROVISIONING_H
 #define LASTSTATE_PROVISIONING_H
 

@@ -1,3 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024-2026 LastState Contributors
+# tests/test_latch_collector.py
+#
+# Collector tests. Device enrollment and record ingestion.
+#
+# Heap-free, bounded, deterministic.
+
 #!/usr/bin/env python3
 from __future__ import annotations
 

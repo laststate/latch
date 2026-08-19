@@ -1,3 +1,12 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024-2026 LastState Contributors
+# tools/generate_public_api_manifest.py
+#
+# Public API manifest generator. Exports header surface for
+# downstream consumers.
+#
+# Heap-free, bounded, deterministic.
+
 #!/usr/bin/env python3
 from pathlib import Path
 import argparse,hashlib,json,re

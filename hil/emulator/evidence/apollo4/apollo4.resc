@@ -1,0 +1,4 @@
+using sysbus
+mach create "latch-apollo4"
+machine LoadPlatformDescription "C:/Program Files/Renode/platforms/cpus/ambiq-apollo4.repl"
+sysbus.cpu PerformanceInMips 64

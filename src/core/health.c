@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/core/health.c
+//
+// Device health aggregation. Combines environment samples, recent
+// anomaly events, and the boot counter into the health block that
+// travels inside the next envelope.
+//
+// Heap-free, bounded, deterministic.
+
 #include "internal.h"
 #include "laststate/blackbox.h"
 

@@ -1,3 +1,12 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024-2026 LastState Contributors
+# tools/check_release_qualification.py
+#
+# Release qualification checker. Validates 23/23 matrix, coverage,
+# and artifact integrity before tag.
+#
+# Heap-free, bounded, deterministic.
+
 #!/usr/bin/env python3
 """Gate stable releases on fresh, commit-bound physical HIL evidence."""
 from __future__ import annotations

@@ -1,3 +1,12 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// tests/test_fault_injection_pipeline.c
+//
+// Fault-injection pipeline tests. Synthetic triggers exercise the
+// capture path deterministically.
+//
+// Heap-free, bounded, deterministic.
+
 #include <stdio.h>
 #include <string.h>
 #include "laststate/latch.h"

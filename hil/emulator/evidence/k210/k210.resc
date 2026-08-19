@@ -1,0 +1,4 @@
+using sysbus
+mach create "latch-k210"
+machine LoadPlatformDescription "C:/Program Files/Renode/platforms/cpus/kendryte_k210.repl"
+sysbus.cpu1 PerformanceInMips 64

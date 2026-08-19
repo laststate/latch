@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/spool.h
+//
+// Bounded spool API. Holds serialized LEP envelopes awaiting
+// transport, with a drop policy that keeps errors and drops the
+// oldest healthy entries when space is tight.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_SPOOL_H
 #define LASTSTATE_SPOOL_H
 

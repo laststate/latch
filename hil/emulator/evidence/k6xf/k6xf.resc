@@ -1,0 +1,4 @@
+using sysbus
+mach create "latch-k6xf"
+machine LoadPlatformDescription "C:/Program Files/Renode/platforms/cpus/nxp-k6xf.repl"
+sysbus.cpu PerformanceInMips 64

@@ -1,0 +1,4 @@
+using sysbus
+mach create "latch-opentitan"
+machine LoadPlatformDescription "C:/Program Files/Renode/platforms/cpus/opentitan-earlgrey.repl"
+sysbus.cpu0 PerformanceInMips 64

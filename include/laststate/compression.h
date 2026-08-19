@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/compression.h
+//
+// LEP stream compression API. Heap-free LZ-style codec used to shrink
+// envelopes and dump regions before authenticated storage or
+// transport.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_COMPRESSION_H
 #define LASTSTATE_COMPRESSION_H
 #include <stddef.h>

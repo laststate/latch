@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/security.h
+//
+// Security primitives façade. Re-exports the cryptography entry
+// points used by Latch so a port can satisfy them either via the
+// built-in software provider or a secure element.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_SECURITY_H
 #define LASTSTATE_SECURITY_H
 #include <stdbool.h>

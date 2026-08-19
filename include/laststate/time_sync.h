@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/time_sync.h
+//
+// Time synchronization API. Lets a port feed monotonic and wall
+// clock time into Latch without exposing the chosen back-end;
+// timestamps travel inside every envelope.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_TIME_SYNC_H
 #define LASTSTATE_TIME_SYNC_H
 

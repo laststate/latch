@@ -1,3 +1,12 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024-2026 LastState Contributors
+# tools/check_hil_matrix.py
+#
+# HIL qualification matrix validator. Ensures claims match the
+# hardware-compatibility.md table.
+#
+# Heap-free, bounded, deterministic.
+
 #!/usr/bin/env python3
 """Validate qualification claims and keep the public HIL table reproducible."""
 

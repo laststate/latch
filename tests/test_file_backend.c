@@ -1,3 +1,11 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// tests/test_file_backend.c
+//
+// File-backed storage tests. Host simulator backend for CI.
+//
+// Heap-free, bounded, deterministic.
+
 #define _XOPEN_SOURCE 700
 #define _POSIX_C_SOURCE 200809L
 

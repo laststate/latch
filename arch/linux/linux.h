@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// arch/linux/linux.h
+//
+// Latch runtime source. Part of the heap-free, deterministic,
+// embedded failure-capture runtime that ships fault state over LEP
+// to the Relay.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_LINUX_H
 #define LASTSTATE_LINUX_H
 

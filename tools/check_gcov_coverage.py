@@ -1,3 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024-2026 LastState Contributors
+# tools/check_gcov_coverage.py
+#
+# GCOV coverage parser. Enforces 90%+ line/branch thresholds.
+#
+# Heap-free, bounded, deterministic.
+
 #!/usr/bin/env python3
 """Deterministic gcov coverage gate for Latch production sources.
 

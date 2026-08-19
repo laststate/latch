@@ -1,3 +1,12 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// tests/test_secure_power_loss.c
+//
+// Power-loss atomicity tests for secure storage. Validates that
+// partial commits never expose plaintext or corrupt state.
+//
+// Heap-free, bounded, deterministic.
+
 #include <stdio.h>
 #include <string.h>
 #include "laststate/latch.h"

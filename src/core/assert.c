@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/core/assert.c
+//
+// Assertion policy implementation. Routes a failed assertion to the
+// configured policy — continue, reset, halt, breakpoint, or the
+// port's callback — without ever calling into malloc.
+//
+// Heap-free, bounded, deterministic.
+
 #include "internal.h"
 void ls_assert_set_policy(ls_assert_policy_t policy, ls_assert_callback_t callback) {
     ls_runtime.assert_policy = policy;

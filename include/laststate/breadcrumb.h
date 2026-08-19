@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/breadcrumb.h
+//
+// Structured breadcrumbs — typed key/value events appended to the
+// next LEP envelope to reconstruct activity around a fault. Bounded
+// ring with drop-oldest, drop-newest, and keep-errors policies.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_BREADCRUMB_H
 #define LASTSTATE_BREADCRUMB_H
 

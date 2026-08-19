@@ -1,3 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024-2026 LastState Contributors
+# tests/test_release_metadata.py
+#
+# Release metadata tests. SBOM, version, changelog integrity.
+#
+# Heap-free, bounded, deterministic.
+
 #!/usr/bin/env python3
 """Focused tests for the release metadata gate."""
 

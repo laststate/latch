@@ -1,3 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024-2026 LastState Contributors
+# tests/test_footprint.py
+#
+# Footprint measurement script. Parses map/elf for RAM/flash use.
+#
+# Heap-free, bounded, deterministic.
+
 #!/usr/bin/env python3
 """Unit tests for the target-agnostic footprint report generator."""
 

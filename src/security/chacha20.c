@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/security/chacha20.c
+//
+// ChaCha20 stream cipher implementation. Constant-time and
+// allocation-free; reused by AEAD and by the secure-element
+// adapter when no hardware primitive is available.
+//
+// Heap-free, bounded, deterministic.
+
 #include "../core/internal.h"
 #include "laststate/security.h"
 

@@ -1,0 +1,6 @@
+{
+  "status": "emulator-tested",
+  "replaces": "fabricated physical-qualification stub (no physical HIL was performed for this board)",
+  "note": "Physical HIL was not performed for this board. Real evidence is Renode emulator runs under ../../emulator/evidence/efr32mg12/. Physical qualification requires real-board HIL per hil/AGENTS.md and is not claimed here.",
+  "result": "pass (Renode emulator only — NOT physical-board qualification)"
+}

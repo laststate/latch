@@ -1,3 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024-2026 LastState Contributors
+# tests/test_latch_dump.py
+#
+# Dump tool tests. Record parsing and pretty-print.
+#
+# Heap-free, bounded, deterministic.
+
 #!/usr/bin/env python3
 """Exercise the host decoder's bounded hexadecimal input mode."""
 

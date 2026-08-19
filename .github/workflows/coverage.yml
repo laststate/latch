@@ -14,7 +14,20 @@ jobs:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - run: sudo apt-get update && sudo apt-get install -y lcov ninja-build
+      - name: Install lcov ninja-build
+        shell: bash
+        run: |
+          set -euo pipefail
+          opts=(-o Acquire::Retries=5 -o Acquire::http::Timeout=60 -o Acquire::https::Timeout=60)
+          for attempt in 1 2 3; do
+            if timeout 90 sudo apt-get update "${opts[@]}" && timeout 240 sudo apt-get install -y "${opts[@]}" lcov ninja-build; then
+              exit 0
+            fi
+            echo "apt attempt ${attempt}/3 failed, retrying in 15s..." >&2
+            sleep 15
+          done
+          echo "apt install failed after 3 attempts" >&2
+          exit 1
       - run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DLS_BUILD_TESTS=ON -DLS_BUILD_LINUX=ON -DCMAKE_C_FLAGS="--coverage -fprofile-update=atomic" -DCMAKE_CXX_FLAGS="--coverage -fprofile-update=atomic" -DCMAKE_EXE_LINKER_FLAGS=--coverage
       - run: cmake --build build --parallel
       - run: ctest --test-dir build --output-on-failure

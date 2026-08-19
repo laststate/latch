@@ -1,3 +1,12 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// fuzz/fuzz_compression.c
+//
+// Compression codec fuzz target. Encode/decode round-trips with
+// malformed inputs.
+//
+// Heap-free, bounded, deterministic.
+
 #include <stddef.h>
 #include <stdint.h>
 #include "laststate/latch.h"

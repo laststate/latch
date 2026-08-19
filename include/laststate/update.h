@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// include/laststate/update.h
+//
+// Update / changelog API. A small, audited log of release metadata
+// and rollbacks that Latch carries in the envelope identity block
+// to correlate records to firmware.
+//
+// Heap-free, bounded, deterministic.
+
 #ifndef LASTSTATE_UPDATE_H
 #define LASTSTATE_UPDATE_H
 

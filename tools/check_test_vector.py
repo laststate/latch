@@ -1,3 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2024-2026 LastState Contributors
+# tools/check_test_vector.py
+#
+# Test vector validator. Known-answer tests for crypto and LEP.
+#
+# Heap-free, bounded, deterministic.
+
 from __future__ import annotations
 
 import pathlib

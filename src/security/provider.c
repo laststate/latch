@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026 LastState Contributors
+// src/security/provider.c
+//
+// Cryptography provider dispatch. Selects between the in-tree
+// software provider and a port-supplied secure element at
+// ls_init(); never falls back to a weaker PRNG.
+//
+// Heap-free, bounded, deterministic.
+
 #include "../core/internal.h"
 #include "laststate/security.h"
 

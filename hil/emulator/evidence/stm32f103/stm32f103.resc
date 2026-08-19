@@ -1,0 +1,4 @@
+using sysbus
+mach create "latch-stm32f103"
+machine LoadPlatformDescription "C:/Program Files/Renode/platforms/cpus/stm32f103.repl"
+sysbus.cpu PerformanceInMips 64
