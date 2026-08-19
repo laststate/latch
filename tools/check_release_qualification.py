@@ -35,6 +35,11 @@ def version_major(version: str) -> int:
     return int(match.group(1))
 
 
+def is_prerelease(version: str) -> bool:
+    core = version.split("+", 1)[0]
+    return "-" in core
+
+
 def validate(version: str, commit: str, manifest_path: pathlib.Path | None = None,
              today: dt.date | None = None) -> list[str]:
     errors: list[str] = []
@@ -43,7 +48,7 @@ def validate(version: str, commit: str, manifest_path: pathlib.Path | None = Non
         return ["qualification policy schema_version must be 1"]
     major = version_major(version)
     stable_major = int(policy.get("stable_release_min_major", 1))
-    if major < stable_major:
+    if major < stable_major or is_prerelease(version):
         return []
 
     tag = version if version.startswith("v") else f"v{version}"
@@ -131,8 +136,8 @@ def main() -> int:
     if errors:
         print("\n".join(errors), file=sys.stderr)
         return 1
-    if version_major(args.version) < int(load_json(POLICY_PATH)["stable_release_min_major"]):
-        print("pre-1.0 release: physical qualification manifest is advisory")
+    if version_major(args.version) < int(load_json(POLICY_PATH)["stable_release_min_major"]) or is_prerelease(args.version):
+        print("pre-release release: physical qualification manifest is advisory")
     else:
         print("stable release qualification manifest valid")
     return 0

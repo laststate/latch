@@ -2,6 +2,20 @@
 
 All notable changes to Latch — embedded failure-capture runtime.
 
+## [1.0.0-rc.2] - 2026-08-19
+
+### Added
+- **QEMU ESP32 (Xtensa) emulator coverage** - first Xtensa emulator target: full panic -> reboot -> recovery -> durable-ack cycle verified with `HIL:PASS:LATCH_RELAY_ESP32`, reproducible via `hil/esp32_qemu/run-qemu.ps1`; machine-readable evidence under `hil/esp32_qemu/evidence/`.
+- **Pre-release release gate** - `tools/check_release_qualification.py` now treats semver pre-releases (`-rc`, `-beta`, ...) as advisory for physical HIL, and `release.yml` requires the signed annotated tag only for stable versions.
+
+### Changed
+- Renode emulator matrix refreshed: 23/23 targets PASS on 2026-08-19 (`hil/emulator/evidence/`).
+- Version metadata synchronized to `1.0.0-rc.2` (CMake, C API header, PlatformIO, Arduino, ESP-IDF component, Rust crate).
+- `hil/qualification-matrix.json` and `hil/releases/v1.0.0.json` record 24 emulator-tested targets (23 Renode + QEMU ESP32).
+
+### Fixed
+- Xtensa portability in `src/capture/anomaly.c` (missing `<inttypes.h>`/`<stdio.h>`; `PRIu32` for `uint32_t`) and `src/capture/dna.c` (missing `<math.h>`), found while building the ESP32 fixture.
+
 ## [1.0.0] - 2026-08-18
 
 ### Added

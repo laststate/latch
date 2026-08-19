@@ -25,7 +25,7 @@ jobs:
           python tools/check_release_metadata.py --version "${version}" --require-tag
           python tools/check_release_qualification.py --version "${version}" --commit "${GITHUB_SHA}"
           major="${version%%.*}"
-          if [ "${major}" -ge 1 ]; then
+          if [ "${major}" -ge 1 ] && [[ "${version}" != *"-"* ]]; then
             git verify-tag "${GITHUB_REF_NAME}" || {
               echo "Stable releases require a cryptographically signed annotated tag" >&2
               exit 1

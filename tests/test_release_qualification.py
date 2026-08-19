@@ -27,6 +27,11 @@ SPEC.loader.exec_module(MODULE)
 def main() -> int:
     commit = "a" * 40
     assert MODULE.validate("0.2.0", commit, today=dt.date(2026, 8, 7)) == []
+    assert MODULE.is_prerelease("1.0.0-rc.2")
+    assert not MODULE.is_prerelease("1.0.0")
+    assert not MODULE.is_prerelease("1.0.0+build.7")
+    assert MODULE.validate("1.0.0-rc.2", commit, ROOT / "does-not-exist.json",
+                           today=dt.date(2026, 8, 7)) == []
     missing = MODULE.validate("1.0.0", commit, ROOT / "does-not-exist.json",
                               today=dt.date(2026, 8, 7))
     assert missing and "requires qualification manifest" in missing[0]
