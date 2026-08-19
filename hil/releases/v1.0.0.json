@@ -1,14 +1,16 @@
 {
   "schema_version": 1,
   "release": "v1.0.0",
-  "generated_at": "2026-08-18",
-  "note": "Release qualification record. A board may be called 'qualified' only after accepted physical HIL (see hil/AGENTS.md). v1.0.0 records one physically qualified configuration (ESP32) and Renode emulator evidence for 23 additional targets. Emulator evidence validates architecture/toolchain/fault-entry paths on Renode board models; it is explicitly NOT physical-board qualification.",
-  "physically_qualified": [
+  "commit": "2f0c76383dd25848c4ce864ebca200b876165874",
+  "generated_at": "2026-08-19",
+  "note": "Release qualification record. A board may be called 'qualified' only after accepted physical HIL (see hil/AGENTS.md). v1.0.0 records one physically qualified configuration (ESP32) and Renode emulator evidence for 23 additional targets. Emulator evidence validates architecture/toolchain/fault-entry paths on Renode board models; it is explicitly NOT physical-board qualification. The stable release gate (tools/check_release_qualification.py) requires physical scenarios hardfault, watchdog, brownout, stack-canary, flash and reset-registers with machine-readable JSON evidence; these remain open and must be completed before the v1.0.0 tag is created. The 'commit' field must be updated to the final v1.0.0 tag commit at release time.",
+  "targets": [
     {
       "platform": "ESP32",
       "mcu": "ESP32-D0WD-V3 rev 3.1",
       "board": "ESP32 DevKit (4 MB flash)",
       "toolchain": "ESP-IDF 5.5.0",
+      "features": [],
       "scenarios": [
         "capture-before-panic",
         "mirrored-flash",
