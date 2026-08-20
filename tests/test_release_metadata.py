@@ -23,11 +23,11 @@ from check_release_metadata import collect_versions, validate  # noqa: E402
 
 
 def write_tree(root: pathlib.Path, version: str = "0.3.0") -> None:
-    (root / "rust" / "latch").mkdir(parents=True)
+    (root / "rust" / "latch").mkdir(parents=True, exist_ok=True)
     (root / "CMakeLists.txt").write_text(
         f"project(latch VERSION {version} LANGUAGES C)\n", encoding="utf-8"
     )
-    (root / "include" / "laststate").mkdir(parents=True)
+    (root / "include" / "laststate").mkdir(parents=True, exist_ok=True)
     (root / "include" / "laststate" / "version.h").write_text(
         f'#define LS_VERSION_STRING "{version}"\n', encoding="utf-8"
     )
@@ -67,6 +67,15 @@ def main() -> int:
         (root / "library.json").write_text('{"version": "0.3.0"}\n', encoding="utf-8")
         (root / "CHANGELOG.md").write_text("# Changelog\n", encoding="utf-8")
         assert "CHANGELOG.md has no dated [0.3.0] release section" in validate(root, "0.3.0", False)
+
+        write_tree(root, "1.0.0-rc.2")
+        (root / "CMakeLists.txt").write_text(
+            "project(latch VERSION 1.0.0 LANGUAGES C)\n", encoding="utf-8"
+        )
+        assert collect_versions(root)["CMake"] == "1.0.0"
+        assert validate(root, "1.0.0-rc.2", False) == []
+        errors = validate(root, "1.0.0", False)
+        assert any("C API version is 1.0.0-rc.2, expected 1.0.0" in e for e in errors)
     return 0
 
 

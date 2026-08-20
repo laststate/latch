@@ -122,10 +122,20 @@ def exact_tag(root: pathlib.Path) -> str:
     return completed.stdout.strip()
 
 
+def version_core(version: str) -> str:
+    return version.split("+", 1)[0].split("-", 1)[0]
+
+
 def validate(root: pathlib.Path, expected: str | None, require_tag: bool) -> list[str]:
     versions = collect_versions(root)
     selected = expected or versions["CMake"]
-    errors = [f"{name} version is {value}, expected {selected}" for name, value in versions.items() if value != selected]
+    errors = []
+    for name, value in versions.items():
+        acceptable = {selected}
+        if name == "CMake":
+            acceptable.add(version_core(selected))
+        if value not in acceptable:
+            errors.append(f"{name} version is {value}, expected {selected}")
     if not changelog_has_release(root, selected):
         errors.append(f"CHANGELOG.md has no dated [{selected}] release section")
     if require_tag:
