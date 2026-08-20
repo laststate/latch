@@ -128,24 +128,22 @@ def version_core(version: str) -> str:
 
 def validate(root: pathlib.Path, expected: str | None, require_tag: bool) -> list[str]:
     versions = collect_versions(root)
-    selected = expected or versions["CMake"]
+    full = expected or versions["C API"]
     errors = []
     for name, value in versions.items():
-        acceptable = {selected}
-        if name == "CMake":
-            acceptable.add(version_core(selected))
-        if value not in acceptable:
-            errors.append(f"{name} version is {value}, expected {selected}")
-    if not changelog_has_release(root, selected):
-        errors.append(f"CHANGELOG.md has no dated [{selected}] release section")
+        target = version_core(full) if name == "CMake" else full
+        if value != target:
+            errors.append(f"{name} version is {value}, expected {target}")
+    if not changelog_has_release(root, full):
+        errors.append(f"CHANGELOG.md has no dated [{full}] release section")
     if require_tag:
         try:
             tag = exact_tag(root)
         except ValueError as error:
             errors.append(str(error))
         else:
-            if tag != f"v{selected}":
-                errors.append(f"exact Git tag is {tag}, expected v{selected}")
+            if tag != f"v{full}":
+                errors.append(f"exact Git tag is {tag}, expected v{full}")
     return errors
 
 
@@ -169,7 +167,7 @@ def main(argv: list[str] | None = None) -> int:
         print("release metadata check failed:", file=sys.stderr)
         print("\n".join(f"- {error}" for error in errors), file=sys.stderr)
         return 1
-    print(f"release metadata checks passed for v{args.version or version_from_cmake(root / 'CMakeLists.txt')}")
+    print(f"release metadata checks passed for v{args.version or version_from_header(root / 'include' / 'laststate' / 'version.h')}")
     return 0
 
 

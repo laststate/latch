@@ -74,6 +74,7 @@ def main() -> int:
         )
         assert collect_versions(root)["CMake"] == "1.0.0"
         assert validate(root, "1.0.0-rc.2", False) == []
+        assert validate(root, None, False) == []
         errors = validate(root, "1.0.0", False)
         assert any("C API version is 1.0.0-rc.2, expected 1.0.0" in e for e in errors)
     return 0
