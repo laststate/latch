@@ -39,7 +39,7 @@ v=(root/'include/laststate/version.h').read_text()
 m=re.search(r'LS_VERSION_STRING\s+"([^"]+)"',v)
 cm=(root/'CMakeLists.txt').read_text()
 pm=re.search(r'project\(latch VERSION ([0-9.]+)',cm)
-require(bool(m and pm and m.group(1)==pm.group(1)),'CMake and public header versions disagree')
+require(bool(m and pm and m.group(1).split('-')[0]==pm.group(1)),'CMake and public header versions disagree')
 # Machine-readable mutation report, if present, must be perfect for critical set.
 r=root/'artifacts/mutation-report.json'
 if r.exists():
