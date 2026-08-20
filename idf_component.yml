@@ -2,7 +2,7 @@ version: "1.0.0-rc.2"
 description: "Heap-free embedded error evidence capture with durable LEP envelopes."
 url: "https://github.com/laststate/latch"
 repository: "https://github.com/laststate/latch.git"
-documentation: "https://github.com/laststate/latch/tree/v1.0.0/examples/esp-idf-component"
+documentation: "https://github.com/laststate/latch/tree/v1.0.0-rc.2/examples/esp-idf-component"
 issues: "https://github.com/laststate/latch/issues"
 license: "Apache-2.0"
 tags:
