@@ -184,6 +184,9 @@ void ls_boot_mark_successful(void) {
     ls_runtime.persistent.boot_successful = 1;
     ls_runtime.persistent.crash_pending = 0;
     ls_runtime.persistent.consecutive_failures = 0;
+#if LS_ENABLE_POWERFAIL_SEAL
+    ls_runtime.powerfail_last_valid = false;
+#endif
     (void)ls_boot_state_save();
 }
 bool ls_safe_mode_requested(void) {

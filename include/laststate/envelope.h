@@ -51,7 +51,9 @@ typedef enum {
     LS_TLV_TIME_SYNC,
     LS_TLV_PROVISIONING,
     LS_TLV_SUPERVISOR,
-    LS_TLV_ENVIRONMENT
+    LS_TLV_ENVIRONMENT,
+    /* Additive power-fail seal (TLV 23). Legacy decoders skip by length. */
+    LS_TLV_POWERFAIL_SEAL = 23
 } ls_tlv_type_t;
 typedef struct {
     uint8_t version, type, architecture, flags;

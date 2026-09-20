@@ -9,7 +9,7 @@ if(ESP_PLATFORM)
     src/core/peripheral.c src/core/assert.c src/core/log.c src/core/performance.c
     src/core/boot.c src/core/build_id.c src/core/policy.c src/core/blackbox.c
     src/core/mission.c src/core/time_sync.c src/core/fingerprint.c src/core/supervisor.c
-    src/core/trace.c src/core/provisioning.c src/core/selftest.c src/core/fault_injection.c src/core/ota.c src/core/environment.c
+    src/core/trace.c src/core/provisioning.c src/core/selftest.c src/core/fault_injection.c src/core/ota.c src/core/environment.c src/core/powerfail.c
     src/capture/capture.c src/envelope/lep.c src/envelope/compression.c
     src/spool/spool.c src/storage/memory_storage.c src/storage/storage_sim.c
     src/storage/flash_mirror.c src/storage/wear_level.c src/storage/secure_storage.c
@@ -65,7 +65,7 @@ include(cmake/GenerateBuildId.cmake)
 set(LS_CONFIGURABLE_DEFINITIONS
   LS_CONSTRAINED_PROFILE LS_REQUIRE_EXTERNAL_CRYPTO_PROVIDER LS_MIN_CRYPTO_ASSURANCE LS_STORE_STRINGS LS_ENABLE_BREADCRUMBS LS_ENABLE_METRICS LS_ENABLE_LOGS
   LS_ENABLE_POWER_SAMPLES LS_ENABLE_PERFORMANCE LS_ENABLE_DUMPS LS_ENABLE_ASSERTS
-  LS_ENABLE_WIDE_CONTEXT
+  LS_ENABLE_WIDE_CONTEXT LS_ENABLE_POWERFAIL_SEAL
   LS_ENABLE_STACK_SNAPSHOT LS_COMPILED_MIN_LEVEL LS_MAX_EVENT_SIZE
   LS_BREADCRUMB_CAPACITY LS_BREADCRUMB_MESSAGE_MAX LS_BREADCRUMB_CATEGORY_MAX
   LS_BREADCRUMB_KV_MAX LS_METRIC_CAPACITY LS_METRIC_NAME_MAX LS_METRIC_WINDOW_SIZE
@@ -92,7 +92,7 @@ if(LS_COMMERCIAL_PROFILE)
   add_compile_definitions(LS_REQUIRE_EXTERNAL_CRYPTO_PROVIDER=1 LS_MIN_CRYPTO_ASSURANCE=3)
 endif()
 
-set(LS_CORE_SOURCES src/core/runtime.c src/core/util.c src/core/memory.c src/core/health.c src/core/peripheral.c src/core/assert.c src/core/log.c src/core/performance.c src/core/boot.c src/core/build_id.c src/core/policy.c src/core/blackbox.c src/core/mission.c src/core/time_sync.c src/core/fingerprint.c src/core/supervisor.c src/core/trace.c src/core/provisioning.c src/core/selftest.c src/core/fault_injection.c src/core/ota.c src/core/environment.c)
+set(LS_CORE_SOURCES src/core/runtime.c src/core/util.c src/core/memory.c src/core/health.c src/core/peripheral.c src/core/assert.c src/core/log.c src/core/performance.c src/core/boot.c src/core/build_id.c src/core/policy.c src/core/blackbox.c src/core/mission.c src/core/time_sync.c src/core/fingerprint.c src/core/supervisor.c src/core/trace.c src/core/provisioning.c src/core/selftest.c src/core/fault_injection.c src/core/ota.c src/core/environment.c src/core/powerfail.c)
 set(LS_CAPTURE_SOURCES src/capture/capture.c)
 set(LS_ENVELOPE_SOURCES src/envelope/lep.c src/envelope/compression.c)
 set(LS_SPOOL_SOURCES src/spool/spool.c)
@@ -315,7 +315,7 @@ if(LS_BUILD_TESTS)
   add_executable(latch-core-observability-tests tests/test_core_observability.c)
   target_link_libraries(latch-core-observability-tests PRIVATE latch)
   add_test(NAME latch-core-observability-tests COMMAND latch-core-observability-tests)
-  foreach(test_name security crypto-vectors crypto-negative secure-element secure-storage secure-power-loss wear-level compression flash policy transport envelope-fuzz power-loss spool-stress property storage-bounds transport-policy build-id envelope-errors spool-priority crypto-provider update defensive-paths stream-edges memory-capture spool-edges envelope-capacity runtime-edges auv-runtime auv-edges ota fault-injection-pipeline replay-property)
+  foreach(test_name security crypto-vectors crypto-negative secure-element secure-storage secure-power-loss wear-level compression flash policy transport envelope-fuzz power-loss powerfail-seal spool-stress property storage-bounds transport-policy build-id envelope-errors spool-priority crypto-provider update defensive-paths stream-edges memory-capture spool-edges envelope-capacity runtime-edges auv-runtime auv-edges ota fault-injection-pipeline replay-property)
     string(REPLACE "-" "_" test_source ${test_name})
     add_executable(latch-${test_name}-tests tests/test_${test_source}.c)
     target_link_libraries(latch-${test_name}-tests PRIVATE latch)

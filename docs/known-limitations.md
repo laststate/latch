@@ -15,6 +15,12 @@ an LTS release.
   **emulator-tested (Renode) only** — not physical-board qualification.
 - **Automatic Xtensa panic-frame capture** is an integration boundary on ESP32 and
   has not been re-qualified on physical HIL.
+- **Power-fail seal (LEP TLV 23)** is implemented and host-tested only. No
+  physical brownout run exists yet: no programmable-supply ramp/cut evidence,
+  no measured `vcap_mv` threshold per board, no SPI-FRAM or single-shot Flash
+  slot claim. The run procedure is staged at `hil/brownout_seal/README.md`
+  with evidence marked NOT RUN. Treat the seal as experimental until that
+  fixture reports PASS on the exact board, revision, SDK, and toolchain.
 - Per-board physical HIL, and vendor TLS/BLE/LoRaWAN/CAN/secure-element/TrustZone
   qualification remains product-qualification work.
 

@@ -10,12 +10,17 @@ The embedded runtime is heap-free C11 with bounded buffers: you keep control of 
 [![C11](https://img.shields.io/badge/C-C11-00599C.svg)](CMakeLists.txt)
 [![Rust no_std](https://img.shields.io/badge/Rust-no__std-000000.svg)](rust/README.md)
 
-```text
-without Latch  HardFault -> reboot -> "could not reproduce"
-
-with Latch     HardFault -> retained snapshot -> reboot -> persistent spool -> your transport
-                                  +-> CPU context, reset reason, build ID,
-                                      breadcrumbs, metrics, and health data
+```mermaid
+flowchart TB
+    subgraph without["without Latch"]
+        direction LR
+        f1["HardFault"] --> r1["reboot"] --> lost["“could not reproduce”"]
+    end
+    subgraph with["with Latch"]
+        direction LR
+        f2["HardFault"] --> snap["retained snapshot"] --> r2["reboot"] --> spool["persistent spool"] --> t["your transport"]
+    end
+    snap -. "CPU context · reset reason · build ID<br/>breadcrumbs · metrics · health data" .-> spool
 ```
 
 [![Latch physical ESP32 crash, reboot, recovery, and durable ACK demonstration](docs/assets/latch-esp32-demo.gif)](hil/esp32_relay/README.md)
@@ -35,6 +40,15 @@ ls_capture_message("sensor timeout", LS_SEVERITY_ERROR);
 ```
 
 Architecture ports can capture fault state automatically. On the next boot, Latch promotes the retained snapshot into a transactional spool; normal runtime can then call `ls_flush()` to deliver a deterministic [LEP v1](docs/lep-v1.md) envelope through the best available transport.
+
+## Development status
+
+Latch `v1.0.0` is a stable, host-tested core with one physical HIL configuration (ESP32).
+Active development continues on `main`: the power-fail seal (LEP TLV 23,
+[brownout-proof commit](docs/powerfail-seal.md)) is implemented and host-tested
+but has **no physical brownout-HIL evidence yet — treat it as experimental**.
+Check [known limitations](docs/known-limitations.md) before treating any
+unreleased feature as qualified.
 
 ## Try it in 60 seconds
 
@@ -108,13 +122,17 @@ No allocator, scheduler, network stack, or hardware register map is hidden insid
 
 ## How it works
 
-```text
-fault -> retained minimal snapshot -> reboot -> LEP envelope --+
-                                                               |
-error -----------> bounded state snapshot -> LEP envelope -----+-> persistent spool
-                                                                        |
-                                                                        v
-                                                    normal runtime -> transport -> ACK
+```mermaid
+flowchart TB
+    fault["fault"] --> snap["retained minimal snapshot"]
+    snap --> reboot["reboot"]
+    reboot --> env1["LEP envelope"]
+    error["error"] --> state["bounded state snapshot"]
+    state --> env2["LEP envelope"]
+    env1 --> spool["persistent spool"]
+    env2 --> spool
+    spool --> runtime["normal runtime"]
+    runtime --> transport["transport"] --> ack["ACK"]
 ```
 
 The critical path stays deliberately small. Unknown LEP TLVs are skippable, interrupted spool records are ignored during recovery, and retained fault state is cleared only after it is promoted successfully. Read the [architecture](docs/architecture.md), [concurrency contract](docs/concurrency.md), and [wire format](docs/lep-v1.md) for the invariants.

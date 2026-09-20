@@ -171,6 +171,20 @@ static const char *tlv_name(uint16_t type) {
         return "heap";
     case LS_TLV_CPU64:
         return "cpu64";
+    case LS_TLV_BLACKBOX:
+        return "blackbox";
+    case LS_TLV_MISSION:
+        return "mission";
+    case LS_TLV_TIME_SYNC:
+        return "time_sync";
+    case LS_TLV_PROVISIONING:
+        return "provisioning";
+    case LS_TLV_SUPERVISOR:
+        return "supervisor";
+    case LS_TLV_ENVIRONMENT:
+        return "environment";
+    case LS_TLV_POWERFAIL_SEAL:
+        return "powerfail_seal";
     default:
         return "unknown";
     }

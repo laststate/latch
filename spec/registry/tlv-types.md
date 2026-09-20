@@ -39,6 +39,7 @@ type u16 LE | length u16 LE | value[length]
 | 20 | PROVISIONING | no |
 | 21 | SUPERVISOR | no |
 | 22 | ENVIRONMENT | no |
+| 23 | POWERFAIL_SEAL | no |
 | 0x0020–0x0021 | attachment meta/chunk | yes (chunk) |
 | 0x0030 | probe waveform (reserved) | — |
 | 0x8000–0x8FFF | vendor | — |
@@ -159,6 +160,12 @@ Encoding is `1`. Alarm bit definitions are product policy; consumers preserve un
 `encoding u8 | timestamp_ms u32 | pressure_pa u32 | depth_cm i32 | internal_temperature_c i16 | humidity_permyriad u16 | vibration_mg_rms u16 | flags u16 | sample_count u32 | leak_events u32`
 
 Encoding is `1`. Environment flags are bit 0 leak detected, bit 1 water ingress, bit 2 pressure-sensor fault, and bit 3 vibration limit.
+
+### 23 POWERFAIL_SEAL (13 bytes)
+
+`encoding u8 | reason u8 | tier u8 | vcap_mv u16 | boot_id u32 | fault u32`
+
+Encoding is `1`. Reason values are 1 brownout, 2 power-loss, 3 PVD. Tier values are 0 retained RAM and 1 VBAT backup RAM. Producers emit this TLV only while a promoted power-fail seal is active; see the [power-fail seal](../../docs/powerfail-seal.md) contract. Host-tested only; no physical brownout-HIL evidence yet.
 
 ## References
 

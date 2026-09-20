@@ -84,6 +84,9 @@ ls_result_t ls_boot(void) {
     result = ls_boot_state_save();
     if (result != LS_OK)
         return result;
+#if LS_ENABLE_POWERFAIL_SEAL
+    (void)ls_powerfail_recover();
+#endif
     if (retained_fault)
         (void)ls_capture_minimal_recover();
     return LS_OK;

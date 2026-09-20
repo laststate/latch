@@ -36,7 +36,7 @@ With AEAD, metadata length is 28 bytes: a 24-byte XChaCha20 nonce followed by a 
 
 An unencrypted payload is a sequence of TLVs. Each TLV is a two-byte nonzero type, a two-byte value length and that many value bytes. TLVs are contiguous with no padding. Unknown types are skipped by length. A receiver must reject a zero type, an incomplete TLV header or a value extending past the payload boundary.
 
-Types 1 through 15 are currently assigned to identity, reset, event, CPU, fault, breadcrumb, metric, power, health, assert, peripheral, log, memory, stack and heap data respectively. Type 16 (`CPU64`) is an additive full-width CPU extension. New types may be added in future minor protocol revisions; existing type semantics are immutable in v1.
+Types 1 through 15 are currently assigned to identity, reset, event, CPU, fault, breadcrumb, metric, power, health, assert, peripheral, log, memory, stack and heap data respectively. Type 16 (`CPU64`) is an additive full-width CPU extension. Types 17 through 22 carry blackbox, mission, time-sync, provisioning, supervisor, and environment data. Type 23 (`POWERFAIL_SEAL`) is an additive 13-byte power-fail seal: encoding (`1`), reason, tier, `vcap_mv` (`u16` LE), `boot_id` (`u32` LE), fault (`u32` LE). New types may be added in future minor protocol revisions; existing type semantics are immutable in v1.
 
 ### CPU64 extension (type 16)
 
