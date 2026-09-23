@@ -44,11 +44,13 @@ Architecture ports can capture fault state automatically. On the next boot, Latc
 ## Development status
 
 Latch `v1.0.0` is a stable, host-tested core with one physical HIL configuration (ESP32).
-Active development continues on `main`: the power-fail seal (LEP TLV 23,
-[brownout-proof commit](docs/powerfail-seal.md)) is implemented and host-tested
-but has **no physical brownout-HIL evidence yet — treat it as experimental**.
-Check [known limitations](docs/known-limitations.md) before treating any
-unreleased feature as qualified.
+Active development continues on `main`.
+
+> [!CAUTION]
+> The power-fail seal (LEP TLV 23, [brownout-proof commit](docs/powerfail-seal.md))
+> is implemented and host-tested but has **no physical brownout-HIL evidence
+> yet — treat it as experimental**. Check [known limitations](docs/known-limitations.md)
+> before treating any unreleased feature as qualified.
 
 ## Try it in 60 seconds
 
@@ -201,9 +203,21 @@ Feature switches and buffer capacities live in [`include/laststate/config.h`](in
 
 ## Security and production status
 
-Latch supports XChaCha20-Poly1305 envelopes, HKDF-SHA-256 domain separation, replay windows, authenticated at-rest storage, and hardware-backed key contracts. These mechanisms still require a hardware CSPRNG, per-device provisioning, verified TLS, and an independent review for the product threat model. Latch has not claimed an independent cryptographic audit or MISRA compliance; read [security, audit and compliance status](docs/assurance.md) and the [security policy](SECURITY.md) before enabling encryption or dumps.
+Latch supports XChaCha20-Poly1305 envelopes, HKDF-SHA-256 domain separation, replay windows, authenticated at-rest storage, and hardware-backed key contracts. These mechanisms still require a hardware CSPRNG, per-device provisioning, verified TLS, and an independent review for the product threat model.
 
-The portable runtime and wire format are extensively host-tested. Hardware fault entry, linker placement, flash geometry, reset registers, vendor networking, TrustZone boundaries, and secure elements **must be qualified on each selected board and toolchain**. Host tests are not hardware certification. The exact release gates are in [production readiness](docs/production-readiness.md) and [implementation status](docs/implementation-status.md).
+> [!WARNING]
+> Latch has not claimed an independent cryptographic audit or MISRA compliance.
+> Read [security, audit and compliance status](docs/assurance.md) and the
+> [security policy](SECURITY.md) before enabling encryption or dumps in production.
+
+The portable runtime and wire format are extensively host-tested.
+
+> [!IMPORTANT]
+> Hardware fault entry, linker placement, flash geometry, reset registers,
+> vendor networking, TrustZone boundaries, and secure elements **must be
+> qualified on each selected board and toolchain**. Host tests are not hardware
+> certification. The exact release gates are in [production readiness](docs/production-readiness.md)
+> and [implementation status](docs/implementation-status.md).
 
 On 2026-07-29 the complete flash → panic → reboot → UART → durable ACK path
 was verified on a physical ESP32-D0WD-V3 with ESP-IDF 5.5.0 against the
