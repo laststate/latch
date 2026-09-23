@@ -936,6 +936,44 @@ static ls_result_t put_environment(ls_writer_t *writer, bool *truncated) {
     return put_optional_tlv(writer, LS_TLV_ENVIRONMENT, value, (uint16_t)nested.length, truncated);
 }
 
+static ls_result_t put_powerfail_seal(ls_writer_t *writer, bool *truncated) {
+#if LS_ENABLE_POWERFAIL_SEAL
+    if (!ls_runtime.powerfail_last_valid || !ls_runtime.powerfail_last.sealed_ok) {
+        return LS_OK;
+    }
+    if (ls_runtime.powerfail_last.reason > (uint8_t)LS_POWERFAIL_PVD) {
+        return LS_OK;
+    }
+    uint8_t value[16];
+    ls_writer_t nested = {value, sizeof(value), 0u};
+    ls_result_t result = ls_writer_u8(&nested, 1u);
+    if (result == LS_OK) {
+        result = ls_writer_u8(&nested, (uint8_t)ls_runtime.powerfail_last.reason);
+    }
+    if (result == LS_OK) {
+        result = ls_writer_u8(&nested, (uint8_t)ls_runtime.powerfail_last.tier);
+    }
+    if (result == LS_OK) {
+        result = ls_writer_u16(&nested, ls_runtime.powerfail_last.vcap_mv);
+    }
+    if (result == LS_OK) {
+        result = ls_writer_u32(&nested, ls_runtime.powerfail_last.boot_id);
+    }
+    if (result == LS_OK) {
+        result = ls_writer_u32(&nested, ls_runtime.powerfail_last.fault);
+    }
+    if (result != LS_OK) {
+        return result;
+    }
+    return put_optional_tlv(writer, LS_TLV_POWERFAIL_SEAL, value, (uint16_t)nested.length,
+                            truncated);
+#else
+    (void)writer;
+    (void)truncated;
+    return LS_OK;
+#endif
+}
+
 static ls_result_t put_payload(ls_writer_t *writer, const ls_event_t *event, bool *truncated) {
     ls_result_t result = put_identity(writer, truncated);
     if (result == LS_OK) {
@@ -973,6 +1011,9 @@ static ls_result_t put_payload(ls_writer_t *writer, const ls_event_t *event, boo
     }
     if (result == LS_OK) {
         result = put_environment(writer, truncated);
+    }
+    if (result == LS_OK) {
+        result = put_powerfail_seal(writer, truncated);
     }
     if (result == LS_OK) {
         result = put_details(writer, event, truncated);

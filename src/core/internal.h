@@ -15,6 +15,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "laststate/latch.h"
+#include "laststate/powerfail.h"
 
 typedef struct {
     uint32_t at_ms;
@@ -178,6 +179,8 @@ typedef struct {
     size_t selftest_count;
     ls_fault_injection_state_t fault_injections[LS_FAULT_INJECTION_CAPACITY];
     bool fault_injection_active;
+    ls_powerfail_seal_info_t powerfail_last;
+    bool powerfail_last_valid;
 } ls_runtime_t;
 extern ls_runtime_t ls_runtime;
 

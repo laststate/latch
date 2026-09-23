@@ -45,3 +45,6 @@ Upstream evidence consulted for this policy:
 
 For an AUV release, retain the exact library version, binary/source hashes, build options, KAT result,
 provisioning procedure and integration review with the release qualification evidence.
+See [audit-evidence.md](audit-evidence.md) for the per-release pack template
+and [compliance-checklist.md](compliance-checklist.md) for the ISO 27001 /
+SOC 2 / HIPAA control mapping (self-assessed, not a certification).

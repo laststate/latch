@@ -8,4 +8,6 @@ Interrupt handlers may record only data through APIs documented by the selected 
 
 Fault handlers are separate from the normal runtime. The Cortex-M and RISC-V ports switch to an emergency stack, avoid spool, storage, transport and reset callbacks, and write a fixed retained snapshot. A recursive Cortex-M fault writes one recursive snapshot and then stops. Normal boot validates and persists the snapshot before clearing it.
 
+Power-fail NMI handlers follow the same rule: `ls_powerfail_seal()` writes only the fixed retained seal plus the installed backup-RAM mirror with bounded stores. Promotion to the spool happens in `ls_boot()`, never in the NMI path. See [power-fail seal](powerfail-seal.md).
+
 The application owns synchronization for callback implementations, storage drivers, network stacks and secure elements. A callback must not re-enter Latch while it is executing on behalf of Latch.

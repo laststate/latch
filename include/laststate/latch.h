@@ -47,6 +47,7 @@
 #include "envelope.h"
 #include "capture.h"
 #include "policy.h"
+#include "powerfail.h"
 #include "compression.h"
 #include "security.h"
 #include "secure_element.h"

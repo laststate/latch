@@ -2,6 +2,11 @@
 
 All notable changes to Latch — embedded failure-capture runtime.
 
+## [Unreleased]
+
+### Added
+- **Power-fail seal (Last-Microjoule commit)** — NMI-safe `ls_powerfail_seal()` freezes a fixed retained record plus VBAT backup-RAM mirror; `ls_boot()` promotes it as an `EMERGENCY` reset event with additive LEP TLV 23 (`POWERFAIL_SEAL`); torn writes ignored, clear-after-append preserved. Host-tested; HIL brownout rig not yet run (`not hardware-tested`).
+
 ## [1.0.0-rc.2] - 2026-08-19
 
 ### Added
