@@ -25,10 +25,7 @@ typedef enum {
     LS_POWERFAIL_PVD = 3
 } ls_powerfail_reason_t;
 
-typedef enum {
-    LS_POWERFAIL_TIER_RAM = 0,
-    LS_POWERFAIL_TIER_BACKUP_RAM = 1
-} ls_powerfail_tier_t;
+typedef enum { LS_POWERFAIL_TIER_RAM = 0, LS_POWERFAIL_TIER_BACKUP_RAM = 1 } ls_powerfail_tier_t;
 
 typedef struct {
     ls_powerfail_reason_t reason;
