@@ -80,8 +80,8 @@ static bool sealed_validate_copy(const ls_powerfail_sealed_t *copy) {
     if (!copy || copy->magic != LS_POWERFAIL_MAGIC || copy->version != LS_POWERFAIL_VERSION) {
         return false;
     }
-    if (copy->reason > (uint32_t)LS_POWERFAIL_PVD
-        || copy->tier > (uint32_t)LS_POWERFAIL_TIER_BACKUP_RAM) {
+    if (copy->reason > (uint32_t)LS_POWERFAIL_PVD ||
+        copy->tier > (uint32_t)LS_POWERFAIL_TIER_BACKUP_RAM) {
         return false;
     }
     bytes = (const uint8_t *)(const void *)&magic;
