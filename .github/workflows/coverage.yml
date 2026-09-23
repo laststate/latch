@@ -36,7 +36,7 @@ jobs:
       - run: lcov --capture --directory build --rc lcov_branch_coverage=1 --output-file coverage.raw.info --ignore-errors mismatch
       - run: lcov --extract coverage.raw.info '*/src/*' '*/arch/*' '*/ports/*' --rc lcov_branch_coverage=1 --output-file coverage.info --ignore-errors unused
       - run: lcov --summary coverage.info --rc lcov_branch_coverage=1
-      - uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7
+      - uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7
         if: env.CODECOV_TOKEN != ''
         with:
           files: coverage.info
