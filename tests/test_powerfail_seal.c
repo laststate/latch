@@ -78,7 +78,7 @@ static int boot_runtime(ls_storage_backend_t *storage, ls_transport_backend_t *t
     static const ls_identity_t identity = {
         .project_id = "powerfail",
         .device_id = "seal-1",
-        .firmware_build_id = "seal001",
+        .firmware_build_id = "seal0001",
     };
     ls_config_t config = {.identity = &identity};
     if (ls_init(&config) != LS_OK) {

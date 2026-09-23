@@ -80,7 +80,8 @@ static bool sealed_validate_copy(const ls_powerfail_sealed_t *copy) {
     if (!copy || copy->magic != LS_POWERFAIL_MAGIC || copy->version != LS_POWERFAIL_VERSION) {
         return false;
     }
-    if (copy->reason > (uint32_t)LS_POWERFAIL_PVD || copy->tier > (uint32_t)LS_POWERFAIL_TIER_BACKUP_RAM) {
+    if (copy->reason > (uint32_t)LS_POWERFAIL_PVD
+        || copy->tier > (uint32_t)LS_POWERFAIL_TIER_BACKUP_RAM) {
         return false;
     }
     bytes = (const uint8_t *)(const void *)&magic;
@@ -104,8 +105,7 @@ static bool sealed_validate_copy(const ls_powerfail_sealed_t *copy) {
 
 static bool sealed_read_retained(ls_powerfail_sealed_t *out) {
     ls_powerfail_sealed_t copy;
-    volatile const uint8_t *source =
-        (volatile const uint8_t *)(const void *)&sealed_retained;
+    volatile const uint8_t *source = (volatile const uint8_t *)(const void *)&sealed_retained;
     uint8_t *destination = (uint8_t *)(void *)&copy;
     ls_powerfail_sealed_t backup_copy;
     bool backup_valid = false;
