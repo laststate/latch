@@ -150,7 +150,7 @@ void ls_powerfail_install_backup(uint8_t *ram, size_t size) {
 
 void ls_powerfail_seal(ls_powerfail_reason_t reason, uint16_t vcap_mv) {
     volatile ls_powerfail_sealed_t *seal = &sealed_retained;
-    ls_minimal_snapshot_t minimal;
+    ls_minimal_snapshot_t minimal = {0};
     bool has_minimal = false;
     ls_powerfail_sealed_t snapshot = {0};
     uint32_t sequence;
