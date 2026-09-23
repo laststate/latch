@@ -206,6 +206,11 @@ void ls_powerfail_seal(ls_powerfail_reason_t reason, uint16_t vcap_mv) {
         volatile uint8_t *dst = (volatile uint8_t *)(void *)&sealed_retained;
         const uint8_t *src = (const uint8_t *)(const void *)&snapshot;
         for (size_t index = sizeof snapshot.magic; index < sizeof snapshot; ++index) {
+            /* False positive: every snapshot byte is defined ({0} plus full
+             * field assignment; minimal is guarded and zero-initialized).
+             * Cross-TU init is invisible to the analyzer. The roundtrip is
+             * CRC-validated in test_powerfail_seal.c. */
+            // NOLINTNEXTLINE(clang-analyzer-core.uninitialized.Assign)
             dst[index] = src[index];
         }
         seal_copy_to_backup(&snapshot);
