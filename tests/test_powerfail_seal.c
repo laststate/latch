@@ -173,5 +173,30 @@ int main(void) {
     ls_boot_mark_successful();
     CHECK(!ls_powerfail_last_seal().sealed_ok);
 
+    /* 8. No backup window: RAM tier, copy short-circuits, NULL guards hold. */
+    ls_powerfail_install_backup(0, 0);
+    CHECK(!ls_powerfail_sealed_read(0));
+    ls_powerfail_seal(LS_POWERFAIL_BROWNOUT, 1900u);
+    CHECK(ls_powerfail_sealed_read(&info));
+    CHECK(info.tier == LS_POWERFAIL_TIER_RAM && info.vcap_mv == 1900u);
+    ls_powerfail_sealed_clear();
+    CHECK(!ls_powerfail_sealed_read(&info));
+
+    /* 9. Recover without storage defers (EAGAIN) instead of dropping the seal. */
+    {
+        static const ls_identity_t identity2 = {
+            .project_id = "powerfail",
+            .device_id = "seal-2",
+            .firmware_build_id = "seal0002",
+        };
+        ls_config_t config2 = {.identity = &identity2};
+        CHECK(ls_init(&config2) == LS_OK);
+        ls_powerfail_install_backup(backup_ram, sizeof(backup_ram));
+        ls_powerfail_seal(LS_POWERFAIL_BROWNOUT, 2000u);
+        CHECK(ls_powerfail_recover() == LS_EAGAIN);
+        CHECK(ls_powerfail_sealed_read(&info));
+        CHECK(info.vcap_mv == 2000u);
+    }
+
     return 0;
 }

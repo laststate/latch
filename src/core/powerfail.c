@@ -43,7 +43,7 @@ static uint8_t *backup_window;
 static size_t backup_window_size;
 static volatile uint32_t seal_sequence;
 
-static uint32_t seal_crc_update(uint32_t crc, const volatile uint8_t *data, size_t length) {
+static uint32_t seal_crc_update(uint32_t crc, const uint8_t *data, size_t length) {
     while (length-- != 0u) {
         crc ^= *data++;
         for (unsigned bit = 0; bit < 8u; ++bit) {
@@ -193,8 +193,8 @@ void ls_powerfail_seal(ls_powerfail_reason_t reason, uint16_t vcap_mv) {
     {
         const uint32_t magic = LS_POWERFAIL_MAGIC;
         uint32_t crc = 0xffffffffu;
-        crc = seal_crc_update(crc, (const volatile uint8_t *)(const void *)&magic, sizeof magic);
-        crc = seal_crc_update(crc, (const volatile uint8_t *)(const void *)&snapshot.version,
+        crc = seal_crc_update(crc, (const uint8_t *)(const void *)&magic, sizeof magic);
+        crc = seal_crc_update(crc, (const uint8_t *)(const void *)&snapshot.version,
                               offsetof(ls_powerfail_sealed_t, crc) -
                                   offsetof(ls_powerfail_sealed_t, version));
         snapshot.crc = ~crc;
