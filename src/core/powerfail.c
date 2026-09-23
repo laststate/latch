@@ -267,6 +267,8 @@ ls_result_t ls_powerfail_recover(void) {
     if (!sealed_read_retained(&sealed)) {
         return LS_OK;
     }
+    /* A valid seal proves the previous boot died mid-flight. */
+    ls_runtime.previous_crashed = true;
     if (!ls_runtime.storage) {
         return LS_EAGAIN;
     }
